@@ -13,10 +13,10 @@ public final class Context {
 
     public Context() {
         dataLoaderRegistry = new DataLoaderRegistry()
-                .register("blogsByIdsBatchLoader", Wiring.newBlogsByIdsBatchLoader())
-                .register("articlesByIdsBatchLoader", Wiring.newArticlesByIdsBatchLoader())
-                .register("articlesByBlogIdsBatchLoader", Wiring.newArticlesByBlogIdsBatchLoader())
-                .register("commentsByArticleIdsBatchLoader", Wiring.newCommentsByArticleIdsBatchLoader());
+                .register("blogsByIdsBatchLoader", DataLoaders.newBlogsByIdsBatchLoader())
+                .register("articlesByIdsBatchLoader", DataLoaders.newArticlesByIdsBatchLoader())
+                .register("articlesByBlogIdsBatchLoader", DataLoaders.newArticlesByBlogIdsBatchLoader())
+                .register("commentsByArticleIdsBatchLoader", DataLoaders.newCommentsByArticleIdsBatchLoader());
     }
 
     public DataLoaderRegistry getDataLoaderRegistry() {
