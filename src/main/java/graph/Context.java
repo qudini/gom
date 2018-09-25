@@ -13,12 +13,22 @@ public final class Context {
 
     public Context() {
         dataLoaderRegistry = new DataLoaderRegistry()
+                .register("blogsByIdsBatchLoader", Wiring.newBlogsByIdsBatchLoader())
+                .register("articlesByIdsBatchLoader", Wiring.newArticlesByIdsBatchLoader())
                 .register("articlesByBlogIdsBatchLoader", Wiring.newArticlesByBlogIdsBatchLoader())
                 .register("commentsByArticleIdsBatchLoader", Wiring.newCommentsByArticleIdsBatchLoader());
     }
 
     public DataLoaderRegistry getDataLoaderRegistry() {
         return dataLoaderRegistry;
+    }
+
+    public DataLoader<Integer, Blog> getBlogsByIdsBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("blogsByIdsBatchLoader");
+    }
+
+    public DataLoader<Integer, Article> getArticlesByIdsBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("articlesByIdsBatchLoader");
     }
 
     public DataLoader<Integer, List<Article>> getArticlesByBlogIdsBatchLoader() {

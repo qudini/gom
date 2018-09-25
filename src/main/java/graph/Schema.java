@@ -31,7 +31,13 @@ public final class Schema {
                 .type(
                         TypeRuntimeWiring
                                 .newTypeWiring("Article")
+                                .dataFetcher("blog", Wiring.blogByArticleDataFetcher)
                                 .dataFetcher("comments", Wiring.commentsByArticleDataFetcher)
+                )
+                .type(
+                        TypeRuntimeWiring
+                                .newTypeWiring("Comment")
+                                .dataFetcher("article", Wiring.articleByCommentDataFetcher)
                 )
                 .build();
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import graph.Context;
 import graph.Schema;
 import graphql.ExecutionInput;
-import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import org.dataloader.DataLoaderRegistry;
@@ -28,9 +27,11 @@ public final class Main {
             "    articles {\n" +
             "      id\n" +
             "      title\n" +
+            "      blog { id title }\n" +
             "      comments {\n" +
             "        id\n" +
             "        title\n" +
+            "        article { id title }\n" +
             "      }\n" +
             "    }\n" +
             "  }\n" +
@@ -60,8 +61,10 @@ public final class Main {
 
         graphQL
                 .executeAsync(executionInput)
-                .thenApply(ExecutionResult::getData)
-                .thenAccept(data -> System.out.println(serialise(data)));
+                .thenAccept(result -> {
+                    System.out.println(result.getErrors());
+                    System.out.println(serialise(result.getData()));
+                });
 
     }
 

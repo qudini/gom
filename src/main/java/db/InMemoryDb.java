@@ -40,8 +40,26 @@ public final class InMemoryDb {
             )
             .collect(toMap(comment -> comment.id, identity()));
 
+    public static CompletableFuture<Collection<Blog>> findAllBlogsByIds(Collection<Integer> ids) {
+        return CompletableFuture.completedFuture(
+                ids
+                        .stream()
+                        .map(blogs::get)
+                        .collect(toList())
+        );
+    }
+
     public static CompletableFuture<Collection<Blog>> findAllBlogs() {
         return CompletableFuture.completedFuture(blogs.values());
+    }
+
+    public static CompletableFuture<Collection<Article>> findAllArticlesByIds(Collection<Integer> ids) {
+        return CompletableFuture.completedFuture(
+                ids
+                        .stream()
+                        .map(articles::get)
+                        .collect(toList())
+        );
     }
 
     public static CompletableFuture<Collection<Article>> findAllArticlesByBlogIds(Collection<Integer> blogIds) {
