@@ -3,7 +3,7 @@ package graph;
 import db.Article;
 import db.Blog;
 import db.Comment;
-import db.InMemoryDb;
+import db.Db;
 import org.dataloader.DataLoader;
 
 import java.util.List;
@@ -18,52 +18,40 @@ public final class DataLoaders {
     public static DataLoader<Integer, Blog> newBlogsByIdsBatchLoader() {
         return newMappedDataLoader(ids -> {
             System.out.println("#################### blogsByIdsBatchLoader for ids " + ids);
-            return InMemoryDb
+            return Db
                     .findAllBlogsByIds(ids)
-                    .thenApply(
-                            blogs -> blogs
-                                    .stream()
-                                    .collect(toMap(blog -> blog.id, identity()))
-                    );
+                    .collect(toMap(blog -> blog.id, identity()))
+                    .toFuture();
         });
     }
 
     public static DataLoader<Integer, Article> newArticlesByIdsBatchLoader() {
         return newMappedDataLoader(ids -> {
             System.out.println("#################### articlesByIdsBatchLoader for ids " + ids);
-            return InMemoryDb
+            return Db
                     .findAllArticlesByIds(ids)
-                    .thenApply(
-                            articles -> articles
-                                    .stream()
-                                    .collect(toMap(article -> article.id, identity()))
-                    );
+                    .collect(toMap(article -> article.id, identity()))
+                    .toFuture();
         });
     }
 
     public static DataLoader<Integer, List<Article>> newArticlesByBlogIdsBatchLoader() {
         return newMappedDataLoader(blogIds -> {
             System.out.println("#################### articlesByBlogIdsBatchLoader for blog ids " + blogIds);
-            return InMemoryDb
+            return Db
                     .findAllArticlesByBlogIds(blogIds)
-                    .thenApply(
-                            articles -> articles
-                                    .stream()
-                                    .collect(groupingBy(article -> article.blog.id))
-                    );
+                    .collect(groupingBy(article -> article.blog.id))
+                    .toFuture();
         });
     }
 
     public static DataLoader<Integer, List<Comment>> newCommentsByArticleIdsBatchLoader() {
         return newMappedDataLoader(articleIds -> {
             System.out.println("#################### commentsByArticleIdsBatchLoader for article ids " + articleIds);
-            return InMemoryDb
+            return Db
                     .findAllCommentsByArticleIds(articleIds)
-                    .thenApply(
-                            articles -> articles
-                                    .stream()
-                                    .collect(groupingBy(comment -> comment.article.id))
-                    );
+                    .collect(groupingBy(comment -> comment.article.id))
+                    .toFuture();
         });
     }
 

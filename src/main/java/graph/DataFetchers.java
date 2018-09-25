@@ -3,10 +3,9 @@ package graph;
 import db.Article;
 import db.Blog;
 import db.Comment;
-import db.InMemoryDb;
+import db.Db;
 import graphql.schema.DataFetcher;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -14,9 +13,10 @@ public final class DataFetchers {
 
     public static DataFetcher<CompletableFuture<List<Blog>>> blogsDataFetcher = environment -> {
         System.out.println("########## blogsDataFetcher");
-        return InMemoryDb
+        return Db
                 .findAllBlogs()
-                .thenApply(ArrayList::new);
+                .collectList()
+                .toFuture();
     };
 
     public static DataFetcher<CompletableFuture<Blog>> blogByArticleDataFetcher = environment -> {
