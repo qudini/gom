@@ -1,0 +1,22 @@
+type Comment {
+    id: Int!
+    title: String!
+    article: Article!
+}
+
+type Article {
+    id: Int!
+    title: String!
+    blog: Blog!
+    comments: [Comment!]!
+}
+
+type Blog {
+    id: Int!
+    title: String!
+    articles: [Article!]!
+}
+
+type Query {
+    blogs: [Blog!]!
+}
