@@ -10,23 +10,23 @@ public final class Wiring {
             .type(
                     TypeRuntimeWiring
                             .newTypeWiring("Query")
-                            .dataFetcher("blogs", DataFetchers.blogsDataFetcher)
+                            .dataFetcher("blogs", DataFetchers.queryToBlogsDataFetcher)
             )
             .type(
                     TypeRuntimeWiring
                             .newTypeWiring("Blog")
-                            .dataFetcher("articles", DataFetchers.articlesByBlogDataFetcher)
+                            .dataFetcher("articles", DataFetchers.blogToArticlesDataFetcher)
             )
             .type(
                     TypeRuntimeWiring
                             .newTypeWiring("Article")
-                            .dataFetcher("blog", DataFetchers.blogByArticleDataFetcher)
-                            .dataFetcher("comments", DataFetchers.commentsByArticleDataFetcher)
+                            .dataFetcher("blog", DataFetchers.articleToBlogDataFetcher)
+                            .dataFetcher("comments", DataFetchers.articleToCommentsDataFetcher)
             )
             .type(
                     TypeRuntimeWiring
                             .newTypeWiring("Comment")
-                            .dataFetcher("article", DataFetchers.articleByCommentDataFetcher)
+                            .dataFetcher("article", DataFetchers.commentToArticleDataFetcher)
             )
             .build();
 

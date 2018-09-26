@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import graph.Context;
 import graph.Schema;
+import graphql.ExceptionWhileDataFetching;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
@@ -47,7 +48,13 @@ public final class Main {
         graphQL
                 .executeAsync(executionInput)
                 .thenAccept(result -> {
-                    System.out.println(result.getErrors());
+                    result.getErrors().forEach(error -> {
+                        if (error instanceof ExceptionWhileDataFetching) {
+                            ((ExceptionWhileDataFetching) error).getException().printStackTrace();
+                        } else {
+                            System.out.println(error);
+                        }
+                    });
                     System.out.println(serialise(result.getData()));
                 });
 

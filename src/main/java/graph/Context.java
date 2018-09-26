@@ -2,6 +2,7 @@ package graph;
 
 import db.Article;
 import db.Blog;
+import db.Comment;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
 
@@ -13,30 +14,30 @@ public final class Context {
 
     public Context() {
         dataLoaderRegistry = new DataLoaderRegistry()
-                .register("blogsByIdsBatchLoader", DataLoaders.newBlogsByIdsBatchLoader())
-                .register("articlesByIdsBatchLoader", DataLoaders.newArticlesByIdsBatchLoader())
-                .register("articlesByBlogIdsBatchLoader", DataLoaders.newArticlesByBlogIdsBatchLoader())
-                .register("commentsByArticleIdsBatchLoader", DataLoaders.newCommentsByArticleIdsBatchLoader());
+                .register("articleToBlogBatchLoader", DataLoaders.articleToBlogBatchLoader())
+                .register("commentToArticleBatchLoader", DataLoaders.commentToArticleBatchLoader())
+                .register("blogToArticlesBatchLoader", DataLoaders.blogToArticlesBatchLoader())
+                .register("articleToCommentsBatchLoader", DataLoaders.articleToCommentsBatchLoader());
     }
 
     public DataLoaderRegistry getDataLoaderRegistry() {
         return dataLoaderRegistry;
     }
 
-    public DataLoader<Integer, Blog> getBlogsByIdsBatchLoader() {
-        return dataLoaderRegistry.getDataLoader("blogsByIdsBatchLoader");
+    public DataLoader<Article, Blog> articleToBlogBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("articleToBlogBatchLoader");
     }
 
-    public DataLoader<Integer, Article> getArticlesByIdsBatchLoader() {
-        return dataLoaderRegistry.getDataLoader("articlesByIdsBatchLoader");
+    public DataLoader<Comment, Article> commentToArticleBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("commentToArticleBatchLoader");
     }
 
-    public DataLoader<Integer, List<Article>> getArticlesByBlogIdsBatchLoader() {
-        return dataLoaderRegistry.getDataLoader("articlesByBlogIdsBatchLoader");
+    public DataLoader<Blog, List<Article>> blogToArticlesBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("blogToArticlesBatchLoader");
     }
 
-    public DataLoader<Integer, List<Blog>> getCommentsByArticleIdsBatchLoader() {
-        return dataLoaderRegistry.getDataLoader("commentsByArticleIdsBatchLoader");
+    public DataLoader<Article, List<Comment>> articleToCommentsBatchLoader() {
+        return dataLoaderRegistry.getDataLoader("articleToCommentsBatchLoader");
     }
 
 }

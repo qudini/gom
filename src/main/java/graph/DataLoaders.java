@@ -3,62 +3,57 @@ package graph;
 import db.Article;
 import db.Blog;
 import db.Comment;
-import db.Db;
 import org.dataloader.DataLoader;
+import resolvers.ArticleResolver;
+import resolvers.BlogResolver;
+import resolvers.CommentResolver;
 
 import java.util.List;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
 import static org.dataloader.DataLoader.newMappedDataLoader;
 
 public final class DataLoaders {
 
-    public static DataLoader<Integer, Blog> newBlogsByIdsBatchLoader() {
-        return newMappedDataLoader(ids -> {
+    public static DataLoader<Article, Blog> articleToBlogBatchLoader() {
+        return newMappedDataLoader(articles -> {
             System.out.println("####################");
-            System.out.println("#################### blogsByIdsBatchLoader for ids " + ids);
+            System.out.println("#################### newArticleToBlogBatchLoader for articles " + articles);
             System.out.println("####################");
-            return Db
-                    .findAllBlogsByIds(ids)
-                    .collect(toMap(blog -> blog.id, identity()))
+            return ArticleResolver
+                    .getBlog(articles)
                     .toFuture();
         });
     }
 
-    public static DataLoader<Integer, Article> newArticlesByIdsBatchLoader() {
-        return newMappedDataLoader(ids -> {
+    public static DataLoader<Comment, Article> commentToArticleBatchLoader() {
+        return newMappedDataLoader(comments -> {
             System.out.println("####################");
-            System.out.println("#################### articlesByIdsBatchLoader for ids " + ids);
+            System.out.println("#################### newCommentToArticleBatchLoader for comments " + comments);
             System.out.println("####################");
-            return Db
-                    .findAllArticlesByIds(ids)
-                    .collect(toMap(article -> article.id, identity()))
+            return CommentResolver
+                    .getArticle(comments)
                     .toFuture();
         });
     }
 
-    public static DataLoader<Integer, List<Article>> newArticlesByBlogIdsBatchLoader() {
-        return newMappedDataLoader(blogIds -> {
+    public static DataLoader<Blog, List<Article>> blogToArticlesBatchLoader() {
+        return newMappedDataLoader(blogs -> {
             System.out.println("####################");
-            System.out.println("#################### articlesByBlogIdsBatchLoader for blog ids " + blogIds);
+            System.out.println("#################### newBlogToArticlesBatchLoader for blogs " + blogs);
             System.out.println("####################");
-            return Db
-                    .findAllArticlesByBlogIds(blogIds)
-                    .collect(groupingBy(article -> article.blog.id))
+            return BlogResolver
+                    .getArticles(blogs)
                     .toFuture();
         });
     }
 
-    public static DataLoader<Integer, List<Comment>> newCommentsByArticleIdsBatchLoader() {
-        return newMappedDataLoader(articleIds -> {
+    public static DataLoader<Article, List<Comment>> articleToCommentsBatchLoader() {
+        return newMappedDataLoader(articles -> {
             System.out.println("####################");
-            System.out.println("#################### commentsByArticleIdsBatchLoader for article ids " + articleIds);
+            System.out.println("#################### newArticleToCommentsBatchLoader for articles " + articles);
             System.out.println("####################");
-            return Db
-                    .findAllCommentsByArticleIds(articleIds)
-                    .collect(groupingBy(comment -> comment.article.id))
+            return ArticleResolver
+                    .getComments(articles)
                     .toFuture();
         });
     }

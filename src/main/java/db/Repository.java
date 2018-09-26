@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-public final class Db {
+public final class Repository {
 
     private static final Map<Integer, Blog> blogs = Stream
             .of(
