@@ -20,12 +20,14 @@ public final class DataLoaders {
 
     public static DataLoader<Article, Blog> articleToBlogBatchLoader() {
         return newMappedDataLoader(articles -> ArticleResolver
+                .INSTANCE
                 .getBlog(articles)
                 .toFuture());
     }
 
     public static DataLoader<Comment, Article> commentToArticleBatchLoader() {
         return newMappedDataLoader(comments -> CommentResolver
+                .INSTANCE
                 .getArticle(comments)
                 .toFuture());
     }
@@ -41,6 +43,7 @@ public final class DataLoaders {
                         Set<Blog> blogs = keysByBlog.keySet();
                         Optional<String> maybeTitle = Optional.ofNullable((String) entry.getKey().get("title"));
                         return BlogResolver
+                                .INSTANCE
                                 .getArticles(blogs, maybeTitle)
                                 .toFuture()
                                 .thenApply(articlesByBlog -> articlesByBlog
@@ -67,6 +70,7 @@ public final class DataLoaders {
 
     public static DataLoader<Article, List<Comment>> articleToCommentsBatchLoader() {
         return newMappedDataLoader(articles -> ArticleResolver
+                .INSTANCE
                 .getComments(articles)
                 .toFuture());
     }

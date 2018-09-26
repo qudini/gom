@@ -14,7 +14,12 @@ import static java.util.stream.Collectors.toSet;
 
 public final class CommentResolver {
 
-    public static Mono<Map<Comment, Article>> getArticle(Set<Comment> comments) {
+    public static final CommentResolver INSTANCE = new CommentResolver();
+
+    private CommentResolver() {
+    }
+
+    public Mono<Map<Comment, Article>> getArticle(Set<Comment> comments) {
         return Repository
                 .findAllArticlesByIds(comments.stream().map(comment -> comment.article.id).collect(toSet()))
                 .collect(toMap(article -> article.id, identity()))

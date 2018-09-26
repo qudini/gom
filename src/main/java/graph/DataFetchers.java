@@ -14,6 +14,7 @@ public final class DataFetchers {
     public static DataFetcher<CompletableFuture<List<Blog>>> queryToBlogsDataFetcher = environment -> {
         System.out.println("########## queryToBlogsDataFetcher");
         return QueryResolver
+                .INSTANCE
                 .getBlogs()
                 .collectList()
                 .toFuture();

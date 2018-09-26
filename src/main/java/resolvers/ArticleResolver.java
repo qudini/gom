@@ -15,7 +15,12 @@ import static java.util.stream.Collectors.*;
 
 public final class ArticleResolver {
 
-    public static Mono<Map<Article, Blog>> getBlog(Set<Article> articles) {
+    public static final ArticleResolver INSTANCE = new ArticleResolver();
+
+    private ArticleResolver() {
+    }
+
+    public Mono<Map<Article, Blog>> getBlog(Set<Article> articles) {
         return Repository
                 .findAllBlogsByIds(articles.stream().map(article -> article.blog.id).collect(toSet()))
                 .collect(toMap(blog -> blog.id, identity()))
@@ -25,7 +30,7 @@ public final class ArticleResolver {
                 );
     }
 
-    public static Mono<Map<Article, List<Comment>>> getComments(Set<Article> articles) {
+    public Mono<Map<Article, List<Comment>>> getComments(Set<Article> articles) {
         return Repository
                 .findAllCommentsByArticleIds(articles.stream().map(article -> article.id).collect(toSet()))
                 .collect(groupingBy(comment -> comment.article));

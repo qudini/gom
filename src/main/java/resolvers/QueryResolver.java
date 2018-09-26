@@ -6,7 +6,12 @@ import reactor.core.publisher.Flux;
 
 public final class QueryResolver {
 
-    public static Flux<Blog> getBlogs() {
+    public static final QueryResolver INSTANCE = new QueryResolver();
+
+    private QueryResolver() {
+    }
+
+    public Flux<Blog> getBlogs() {
         return Repository
                 .findAllBlogs();
     }
