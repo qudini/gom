@@ -1,13 +1,13 @@
-package graph;
+package graphql.gom;
 
-import db.Article;
-import db.Blog;
-import db.Comment;
+import example.db.Article;
+import example.db.Blog;
+import example.db.Comment;
 import org.dataloader.DataLoader;
-import resolvers.ArticleResolver;
-import resolvers.BlogResolver;
-import resolvers.CommentResolver;
-import utils.FutureParalleliser;
+import example.resolvers.ArticleResolver;
+import example.resolvers.BlogResolver;
+import example.resolvers.CommentResolver;
+import graphql.gom.utils.FutureParalleliser;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

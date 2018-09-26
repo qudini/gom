@@ -1,8 +1,8 @@
-package graph;
+package graphql.gom;
 
-import db.Article;
-import db.Blog;
-import db.Comment;
+import example.db.Article;
+import example.db.Blog;
+import example.db.Comment;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
 

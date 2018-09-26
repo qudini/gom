@@ -1,4 +1,4 @@
-package db;
+package example.db;
 
 import reactor.core.publisher.Flux;
 

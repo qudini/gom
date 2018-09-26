@@ -1,4 +1,4 @@
-package db;
+package example.db;
 
 public abstract class Entity {
 

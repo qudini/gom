@@ -1,7 +1,7 @@
-package resolvers;
+package example.resolvers;
 
-import db.Blog;
-import db.Repository;
+import example.db.Blog;
+import example.db.Repository;
 import reactor.core.publisher.Flux;
 
 public final class QueryResolver {

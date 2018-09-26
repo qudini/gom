@@ -1,4 +1,4 @@
-package utils;
+package graphql.gom.utils;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

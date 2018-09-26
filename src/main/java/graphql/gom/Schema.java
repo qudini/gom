@@ -1,9 +1,9 @@
-package graph;
+package graphql.gom;
 
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
-import utils.ResourceReader;
+import graphql.gom.utils.ResourceReader;
 
 public final class Schema {
 

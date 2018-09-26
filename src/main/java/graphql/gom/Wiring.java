@@ -1,4 +1,4 @@
-package graph;
+package graphql.gom;
 
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.TypeRuntimeWiring;

@@ -1,9 +1,9 @@
-package resolvers;
+package example.resolvers;
 
-import db.Article;
-import db.Blog;
-import db.Comment;
-import db.Repository;
+import example.db.Article;
+import example.db.Blog;
+import example.db.Comment;
+import example.db.Repository;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

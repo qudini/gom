@@ -1,14 +1,14 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import graph.Context;
-import graph.Schema;
+import graphql.gom.Context;
+import graphql.gom.Schema;
 import graphql.ExceptionWhileDataFetching;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import org.dataloader.DataLoaderRegistry;
-import utils.ResourceReader;
+import graphql.gom.utils.ResourceReader;
 
 public final class Main {
 

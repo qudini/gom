@@ -1,4 +1,4 @@
-package graph;
+package graphql.gom;
 
 import graphql.schema.DataFetchingEnvironment;
 

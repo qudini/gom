@@ -1,4 +1,4 @@
-package utils;
+package graphql.gom.utils;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

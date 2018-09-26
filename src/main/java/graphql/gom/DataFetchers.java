@@ -1,10 +1,10 @@
-package graph;
+package graphql.gom;
 
-import db.Article;
-import db.Blog;
-import db.Comment;
+import example.db.Article;
+import example.db.Blog;
+import example.db.Comment;
 import graphql.schema.DataFetcher;
-import resolvers.QueryResolver;
+import example.resolvers.QueryResolver;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
