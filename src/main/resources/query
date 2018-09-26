@@ -2,21 +2,13 @@ query {
     blogs {
         id
         title
-        articles {
+        allArticles: articles {
             id
             title
-            blog {
-                id
-                title
-            }
-            comments {
-                id
-                title
-                article {
-                    id
-                    title
-                }
-            }
+        }
+        filteredArticles: articles (title: "2") {
+            id
+            title
         }
     }
 }

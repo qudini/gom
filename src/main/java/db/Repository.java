@@ -4,6 +4,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
@@ -41,28 +42,34 @@ public final class Repository {
             .collect(toMap(comment -> comment.id, identity()));
 
     public static Flux<Blog> findAllBlogsByIds(Collection<Integer> ids) {
+        System.out.println(">>>>>>>>>> select from Blog where id in " + ids);
         return Flux
                 .fromIterable(ids)
                 .map(blogs::get);
     }
 
     public static Flux<Blog> findAllBlogs() {
+        System.out.println(">>>>>>>>>> select from Blog");
         return Flux.fromIterable(blogs.values());
     }
 
     public static Flux<Article> findAllArticlesByIds(Collection<Integer> ids) {
+        System.out.println(">>>>>>>>>> select from Article where id in " + ids);
         return Flux
                 .fromIterable(ids)
                 .map(articles::get);
     }
 
-    public static Flux<Article> findAllArticlesByBlogIds(Collection<Integer> blogIds) {
+    public static Flux<Article> findAllArticlesByBlogIds(Collection<Integer> blogIds, Optional<String> maybeTitle) {
+        System.out.println(">>>>>>>>>> select from Article a join Blog b where b.id in " + blogIds + maybeTitle.map(title -> " and title like '" + title + "'").orElse(""));
         return Flux
                 .fromIterable(articles.values())
-                .filter(article -> blogIds.contains(article.blog.id));
+                .filter(article -> blogIds.contains(article.blog.id))
+                .filter(article -> maybeTitle.map(title -> article.title.toLowerCase().contains(title)).orElse(true));
     }
 
     public static Flux<Comment> findAllCommentsByArticleIds(Collection<Integer> articleIds) {
+        System.out.println(">>>>>>>>>> select from Comment c join Article a where a.id in " + articleIds);
         return Flux
                 .fromIterable(comments.values())
                 .filter(comment -> articleIds.contains(comment.article.id));

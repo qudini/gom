@@ -32,7 +32,7 @@ public final class Context {
         return dataLoaderRegistry.getDataLoader("commentToArticleBatchLoader");
     }
 
-    public DataLoader<Blog, List<Article>> blogToArticlesBatchLoader() {
+    public DataLoader<DataLoaderKey<Blog>, List<Article>> blogToArticlesBatchLoader() {
         return dataLoaderRegistry.getDataLoader("blogToArticlesBatchLoader");
     }
 

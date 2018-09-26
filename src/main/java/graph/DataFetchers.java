@@ -43,7 +43,7 @@ public final class DataFetchers {
         System.out.println("########## blogToArticlesDataFetcher for " + blog);
         return context
                 .blogToArticlesBatchLoader()
-                .load(blog);
+                .load(new DataLoaderKey<>(environment));
     };
 
     public static DataFetcher<CompletableFuture<List<Comment>>> articleToCommentsDataFetcher = environment -> {

@@ -14,7 +14,7 @@ type Article {
 type Blog {
     id: Int!
     title: String!
-    articles: [Article!]!
+    articles(title: String): [Article!]!
 }
 
 type Query {
