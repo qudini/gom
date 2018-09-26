@@ -4,6 +4,8 @@ import example.db.Article;
 import example.db.Blog;
 import example.db.Comment;
 import example.db.Repository;
+import graphql.gom.reflect.GraphBatched;
+import graphql.gom.reflect.GraphResolver;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Set;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
+@GraphResolver("Article")
 public final class ArticleResolver {
 
     public static final ArticleResolver INSTANCE = new ArticleResolver();
@@ -20,6 +23,7 @@ public final class ArticleResolver {
     private ArticleResolver() {
     }
 
+    @GraphBatched
     public Mono<Map<Article, Blog>> getBlog(Set<Article> articles) {
         return Repository
                 .findAllBlogsByIds(articles.stream().map(article -> article.blog.id).collect(toSet()))
@@ -30,6 +34,7 @@ public final class ArticleResolver {
                 );
     }
 
+    @GraphBatched
     public Mono<Map<Article, List<Comment>>> getComments(Set<Article> articles) {
         return Repository
                 .findAllCommentsByArticleIds(articles.stream().map(article -> article.id).collect(toSet()))
