@@ -1,0 +1,22 @@
+query {
+    blogs {
+        id
+        title
+        articles {
+            id
+            title
+            blog {
+                id
+                title
+            }
+            comments {
+                id
+                title
+                article {
+                    id
+                    title
+                }
+            }
+        }
+    }
+}

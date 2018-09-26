@@ -7,6 +7,7 @@ import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import org.dataloader.DataLoaderRegistry;
+import utils.ResourceReader;
 
 public final class Main {
 
@@ -20,25 +21,9 @@ public final class Main {
         }
     }
 
-    private static final String QUERY = "query {\n" +
-            "  blogs {\n" +
-            "    id\n" +
-            "    title\n" +
-            "    articles {\n" +
-            "      id\n" +
-            "      title\n" +
-            "      blog { id title }\n" +
-            "      comments {\n" +
-            "        id\n" +
-            "        title\n" +
-            "        article { id title }\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}";
-
     public static void main(String[] args) {
-        newQuery(QUERY);
+        String query = ResourceReader.read("query");
+        newQuery(query);
     }
 
     private static void newQuery(String query) {

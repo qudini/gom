@@ -17,7 +17,9 @@ public final class DataLoaders {
 
     public static DataLoader<Integer, Blog> newBlogsByIdsBatchLoader() {
         return newMappedDataLoader(ids -> {
+            System.out.println("####################");
             System.out.println("#################### blogsByIdsBatchLoader for ids " + ids);
+            System.out.println("####################");
             return Db
                     .findAllBlogsByIds(ids)
                     .collect(toMap(blog -> blog.id, identity()))
@@ -27,7 +29,9 @@ public final class DataLoaders {
 
     public static DataLoader<Integer, Article> newArticlesByIdsBatchLoader() {
         return newMappedDataLoader(ids -> {
+            System.out.println("####################");
             System.out.println("#################### articlesByIdsBatchLoader for ids " + ids);
+            System.out.println("####################");
             return Db
                     .findAllArticlesByIds(ids)
                     .collect(toMap(article -> article.id, identity()))
@@ -37,7 +41,9 @@ public final class DataLoaders {
 
     public static DataLoader<Integer, List<Article>> newArticlesByBlogIdsBatchLoader() {
         return newMappedDataLoader(blogIds -> {
+            System.out.println("####################");
             System.out.println("#################### articlesByBlogIdsBatchLoader for blog ids " + blogIds);
+            System.out.println("####################");
             return Db
                     .findAllArticlesByBlogIds(blogIds)
                     .collect(groupingBy(article -> article.blog.id))
@@ -47,7 +53,9 @@ public final class DataLoaders {
 
     public static DataLoader<Integer, List<Comment>> newCommentsByArticleIdsBatchLoader() {
         return newMappedDataLoader(articleIds -> {
+            System.out.println("####################");
             System.out.println("#################### commentsByArticleIdsBatchLoader for article ids " + articleIds);
+            System.out.println("####################");
             return Db
                     .findAllCommentsByArticleIds(articleIds)
                     .collect(groupingBy(comment -> comment.article.id))
