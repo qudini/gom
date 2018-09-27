@@ -1,15 +1,15 @@
-package graphql.gom;
+package graphql.gom.batching;
 
 import graphql.schema.DataFetchingEnvironment;
 
 import java.util.Map;
 import java.util.Objects;
 
-public final class DataLoaderKey<T> {
+public final class DataLoaderKey<Source> {
 
-    public final T source;
+    private final Source source;
 
-    public final Map<String, Object> arguments;
+    private final Map<String, Object> arguments;
 
     public DataLoaderKey(DataFetchingEnvironment environment) {
         this.source = environment.getSource();
@@ -30,6 +30,14 @@ public final class DataLoaderKey<T> {
     @Override
     public int hashCode() {
         return Objects.hash(source, arguments);
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public Map<String, Object> getArguments() {
+        return arguments;
     }
 
 }

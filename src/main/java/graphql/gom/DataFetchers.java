@@ -3,6 +3,7 @@ package graphql.gom;
 import example.db.Article;
 import example.db.Blog;
 import example.db.Comment;
+import graphql.gom.batching.DataLoaderKey;
 import graphql.schema.DataFetcher;
 import example.resolvers.QueryResolver;
 

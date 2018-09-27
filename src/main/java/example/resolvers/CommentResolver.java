@@ -3,8 +3,8 @@ package example.resolvers;
 import example.db.Article;
 import example.db.Comment;
 import example.db.Repository;
-import graphql.gom.reflect.GraphBatched;
-import graphql.gom.reflect.GraphResolver;
+import graphql.gom.inspecting.GraphBatched;
+import graphql.gom.inspecting.GraphResolver;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;

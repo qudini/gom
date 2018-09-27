@@ -1,4 +1,4 @@
-package graphql.gom.reflect;
+package graphql.gom.inspecting;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

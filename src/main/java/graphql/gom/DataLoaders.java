@@ -3,6 +3,7 @@ package graphql.gom;
 import example.db.Article;
 import example.db.Blog;
 import example.db.Comment;
+import graphql.gom.batching.DataLoaderKey;
 import org.dataloader.DataLoader;
 import example.resolvers.ArticleResolver;
 import example.resolvers.BlogResolver;
@@ -34,12 +35,12 @@ public final class DataLoaders {
 
     public static DataLoader<DataLoaderKey<Blog>, List<Article>> blogToArticlesBatchLoader() {
         return newMappedDataLoader(blogKeys -> {
-            Map<Map<String, Object>, List<DataLoaderKey<Blog>>> keysByArguments = blogKeys.stream().collect(groupingBy(key -> key.arguments));
+            Map<Map<String, Object>, List<DataLoaderKey<Blog>>> keysByArguments = blogKeys.stream().collect(groupingBy(DataLoaderKey::getArguments));
             List<CompletableFuture<Map<DataLoaderKey<Blog>, List<Article>>>> futures = keysByArguments
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        Map<Blog, DataLoaderKey<Blog>> keysByBlog = entry.getValue().stream().collect(toMap(key -> key.source, identity()));
+                        Map<Blog, DataLoaderKey<Blog>> keysByBlog = entry.getValue().stream().collect(toMap(DataLoaderKey::getSource, identity()));
                         Set<Blog> blogs = keysByBlog.keySet();
                         Optional<String> maybeTitle = Optional.ofNullable((String) entry.getKey().get("title"));
                         return BlogResolver

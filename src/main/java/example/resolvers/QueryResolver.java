@@ -2,7 +2,7 @@ package example.resolvers;
 
 import example.db.Blog;
 import example.db.Repository;
-import graphql.gom.reflect.GraphResolver;
+import graphql.gom.inspecting.GraphResolver;
 import reactor.core.publisher.Flux;
 
 @GraphResolver("Query")
