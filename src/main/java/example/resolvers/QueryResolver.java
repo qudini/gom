@@ -3,9 +3,7 @@ package example.resolvers;
 import example.db.Blog;
 import example.db.Repository;
 import graphql.gom.GomResolver;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import reactor.core.publisher.Flux;
 
 @GomResolver("Query")
 public final class QueryResolver {
@@ -15,11 +13,8 @@ public final class QueryResolver {
     private QueryResolver() {
     }
 
-    public CompletableFuture<List<Blog>> blogs() {
-        return Repository
-                .findAllBlogs()
-                .collectList()
-                .toFuture();
+    public Flux<Blog> blogs() {
+        return Repository.findAllBlogs();
     }
 
 }

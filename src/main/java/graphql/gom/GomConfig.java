@@ -18,8 +18,8 @@ public final class GomConfig {
 
     private final Collection<DataLoaderRegistrar> dataLoaderRegistrars;
 
-    public static GomConfig build(Collection<Object> resolvers) {
-        GomResolverInspection inspection = GomResolverInspection.inspect(resolvers);
+    public static <C> GomConfig newGomConfig(Collection<Object> resolvers, GomConverters<C> converters) {
+        GomResolverInspection<C> inspection = GomResolverInspection.inspect(resolvers, converters);
         return new GomConfig(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
     }
 

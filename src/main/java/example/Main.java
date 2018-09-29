@@ -16,19 +16,29 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import org.dataloader.DataLoaderRegistry;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import static graphql.gom.GomConfig.newGomConfig;
+import static graphql.gom.GomConverters.newGomConverters;
 import static java.util.Arrays.asList;
 
 public final class Main {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-    private static final GomConfig GOM_CONFIG = GomConfig.build(asList(
-            ArticleResolver.INSTANCE,
-            BlogResolver.INSTANCE,
-            CommentResolver.INSTANCE,
-            QueryResolver.INSTANCE
-    ));
+    private static final GomConfig GOM_CONFIG = newGomConfig(
+            asList(
+                    ArticleResolver.INSTANCE,
+                    BlogResolver.INSTANCE,
+                    CommentResolver.INSTANCE,
+                    QueryResolver.INSTANCE
+            ),
+            newGomConverters()
+                    .with(Mono.class, (result, context) -> result.toFuture())
+                    .with(Flux.class, (result, context) -> result.collectList().toFuture())
+                    .build()
+    );
 
     private static final GraphQLSchema SCHEMA;
 

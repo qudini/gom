@@ -2,8 +2,8 @@ package graphql.gom;
 
 import graphql.gom.utils.Maps;
 import graphql.gom.utils.Methods;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.dataloader.DataLoader;
 
 import java.lang.reflect.Method;
@@ -20,15 +20,17 @@ import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
+@AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class GomResolverInspection {
+final class GomResolverInspection<C> {
+
+    private final GomConverters<C> converters;
 
     private final Set<FieldWiring> fieldWirings = new HashSet<>();
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> R invoke(Method method, Object instance, Object source, Map<String, Object> arguments) {
+    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, Map<String, Object> arguments) {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
@@ -45,7 +47,7 @@ final class GomResolverInspection {
             default:
                 throw new IllegalStateException(); // FIXME
         }
-        return (R) returnedValue;
+        return converters.convert(returnedValue, null);
     }
 
     private <S, R> void createBatchedFieldWiring(String type, Method method, Object instance) {
@@ -61,7 +63,7 @@ final class GomResolverInspection {
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
-                                .<CompletableFuture<Map<S, R>>>invoke(method, instance, sameArgumentsKeysBySource.keySet(), arguments)
+                                .<Map<S, R>>invoke(method, instance, sameArgumentsKeysBySource.keySet(), arguments)
                                 .thenApply(resultsBySource -> resultsBySource
                                         .entrySet()
                                         .stream()
@@ -132,8 +134,8 @@ final class GomResolverInspection {
                 });
     }
 
-    static GomResolverInspection inspect(Collection<Object> resolvers) {
-        GomResolverInspection inspector = new GomResolverInspection();
+    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
+        GomResolverInspection<C> inspector = new GomResolverInspection<>(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;
     }
