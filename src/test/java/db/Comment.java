@@ -1,4 +1,4 @@
-package example.db;
+package db;
 
 public final class Comment extends Entity {
 

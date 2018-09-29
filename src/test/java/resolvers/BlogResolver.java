@@ -1,8 +1,8 @@
-package example.resolvers;
+package resolvers;
 
-import example.db.Article;
-import example.db.Blog;
-import example.db.Repository;
+import db.Article;
+import db.Blog;
+import db.Repository;
 import graphql.gom.GomArguments;
 import graphql.gom.GomBatched;
 import graphql.gom.GomResolver;

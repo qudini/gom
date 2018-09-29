@@ -1,7 +1,7 @@
-package example.resolvers;
+package resolvers;
 
-import example.db.Blog;
-import example.db.Repository;
+import db.Blog;
+import db.Repository;
 import graphql.gom.GomResolver;
 import reactor.core.publisher.Flux;
 

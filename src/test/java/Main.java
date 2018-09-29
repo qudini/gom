@@ -1,12 +1,6 @@
-package example;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import example.resolvers.ArticleResolver;
-import example.resolvers.BlogResolver;
-import example.resolvers.CommentResolver;
-import example.resolvers.QueryResolver;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
@@ -16,8 +10,13 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import org.dataloader.DataLoaderRegistry;
+import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import resolvers.ArticleResolver;
+import resolvers.BlogResolver;
+import resolvers.CommentResolver;
+import resolvers.QueryResolver;
 
 import static graphql.gom.GomConfig.newGomConfig;
 import static graphql.gom.GomConverters.newGomConverters;
@@ -34,7 +33,6 @@ public final class Main {
                     CommentResolver.INSTANCE,
                     QueryResolver.INSTANCE
             ),
-            new ObjectMapper(),
             newGomConverters()
                     .with(Mono.class, (result, context) -> result.toFuture())
                     .with(Flux.class, (result, context) -> result.collectList().toFuture())
@@ -60,12 +58,10 @@ public final class Main {
         }
     }
 
-    public static void main(String[] args) {
-        String query = ResourceReader.read("query");
-        newQuery(query);
-    }
+    @Test
+    public void newQuery() {
 
-    private static void newQuery(String query) {
+        String query = ResourceReader.read("query");
 
         DataLoaderRegistry registry = new DataLoaderRegistry();
         GOM_CONFIG.decorateDataLoaderRegistry(registry);

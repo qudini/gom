@@ -1,15 +1,16 @@
 package graphql.gom;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PACKAGE;
 
-@RequiredArgsConstructor(access = PRIVATE, onConstructor = @__(@JsonCreator))
+@RequiredArgsConstructor(access = PACKAGE)
+@EqualsAndHashCode
 public final class GomArguments {
 
     private final Map<String, Object> arguments;

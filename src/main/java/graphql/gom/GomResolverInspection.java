@@ -1,6 +1,5 @@
 package graphql.gom;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.gom.utils.Maps;
 import graphql.gom.utils.Methods;
 import lombok.AllArgsConstructor;
@@ -25,15 +24,13 @@ import static lombok.AccessLevel.PRIVATE;
 @Getter(PACKAGE)
 final class GomResolverInspection<C> {
 
-    private final ObjectMapper argumentsMapper;
-
     private final GomConverters<C> converters;
 
     private final Set<FieldWiring> fieldWirings = new HashSet<>();
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, Map<String, Object> arguments) {
+    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, GomArguments arguments) {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
@@ -41,11 +38,11 @@ final class GomResolverInspection<C> {
                 break;
             case 1:
                 returnedValue = source == null
-                        ? Methods.invoke(method, instance, argumentsMapper.convertValue(arguments, method.getParameterTypes()[0]))
+                        ? Methods.invoke(method, instance, arguments)
                         : Methods.invoke(method, instance, source);
                 break;
             case 2:
-                returnedValue = Methods.invoke(method, instance, source, argumentsMapper.convertValue(arguments, method.getParameterTypes()[1]));
+                returnedValue = Methods.invoke(method, instance, source, arguments);
                 break;
             default:
                 throw new IllegalStateException(); // FIXME
@@ -99,7 +96,7 @@ final class GomResolverInspection<C> {
                         .<DataLoaderKey<S>, R>getDataLoader(dataLoaderKey)
                         .load(new DataLoaderKey<>(
                                 environment.getSource(),
-                                environment.getArguments()
+                                new GomArguments(environment.getArguments())
                         ))
         ));
     }
@@ -110,7 +107,7 @@ final class GomResolverInspection<C> {
                 method.getName(),
                 environment -> {
                     Object source = environment.getSource();
-                    Map<String, Object> arguments = environment.getArguments();
+                    GomArguments arguments = new GomArguments(environment.getArguments());
                     return invoke(method, instance, source, arguments);
                 }
         ));
@@ -137,8 +134,8 @@ final class GomResolverInspection<C> {
                 });
     }
 
-    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, ObjectMapper argumentsMapper, GomConverters<C> converters) {
-        GomResolverInspection<C> inspector = new GomResolverInspection<>(argumentsMapper, converters);
+    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
+        GomResolverInspection<C> inspector = new GomResolverInspection<>(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;
     }

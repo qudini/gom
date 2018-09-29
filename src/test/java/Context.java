@@ -1,5 +1,3 @@
-package example;
-
 import graphql.gom.DataLoaderRegistryGetter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,5 @@
 package graphql.gom;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.idl.RuntimeWiring;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoaderRegistry;
@@ -19,8 +18,8 @@ public final class GomConfig {
 
     private final Collection<DataLoaderRegistrar> dataLoaderRegistrars;
 
-    public static <C> GomConfig newGomConfig(Collection<Object> resolvers, ObjectMapper argumentsMapper, GomConverters<C> converters) {
-        GomResolverInspection<C> inspection = GomResolverInspection.inspect(resolvers, argumentsMapper, converters);
+    public static <C> GomConfig newGomConfig(Collection<Object> resolvers, GomConverters<C> converters) {
+        GomResolverInspection<C> inspection = GomResolverInspection.inspect(resolvers, converters);
         return new GomConfig(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
     }
 
