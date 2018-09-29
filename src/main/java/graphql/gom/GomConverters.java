@@ -14,11 +14,11 @@ import static java.util.Collections.unmodifiableCollection;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
-public final class GomConverters<C> {
+public final class GomConverters<C extends DataLoaderRegistryGetter> {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @EqualsAndHashCode
-    private static final class Converter<T, C> implements Comparable<Converter<?, C>> {
+    private static final class Converter<T, C extends DataLoaderRegistryGetter> implements Comparable<Converter<?, C>> {
 
         private final Class<?> clazz;
 
@@ -48,7 +48,7 @@ public final class GomConverters<C> {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    public static final class Builder<C> {
+    public static final class Builder<C extends DataLoaderRegistryGetter> {
 
         private final Set<Converter<?, C>> converters = new HashSet<>();
 
@@ -78,7 +78,7 @@ public final class GomConverters<C> {
                 .orElse(CompletableFuture.completedFuture(value));
     }
 
-    public static <C> Builder<C> newGomConverters() {
+    public static <C extends DataLoaderRegistryGetter> Builder<C> newGomConverters() {
         return new Builder<>();
     }
 

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import static graphql.gom.utils.Futures.parallelise;
 import static graphql.gom.utils.Maps.entry;
+import static graphql.gom.utils.Reductions.failIfDifferent;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PACKAGE;
@@ -22,7 +23,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class GomResolverInspection<C> {
+final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
 
     private final GomConverters<C> converters;
 
@@ -30,7 +31,7 @@ final class GomResolverInspection<C> {
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, GomArguments arguments) {
+    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, GomArguments arguments, C context) {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
@@ -47,23 +48,33 @@ final class GomResolverInspection<C> {
             default:
                 throw new IllegalStateException(); // FIXME
         }
-        return converters.convert(returnedValue, null);
+        return converters.convert(returnedValue, context);
     }
 
     private <S, R> void createBatchedFieldWiring(String type, Method method, Object instance) {
         String dataLoaderKey = UUID.randomUUID().toString();
-        Supplier<DataLoader<DataLoaderKey<S>, R>> dataLoaderSupplier = () -> DataLoader.newMappedDataLoader(keys -> {
-            List<CompletableFuture<Map<DataLoaderKey<S>, R>>> futures = keys
+        Supplier<DataLoader<DataLoaderKey<S, C>, R>> dataLoaderSupplier = () -> DataLoader.newMappedDataLoader(keys -> {
+            Optional<C> maybeContext = keys
+                    .stream()
+                    .map(DataLoaderKey::getContext)
+                    .reduce(failIfDifferent());
+            List<CompletableFuture<Map<DataLoaderKey<S, C>, R>>> futures = keys
                     .stream()
                     .collect(groupingBy(DataLoaderKey::getArguments))
                     .entrySet()
                     .stream()
                     .map(entry((arguments, sameArgumentsKeys) -> {
-                        Map<S, DataLoaderKey<S>> sameArgumentsKeysBySource = sameArgumentsKeys
+                        Map<S, DataLoaderKey<S, C>> sameArgumentsKeysBySource = sameArgumentsKeys
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
-                                .<Map<S, R>>invoke(method, instance, sameArgumentsKeysBySource.keySet(), arguments)
+                                .<Map<S, R>>invoke(
+                                        method,
+                                        instance,
+                                        sameArgumentsKeysBySource.keySet(),
+                                        arguments,
+                                        maybeContext.orElseThrow(IllegalStateException::new)
+                                )
                                 .thenApply(resultsBySource -> resultsBySource
                                         .entrySet()
                                         .stream()
@@ -90,14 +101,17 @@ final class GomResolverInspection<C> {
         fieldWirings.add(new FieldWiring<>(
                 type,
                 method.getName(),
-                environment -> environment
-                        .<DataLoaderRegistryGetter>getContext()
-                        .getDataLoaderRegistry()
-                        .<DataLoaderKey<S>, R>getDataLoader(dataLoaderKey)
-                        .load(new DataLoaderKey<>(
-                                environment.getSource(),
-                                new GomArguments(environment.getArguments())
-                        ))
+                environment -> {
+                    C context = environment.getContext();
+                    return context
+                            .getDataLoaderRegistry()
+                            .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
+                            .load(new DataLoaderKey<>(
+                                    environment.getSource(),
+                                    new GomArguments(environment.getArguments()),
+                                    context
+                            ));
+                }
         ));
     }
 
@@ -105,11 +119,13 @@ final class GomResolverInspection<C> {
         fieldWirings.add(new FieldWiring<>(
                 type,
                 method.getName(),
-                environment -> {
-                    Object source = environment.getSource();
-                    GomArguments arguments = new GomArguments(environment.getArguments());
-                    return invoke(method, instance, source, arguments);
-                }
+                environment -> invoke(
+                        method,
+                        instance,
+                        environment.getSource(),
+                        new GomArguments(environment.getArguments()),
+                        environment.getContext()
+                )
         ));
     }
 
@@ -134,7 +150,7 @@ final class GomResolverInspection<C> {
                 });
     }
 
-    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
+    static <C extends DataLoaderRegistryGetter> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
         GomResolverInspection<C> inspector = new GomResolverInspection<>(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;

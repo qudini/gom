@@ -9,10 +9,12 @@ import static lombok.AccessLevel.PACKAGE;
 @RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
 @EqualsAndHashCode
-final class DataLoaderKey<S> {
+final class DataLoaderKey<S, C extends DataLoaderRegistryGetter> {
 
     private final S source;
 
     private final GomArguments arguments;
+
+    private final C context;
 
 }

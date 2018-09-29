@@ -6,7 +6,7 @@ import org.dataloader.DataLoaderRegistry;
 
 import java.util.Collection;
 
-import static graphql.gom.utils.Reductions.failingCombiner;
+import static graphql.gom.utils.Reductions.fail;
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 import static java.util.stream.Collectors.groupingBy;
 import static lombok.AccessLevel.PRIVATE;
@@ -18,7 +18,7 @@ public final class GomConfig {
 
     private final Collection<DataLoaderRegistrar> dataLoaderRegistrars;
 
-    public static <C> GomConfig newGomConfig(Collection<Object> resolvers, GomConverters<C> converters) {
+    public static <C extends DataLoaderRegistryGetter> GomConfig newGomConfig(Collection<Object> resolvers, GomConverters<C> converters) {
         GomResolverInspection<C> inspection = GomResolverInspection.inspect(resolvers, converters);
         return new GomConfig(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
     }
@@ -35,7 +35,7 @@ public final class GomConfig {
                         .reduce(
                                 newTypeWiring(entry.getKey()),
                                 (typeWiring, fieldWiring) -> typeWiring.dataFetcher(fieldWiring.getFieldName(), fieldWiring.getDataFetcher()),
-                                failingCombiner()
+                                fail()
                         ))
                 .forEach(builder::type);
     }
