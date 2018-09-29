@@ -34,6 +34,7 @@ public final class Main {
                     CommentResolver.INSTANCE,
                     QueryResolver.INSTANCE
             ),
+            new ObjectMapper(),
             newGomConverters()
                     .with(Mono.class, (result, context) -> result.toFuture())
                     .with(Flux.class, (result, context) -> result.collectList().toFuture())

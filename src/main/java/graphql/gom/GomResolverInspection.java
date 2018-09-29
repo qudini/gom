@@ -1,5 +1,6 @@
 package graphql.gom;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.gom.utils.Maps;
 import graphql.gom.utils.Methods;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,8 @@ import static lombok.AccessLevel.PRIVATE;
 @Getter(PACKAGE)
 final class GomResolverInspection<C> {
 
+    private final ObjectMapper argumentsMapper;
+
     private final GomConverters<C> converters;
 
     private final Set<FieldWiring> fieldWirings = new HashSet<>();
@@ -38,11 +41,11 @@ final class GomResolverInspection<C> {
                 break;
             case 1:
                 returnedValue = source == null
-                        ? Methods.invoke(method, instance, arguments)
+                        ? Methods.invoke(method, instance, argumentsMapper.convertValue(arguments, method.getParameterTypes()[0]))
                         : Methods.invoke(method, instance, source);
                 break;
             case 2:
-                returnedValue = Methods.invoke(method, instance, source, arguments);
+                returnedValue = Methods.invoke(method, instance, source, argumentsMapper.convertValue(arguments, method.getParameterTypes()[1]));
                 break;
             default:
                 throw new IllegalStateException(); // FIXME
@@ -134,8 +137,8 @@ final class GomResolverInspection<C> {
                 });
     }
 
-    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
-        GomResolverInspection<C> inspector = new GomResolverInspection<>(converters);
+    static <C> GomResolverInspection<C> inspect(Collection<Object> resolvers, ObjectMapper argumentsMapper, GomConverters<C> converters) {
+        GomResolverInspection<C> inspector = new GomResolverInspection<>(argumentsMapper, converters);
         resolvers.forEach(inspector::inspect);
         return inspector;
     }
