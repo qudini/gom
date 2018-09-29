@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public final class FutureParalleliser {
+public final class Futures {
 
     public static <T> CompletableFuture<List<T>> parallelise(List<CompletableFuture<T>> futures) {
         return CompletableFuture

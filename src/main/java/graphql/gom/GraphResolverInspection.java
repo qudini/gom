@@ -1,8 +1,7 @@
 package graphql.gom;
 
-import graphql.gom.utils.FutureParalleliser;
-import graphql.gom.utils.MapMerger;
-import graphql.gom.utils.MethodInvoker;
+import graphql.gom.utils.Maps;
+import graphql.gom.utils.Methods;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dataloader.DataLoader;
@@ -14,7 +13,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static graphql.gom.utils.MapEntryMapper.entry;
+import static graphql.gom.utils.Futures.parallelise;
+import static graphql.gom.utils.Maps.entry;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PACKAGE;
@@ -32,15 +32,15 @@ final class GraphResolverInspection {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
-                returnedValue = MethodInvoker.invoke(method, instance);
+                returnedValue = Methods.invoke(method, instance);
                 break;
             case 1:
                 returnedValue = source == null
-                        ? MethodInvoker.invoke(method, instance, arguments)
-                        : MethodInvoker.invoke(method, instance, source);
+                        ? Methods.invoke(method, instance, arguments)
+                        : Methods.invoke(method, instance, source);
                 break;
             case 2:
-                returnedValue = MethodInvoker.invoke(method, instance, source, arguments);
+                returnedValue = Methods.invoke(method, instance, source, arguments);
                 break;
             default:
                 throw new IllegalStateException(); // FIXME
@@ -72,11 +72,10 @@ final class GraphResolverInspection {
                                 );
                     }))
                     .collect(toList());
-            return FutureParalleliser
-                    .parallelise(futures)
+            return parallelise(futures)
                     .thenApply(results -> results
                             .stream()
-                            .reduce(MapMerger::merge)
+                            .reduce(Maps::merge)
                             .orElseGet(Collections::emptyMap)
                     );
         });

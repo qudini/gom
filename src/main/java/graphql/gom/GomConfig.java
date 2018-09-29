@@ -6,6 +6,7 @@ import org.dataloader.DataLoaderRegistry;
 
 import java.util.Collection;
 
+import static graphql.gom.utils.Reductions.failingCombiner;
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 import static java.util.stream.Collectors.groupingBy;
 import static lombok.AccessLevel.PRIVATE;
@@ -34,9 +35,7 @@ public final class GomConfig {
                         .reduce(
                                 newTypeWiring(entry.getKey()),
                                 (typeWiring, fieldWiring) -> typeWiring.dataFetcher(fieldWiring.getFieldName(), fieldWiring.getDataFetcher()),
-                                (x, y) -> {
-                                    throw new IllegalStateException(); // FIXME
-                                }
+                                failingCombiner()
                         ))
                 .forEach(builder::type);
     }
