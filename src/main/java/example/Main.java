@@ -1,0 +1,84 @@
+package example;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import example.resolvers.ArticleResolver;
+import example.resolvers.BlogResolver;
+import example.resolvers.CommentResolver;
+import example.resolvers.QueryResolver;
+import graphql.ExecutionInput;
+import graphql.GraphQL;
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
+import graphql.gom.GomConfig;
+import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.RuntimeWiring;
+import graphql.schema.idl.SchemaGenerator;
+import graphql.schema.idl.SchemaParser;
+import org.dataloader.DataLoaderRegistry;
+
+import static java.util.Arrays.asList;
+
+public final class Main {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+    private static final GomConfig GOM_CONFIG = GomConfig.build(asList(
+            ArticleResolver.INSTANCE,
+            BlogResolver.INSTANCE,
+            CommentResolver.INSTANCE,
+            QueryResolver.INSTANCE
+    ));
+
+    private static final GraphQLSchema SCHEMA;
+
+    static {
+        RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
+        GOM_CONFIG.decorateRuntimeWiringBuilder(builder);
+        SCHEMA = new SchemaGenerator().makeExecutableSchema(
+                new SchemaParser().parse(ResourceReader.read("schema.graphql")),
+                builder.build()
+        );
+    }
+
+    private static String serialise(Object object) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        String query = ResourceReader.read("query");
+        newQuery(query);
+    }
+
+    private static void newQuery(String query) {
+
+        DataLoaderRegistry registry = new DataLoaderRegistry();
+        GOM_CONFIG.decorateDataLoaderRegistry(registry);
+        Context context = new Context(registry);
+
+        ExecutionInput executionInput = ExecutionInput
+                .newExecutionInput()
+                .query(query)
+                .context(context)
+                .build();
+
+        DataLoaderDispatcherInstrumentation instrumentation = new DataLoaderDispatcherInstrumentation(registry);
+
+        GraphQL graphQL = GraphQL
+                .newGraphQL(SCHEMA)
+                .instrumentation(instrumentation)
+                .build();
+
+        graphQL
+                .executeAsync(executionInput)
+                .thenAccept(result -> {
+                    System.out.println(serialise(result.toSpecification()));
+                });
+
+    }
+
+}

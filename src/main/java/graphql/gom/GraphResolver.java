@@ -1,4 +1,4 @@
-package graphql.gom.inspecting;
+package graphql.gom;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -9,7 +9,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface GraphResolver {
-    
+
     String value();
-    
+
 }

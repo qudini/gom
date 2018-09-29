@@ -2,8 +2,10 @@ package example.resolvers;
 
 import example.db.Blog;
 import example.db.Repository;
-import graphql.gom.inspecting.GraphResolver;
-import reactor.core.publisher.Flux;
+import graphql.gom.GraphResolver;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @GraphResolver("Query")
 public final class QueryResolver {
@@ -13,9 +15,11 @@ public final class QueryResolver {
     private QueryResolver() {
     }
 
-    public Flux<Blog> getBlogs() {
+    public CompletableFuture<List<Blog>> blogs() {
         return Repository
-                .findAllBlogs();
+                .findAllBlogs()
+                .collectList()
+                .toFuture();
     }
 
 }
