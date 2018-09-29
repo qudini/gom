@@ -2,12 +2,12 @@ package example.resolvers;
 
 import example.db.Blog;
 import example.db.Repository;
-import graphql.gom.GraphResolver;
+import graphql.gom.GomResolver;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@GraphResolver("Query")
+@GomResolver("Query")
 public final class QueryResolver {
 
     public static final QueryResolver INSTANCE = new QueryResolver();

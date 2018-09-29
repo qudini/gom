@@ -3,8 +3,8 @@ package example.resolvers;
 import example.db.Article;
 import example.db.Comment;
 import example.db.Repository;
-import graphql.gom.GraphBatched;
-import graphql.gom.GraphResolver;
+import graphql.gom.GomBatched;
+import graphql.gom.GomResolver;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +14,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-@GraphResolver("Comment")
+@GomResolver("Comment")
 public final class CommentResolver {
 
     public static final CommentResolver INSTANCE = new CommentResolver();
@@ -22,7 +22,7 @@ public final class CommentResolver {
     private CommentResolver() {
     }
 
-    @GraphBatched
+    @GomBatched
     public CompletableFuture<Map<Comment, Article>> article(Set<Comment> comments) {
         return Repository
                 .findAllArticlesByIds(comments.stream().map(comment -> comment.article.id).collect(toSet()))

@@ -14,19 +14,19 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 public final class GomConfig {
 
-    private final Collection<GraphFieldWiring> fieldWirings;
+    private final Collection<FieldWiring> fieldWirings;
 
     private final Collection<DataLoaderRegistrar> dataLoaderRegistrars;
 
     public static GomConfig build(Collection<Object> resolvers) {
-        GraphResolverInspection inspection = GraphResolverInspection.inspect(resolvers);
+        GomResolverInspection inspection = GomResolverInspection.inspect(resolvers);
         return new GomConfig(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
     }
 
     public void decorateRuntimeWiringBuilder(RuntimeWiring.Builder builder) {
         fieldWirings
                 .stream()
-                .collect(groupingBy(GraphFieldWiring::getTypeName))
+                .collect(groupingBy(FieldWiring::getTypeName))
                 .entrySet()
                 .stream()
                 .map(entry -> entry

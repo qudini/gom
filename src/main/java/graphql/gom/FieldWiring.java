@@ -10,7 +10,7 @@ import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
-final class GraphFieldWiring<R> {
+final class FieldWiring<R> {
 
     private final String typeName;
 

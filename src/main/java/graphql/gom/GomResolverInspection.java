@@ -22,9 +22,9 @@ import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class GraphResolverInspection {
+final class GomResolverInspection {
 
-    private final Set<GraphFieldWiring> fieldWirings = new HashSet<>();
+    private final Set<FieldWiring> fieldWirings = new HashSet<>();
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
@@ -85,7 +85,7 @@ final class GraphResolverInspection {
                         dataLoaderSupplier
                 )
         );
-        fieldWirings.add(new GraphFieldWiring<>(
+        fieldWirings.add(new FieldWiring<>(
                 type,
                 method.getName(),
                 environment -> environment
@@ -100,7 +100,7 @@ final class GraphResolverInspection {
     }
 
     private void createSimpleFieldWiring(String type, Method method, Object instance) {
-        fieldWirings.add(new GraphFieldWiring<>(
+        fieldWirings.add(new FieldWiring<>(
                 type,
                 method.getName(),
                 environment -> {
@@ -115,15 +115,15 @@ final class GraphResolverInspection {
         Stream
                 .of(resolver)
                 .map(Object::getClass)
-                .filter(clazz -> clazz.isAnnotationPresent(GraphResolver.class))
+                .filter(clazz -> clazz.isAnnotationPresent(GomResolver.class))
                 .forEach(clazz -> {
-                    String type = clazz.getAnnotation(GraphResolver.class).value();
+                    String type = clazz.getAnnotation(GomResolver.class).value();
                     Stream
                             .of(clazz.getDeclaredMethods())
                             .filter(method -> Modifier.isPublic(method.getModifiers()))
                             .filter(method -> !Modifier.isStatic(method.getModifiers()))
                             .forEach(method -> {
-                                if (method.isAnnotationPresent(GraphBatched.class)) {
+                                if (method.isAnnotationPresent(GomBatched.class)) {
                                     createBatchedFieldWiring(type, method, resolver);
                                 } else {
                                     createSimpleFieldWiring(type, method, resolver);
@@ -132,8 +132,8 @@ final class GraphResolverInspection {
                 });
     }
 
-    static GraphResolverInspection inspect(Collection<Object> resolvers) {
-        GraphResolverInspection inspector = new GraphResolverInspection();
+    static GomResolverInspection inspect(Collection<Object> resolvers) {
+        GomResolverInspection inspector = new GomResolverInspection();
         resolvers.forEach(inspector::inspect);
         return inspector;
     }
