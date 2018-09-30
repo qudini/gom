@@ -26,18 +26,18 @@ public final class Main {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-    private static final GomConfig GOM_CONFIG = newGomConfig(
-            asList(
+    private static final GomConfig GOM_CONFIG = newGomConfig()
+            .resolvers(asList(
                     ArticleResolver.INSTANCE,
                     BlogResolver.INSTANCE,
                     CommentResolver.INSTANCE,
                     QueryResolver.INSTANCE
-            ),
-            newGomConverters()
-                    .with(Mono.class, (result, context) -> result.toFuture())
-                    .with(Flux.class, (result, context) -> result.collectList().toFuture())
-                    .build()
-    );
+            ))
+            .converters(newGomConverters()
+                    .converter(Mono.class, (result, context) -> result.toFuture())
+                    .converter(Flux.class, (result, context) -> result.collectList().toFuture())
+                    .build())
+            .build();
 
     private static final GraphQLSchema SCHEMA;
 

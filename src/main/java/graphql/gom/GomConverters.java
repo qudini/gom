@@ -52,7 +52,7 @@ public final class GomConverters<C extends DataLoaderRegistryGetter> {
 
         private final Set<Converter<?, C>> converters = new HashSet<>();
 
-        public <T> Builder<C> with(Class<T> clazz, BiFunction<T, C, CompletableFuture<?>> converter) {
+        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, CompletableFuture<?>> converter) {
             converters.add(new Converter<>(clazz, converter));
             return this;
         }
