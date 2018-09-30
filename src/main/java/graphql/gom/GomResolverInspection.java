@@ -42,7 +42,11 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                         : Methods.invoke(method, instance, source);
                 break;
             case 2:
-                returnedValue = Methods.invoke(method, instance, source, arguments);
+                if (source == null) {
+                    throw new IllegalStateException(); // FIXME
+                } else {
+                    returnedValue = Methods.invoke(method, instance, source, arguments);
+                }
                 break;
             default:
                 throw new IllegalStateException(); // FIXME
