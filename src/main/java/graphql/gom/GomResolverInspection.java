@@ -34,7 +34,11 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
-                returnedValue = Methods.invoke(method, instance);
+                if (source == null) {
+                    returnedValue = Methods.invoke(method, instance);
+                } else {
+                    throw new IllegalStateException(); // FIXME
+                }
                 break;
             case 1:
                 returnedValue = source == null

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static graphql.gom.GomConfig.newGomConfig;
 import static graphql.gom.utils.QueryRunner.callData;
+import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
@@ -46,6 +47,24 @@ public final class DataFetcherTest {
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("MyType")
+    public static final class WithoutSourceNorArguments {
+
+        public String name() {
+            return "foobar";
+        }
+
+    }
+
+    @Test
+    public void withoutSourceNorArguments() {
+        GomConfig gomConfig = newGomConfig()
+                .resolvers(asList(new QueryResolver(), new WithoutSourceNorArguments()))
+                .build();
+        assertEquals(1, callErrors(gomConfig).size());
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    @GomResolver("MyType")
     public static final class WithSource {
 
         public String name(MyType myType) {
@@ -58,6 +77,42 @@ public final class DataFetcherTest {
     public void withSource() {
         GomConfig gomConfig = newGomConfig()
                 .resolvers(asList(new QueryResolver(), new WithSource()))
+                .build();
+        assertEquals("foobar", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    @GomResolver("MyType")
+    public static final class WithArguments {
+
+        public String name(GomArguments arguments) {
+            return arguments.get("name");
+        }
+
+    }
+
+    @Test
+    public void withArguments() {
+        GomConfig gomConfig = newGomConfig()
+                .resolvers(asList(new QueryResolver(), new WithArguments()))
+                .build();
+        assertEquals(1, callErrors(gomConfig).size());
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    @GomResolver("MyType")
+    public static final class WithSourceAndArguments {
+
+        public String name(MyType myType, GomArguments arguments) {
+            return myType.getName() + arguments.get("suffix");
+        }
+
+    }
+
+    @Test
+    public void withSourceAndArguments() {
+        GomConfig gomConfig = newGomConfig()
+                .resolvers(asList(new QueryResolver(), new WithSourceAndArguments()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
     }

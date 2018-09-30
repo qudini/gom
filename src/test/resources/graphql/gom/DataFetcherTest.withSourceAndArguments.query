@@ -1,0 +1,5 @@
+query {
+    myType {
+        name(suffix: "bar")
+    }
+}
