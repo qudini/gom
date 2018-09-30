@@ -1,3 +1,5 @@
+package graphql.gom.utils;
+
 import graphql.gom.DataLoaderRegistryGetter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

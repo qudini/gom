@@ -5,6 +5,8 @@ import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import graphql.gom.GomConfig;
+import graphql.gom.utils.Context;
+import graphql.gom.utils.ResourceReader;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -46,7 +48,7 @@ public final class Main {
         GOM_CONFIG.decorateRuntimeWiringBuilder(builder);
         builder.scalar(new DateTimeScalar());
         SCHEMA = new SchemaGenerator().makeExecutableSchema(
-                new SchemaParser().parse(ResourceReader.read("schema.graphql")),
+                new SchemaParser().parse(ResourceReader.readResource("schema.graphql")),
                 builder.build()
         );
     }
@@ -62,7 +64,7 @@ public final class Main {
     @Test
     public void newQuery() {
 
-        String query = ResourceReader.read("query");
+        String query = ResourceReader.readResource("query");
 
         DataLoaderRegistry registry = new DataLoaderRegistry();
         GOM_CONFIG.decorateDataLoaderRegistry(registry);
