@@ -3,7 +3,7 @@ package graphql.gom;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
-import static graphql.gom.GomConfig.newGomConfig;
+import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
 import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Collections.singletonList;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public final class QueryTest {
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class WithoutSourceNorArguments {
 
         public String foobar() {
@@ -26,14 +26,14 @@ public final class QueryTest {
 
     @Test
     public void withoutSourceNorArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new WithoutSourceNorArguments()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class WithSource {
 
         public static final class Source {
@@ -47,17 +47,17 @@ public final class QueryTest {
 
     @Test
     public void withSource() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new WithSource()))
                 .build();
-        assertEquals(1, callErrors(gomConfig).size());
+        assertEquals(1, callErrors(gom).size());
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class WithArguments {
 
-        public String foobar(GomArguments arguments) {
+        public String foobar(Arguments arguments) {
             return arguments.get("foobar");
         }
 
@@ -65,20 +65,20 @@ public final class QueryTest {
 
     @Test
     public void withArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new WithArguments()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class WithSourceAndArguments {
 
         public static final class Source {
         }
 
-        public String foobar(Source source, GomArguments arguments) {
+        public String foobar(Source source, Arguments arguments) {
             return arguments.get("foobar");
         }
 
@@ -86,10 +86,10 @@ public final class QueryTest {
 
     @Test
     public void withSourceAndArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new WithSourceAndArguments()))
                 .build();
-        assertEquals(1, callErrors(gomConfig).size());
+        assertEquals(1, callErrors(gom).size());
     }
 
 }

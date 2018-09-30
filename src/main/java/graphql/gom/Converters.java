@@ -14,7 +14,7 @@ import static java.util.Collections.unmodifiableCollection;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
-public final class GomConverters<C extends DataLoaderRegistryGetter> {
+public final class Converters<C extends DataLoaderRegistryGetter> {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @EqualsAndHashCode
@@ -57,8 +57,8 @@ public final class GomConverters<C extends DataLoaderRegistryGetter> {
             return this;
         }
 
-        public GomConverters<C> build() {
-            return new GomConverters<>(unmodifiableCollection(converters));
+        public Converters<C> build() {
+            return new Converters<>(unmodifiableCollection(converters));
         }
 
     }
@@ -78,7 +78,7 @@ public final class GomConverters<C extends DataLoaderRegistryGetter> {
                 .orElse(CompletableFuture.completedFuture(value));
     }
 
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newGomConverters() {
+    public static <C extends DataLoaderRegistryGetter> Builder<C> newConverters() {
         return new Builder<>();
     }
 

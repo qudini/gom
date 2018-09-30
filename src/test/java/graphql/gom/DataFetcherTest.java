@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static graphql.gom.GomConfig.newGomConfig;
+import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
 import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Arrays.asList;
@@ -28,7 +28,7 @@ public final class DataFetcherTest {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class QueryResolver {
 
         public MyType myType() {
@@ -39,14 +39,14 @@ public final class DataFetcherTest {
 
     @Test
     public void defaultsToGetter() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foo", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
+        assertEquals("foo", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("MyType")
+    @Resolver("MyType")
     public static final class WithoutSourceNorArguments {
 
         public String name() {
@@ -57,14 +57,14 @@ public final class DataFetcherTest {
 
     @Test
     public void withoutSourceNorArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithoutSourceNorArguments()))
                 .build();
-        assertEquals(1, callErrors(gomConfig).size());
+        assertEquals(1, callErrors(gom).size());
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("MyType")
+    @Resolver("MyType")
     public static final class WithSource {
 
         public String name(MyType myType) {
@@ -75,17 +75,17 @@ public final class DataFetcherTest {
 
     @Test
     public void withSource() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithSource()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("MyType")
+    @Resolver("MyType")
     public static final class WithArguments {
 
-        public String name(GomArguments arguments) {
+        public String name(Arguments arguments) {
             return arguments.get("name");
         }
 
@@ -93,17 +93,17 @@ public final class DataFetcherTest {
 
     @Test
     public void withArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithArguments()))
                 .build();
-        assertEquals(1, callErrors(gomConfig).size());
+        assertEquals(1, callErrors(gom).size());
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("MyType")
+    @Resolver("MyType")
     public static final class WithSourceAndArguments {
 
-        public String name(MyType myType, GomArguments arguments) {
+        public String name(MyType myType, Arguments arguments) {
             return myType.getName() + arguments.get("suffix");
         }
 
@@ -111,10 +111,10 @@ public final class DataFetcherTest {
 
     @Test
     public void withSourceAndArguments() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithSourceAndArguments()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }
 
 }

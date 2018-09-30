@@ -14,27 +14,27 @@ import static java.util.stream.Collectors.groupingBy;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
-public final class GomConfig {
+public final class Gom {
 
     @NoArgsConstructor(access = PRIVATE)
     public static final class Builder<C extends DataLoaderRegistryGetter> {
 
         private Collection<Object> resolvers = new HashSet<>();
-        private GomConverters<C> converters = GomConverters.<C>newGomConverters().build();
+        private Converters<C> converters = Converters.<C>newConverters().build();
 
         public Builder<C> resolvers(Collection<Object> resolvers) {
             this.resolvers = resolvers;
             return this;
         }
 
-        public Builder<C> converters(GomConverters<C> converters) {
+        public Builder<C> converters(Converters<C> converters) {
             this.converters = converters;
             return this;
         }
 
-        public GomConfig build() {
-            GomResolverInspection<C> inspection = GomResolverInspection.inspect(resolvers, converters);
-            return new GomConfig(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
+        public Gom build() {
+            ResolverInspection<C> inspection = ResolverInspection.inspect(resolvers, converters);
+            return new Gom(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
         }
 
     }
@@ -64,7 +64,7 @@ public final class GomConfig {
         dataLoaderRegistrars.forEach(registrar -> registrar.register(registry));
     }
 
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newGomConfig() {
+    public static <C extends DataLoaderRegistryGetter> Builder<C> newGom() {
         return new Builder<>();
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static graphql.gom.GomConfig.newGomConfig;
+import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
@@ -30,7 +30,7 @@ public final class DataLoaderTest {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class FooBarQueryResolver {
 
         public List<MyType> myTypes() {
@@ -43,7 +43,7 @@ public final class DataLoaderTest {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class BarFooQueryResolver {
 
         public List<MyType> myTypes() {
@@ -56,10 +56,10 @@ public final class DataLoaderTest {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("MyType")
+    @Resolver("MyType")
     public static final class WithSources {
 
-        @GomBatched
+        @Batched
         public Map<MyType, String> name(Set<MyType> myTypes) {
             return myTypes
                     .stream()
@@ -70,20 +70,20 @@ public final class DataLoaderTest {
 
     @Test
     public void withSources() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new FooBarQueryResolver(), new WithSources()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gomConfig).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
     }
 
     @Test
     public void sourceOrder() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(asList(new BarFooQueryResolver(), new WithSources()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gomConfig).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));
         assertEquals("foobar", myTypes.get(1).get("name"));
     }

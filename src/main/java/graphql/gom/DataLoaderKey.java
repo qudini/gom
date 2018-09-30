@@ -13,7 +13,7 @@ final class DataLoaderKey<S, C extends DataLoaderRegistryGetter> {
 
     private final S source;
 
-    private final GomArguments arguments;
+    private final Arguments arguments;
 
     private final C context;
 

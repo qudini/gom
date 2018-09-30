@@ -9,12 +9,12 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @EqualsAndHashCode
-public final class GomArguments {
+public final class Arguments {
 
     private final Map<String, Object> arguments;
 
     @SuppressWarnings("unchecked")
-    GomArguments(Map<String, Object> arguments) {
+    Arguments(Map<String, Object> arguments) {
         this.arguments = new HashMap<>(arguments);
         arguments
                 .entrySet()
@@ -22,7 +22,7 @@ public final class GomArguments {
                 .filter(entry -> entry.getValue() instanceof Map)
                 .forEach(entry -> this.arguments.put(
                         entry.getKey(),
-                        new GomArguments((Map<String, Object>) entry.getValue())
+                        new Arguments((Map<String, Object>) entry.getValue())
                 ));
     }
 

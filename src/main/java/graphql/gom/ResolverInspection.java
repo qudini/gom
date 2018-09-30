@@ -22,15 +22,15 @@ import static lombok.AccessLevel.PRIVATE;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
+final class ResolverInspection<C extends DataLoaderRegistryGetter> {
 
-    private final GomConverters<C> converters;
+    private final Converters<C> converters;
 
     private final Set<FieldWiring> fieldWirings = new HashSet<>();
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, GomArguments arguments, C context) {
+    private <R> CompletableFuture<R> invoke(Method method, Object instance, Object source, Arguments arguments, C context) {
         final Object returnedValue;
         switch (method.getParameterCount()) {
             case 0:
@@ -116,7 +116,7 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                             .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
                             .load(new DataLoaderKey<>(
                                     environment.getSource(),
-                                    new GomArguments(environment.getArguments()),
+                                    new Arguments(environment.getArguments()),
                                     context
                             ));
                 }
@@ -131,7 +131,7 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                         method,
                         instance,
                         environment.getSource(),
-                        new GomArguments(environment.getArguments()),
+                        new Arguments(environment.getArguments()),
                         environment.getContext()
                 )
         ));
@@ -141,15 +141,15 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
         Stream
                 .of(resolver)
                 .map(Object::getClass)
-                .filter(clazz -> clazz.isAnnotationPresent(GomResolver.class))
+                .filter(clazz -> clazz.isAnnotationPresent(Resolver.class))
                 .forEach(clazz -> {
-                    String type = clazz.getAnnotation(GomResolver.class).value();
+                    String type = clazz.getAnnotation(Resolver.class).value();
                     Stream
                             .of(clazz.getDeclaredMethods())
                             .filter(method -> Modifier.isPublic(method.getModifiers()))
                             .filter(method -> !Modifier.isStatic(method.getModifiers()))
                             .forEach(method -> {
-                                if (method.isAnnotationPresent(GomBatched.class)) {
+                                if (method.isAnnotationPresent(Batched.class)) {
                                     createBatchedFieldWiring(type, method, resolver);
                                 } else {
                                     createSimpleFieldWiring(type, method, resolver);
@@ -158,8 +158,8 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                 });
     }
 
-    static <C extends DataLoaderRegistryGetter> GomResolverInspection<C> inspect(Collection<Object> resolvers, GomConverters<C> converters) {
-        GomResolverInspection<C> inspector = new GomResolverInspection<>(converters);
+    static <C extends DataLoaderRegistryGetter> ResolverInspection<C> inspect(Collection<Object> resolvers, Converters<C> converters) {
+        ResolverInspection<C> inspector = new ResolverInspection<>(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;
     }

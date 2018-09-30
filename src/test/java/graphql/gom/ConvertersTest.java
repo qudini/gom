@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static graphql.gom.GomConfig.newGomConfig;
+import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNull;
 public final class ConvertersTest {
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class MandatoryFuture {
 
         public CompletableFuture<String> foobar() {
@@ -28,14 +28,14 @@ public final class ConvertersTest {
 
     @Test
     public void mandatoryFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new MandatoryFuture()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class MandatoryNoFuture {
 
         public String foobar() {
@@ -46,14 +46,14 @@ public final class ConvertersTest {
 
     @Test
     public void mandatoryNoFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new MandatoryNoFuture()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class OptionalPresentFuture {
 
         public CompletableFuture<Optional<String>> foobar() {
@@ -64,14 +64,14 @@ public final class ConvertersTest {
 
     @Test
     public void optionalPresentFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new OptionalPresentFuture()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class OptionalPresentNoFuture {
 
         public Optional<String> foobar() {
@@ -82,14 +82,14 @@ public final class ConvertersTest {
 
     @Test
     public void optionalPresentNoFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new OptionalPresentNoFuture()))
                 .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
+        assertEquals("foobar", callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class OptionalAbsentFuture {
 
         public CompletableFuture<Optional<String>> foobar() {
@@ -100,14 +100,14 @@ public final class ConvertersTest {
 
     @Test
     public void optionalAbsentFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new OptionalAbsentFuture()))
                 .build();
-        assertNull(callData(gomConfig).get("foobar"));
+        assertNull(callData(gom).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
+    @Resolver("Query")
     public static final class OptionalAbsentNoFuture {
 
         public Optional<String> foobar() {
@@ -118,10 +118,10 @@ public final class ConvertersTest {
 
     @Test
     public void optionalAbsentNoFuture() {
-        GomConfig gomConfig = newGomConfig()
+        Gom gom = newGom()
                 .resolvers(singletonList(new OptionalAbsentNoFuture()))
                 .build();
-        assertNull(callData(gomConfig).get("foobar"));
+        assertNull(callData(gom).get("foobar"));
     }
 
 }

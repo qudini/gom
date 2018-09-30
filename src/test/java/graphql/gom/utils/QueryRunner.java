@@ -5,7 +5,7 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
-import graphql.gom.GomConfig;
+import graphql.gom.Gom;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
 @NoArgsConstructor(access = PRIVATE)
 public final class QueryRunner {
 
-    private static ExecutionResult call(GomConfig gomConfig) {
+    private static ExecutionResult call(Gom gom) {
 
         StackTraceElement caller = currentThread().getStackTrace()[3];
         String testClassName;
@@ -44,7 +44,7 @@ public final class QueryRunner {
         TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(readResource(baseResourceName + ".graphql"));
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
-        gomConfig.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
+        gom.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
         RuntimeWiring runtimeWiring = runtimeWiringBuilder.build();
 
         GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(
@@ -53,7 +53,7 @@ public final class QueryRunner {
         );
 
         DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
-        gomConfig.decorateDataLoaderRegistry(dataLoaderRegistry);
+        gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
         ExecutionInput executionInput = newExecutionInput()
                 .context(new Context(dataLoaderRegistry))
@@ -72,14 +72,14 @@ public final class QueryRunner {
 
     }
 
-    public static Map<String, ?> callData(GomConfig gomConfig) {
-        ExecutionResult result = call(gomConfig);
+    public static Map<String, ?> callData(Gom gom) {
+        ExecutionResult result = call(gom);
         assertEquals(0, result.getErrors().size());
         return result.getData();
     }
 
-    public static List<GraphQLError> callErrors(GomConfig gomConfig) {
-        ExecutionResult result = call(gomConfig);
+    public static List<GraphQLError> callErrors(Gom gom) {
+        ExecutionResult result = call(gom);
         assertNull(result.getData());
         return result.getErrors();
     }
