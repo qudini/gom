@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static graphql.gom.utils.Futures.parallelise;
-import static graphql.gom.utils.Maps.entry;
 import static graphql.gom.utils.Reductions.failIfDifferent;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
@@ -63,8 +62,9 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                     .collect(groupingBy(DataLoaderKey::getArguments))
                     .entrySet()
                     .stream()
-                    .map(entry((arguments, sameArgumentsKeys) -> {
-                        Map<S, DataLoaderKey<S, C>> sameArgumentsKeysBySource = sameArgumentsKeys
+                    .map(entry -> {
+                        Map<S, DataLoaderKey<S, C>> sameArgumentsKeysBySource = entry
+                                .getValue()
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
@@ -72,7 +72,7 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                                         method,
                                         instance,
                                         sameArgumentsKeysBySource.keySet(),
-                                        arguments,
+                                        entry.getKey(),
                                         maybeContext.orElseThrow(IllegalStateException::new)
                                 )
                                 .thenApply(resultsBySource -> resultsBySource
@@ -83,7 +83,7 @@ final class GomResolverInspection<C extends DataLoaderRegistryGetter> {
                                                 Map.Entry::getValue
                                         ))
                                 );
-                    }))
+                    })
                     .collect(toList());
             return parallelise(futures)
                     .thenApply(results -> results

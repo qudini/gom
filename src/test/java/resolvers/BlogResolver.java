@@ -28,7 +28,7 @@ public final class BlogResolver {
         return Repository
                 .findAllArticlesByBlogIds(
                         blogs.stream().map(blog -> blog.id).collect(toSet()),
-                        arguments.get("title")
+                        arguments.getOptional("title")
                 )
                 .collect(groupingBy(article -> article.blog));
     }

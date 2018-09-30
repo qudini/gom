@@ -2,6 +2,7 @@ package resolvers;
 
 import db.Blog;
 import db.Repository;
+import graphql.gom.GomArguments;
 import graphql.gom.GomResolver;
 import reactor.core.publisher.Flux;
 
@@ -13,7 +14,7 @@ public final class QueryResolver {
     private QueryResolver() {
     }
 
-    public Flux<Blog> blogs() {
+    public Flux<Blog> blogs(GomArguments arguments) {
         return Repository.findAllBlogs();
     }
 
