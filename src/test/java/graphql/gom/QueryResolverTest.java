@@ -38,9 +38,17 @@ public final class QueryResolverTest {
 
     private ExecutionResult call(GomConfig gomConfig) {
 
-        String testMethodName = currentThread().getStackTrace()[3].getMethodName();
+        StackTraceElement caller = currentThread().getStackTrace()[3];
+        String testClassName;
+        try {
+            testClassName = Class.forName(caller.getClassName()).getSimpleName();
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+        String testMethodName = caller.getMethodName();
+        String baseResourceName = "/graphql/gom/" + testClassName + "." + testMethodName;
 
-        TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(readResource("/graphql/gom/" + testMethodName + ".graphql"));
+        TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(readResource(baseResourceName + ".graphql"));
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
         gomConfig.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
@@ -56,7 +64,7 @@ public final class QueryResolverTest {
 
         ExecutionInput executionInput = newExecutionInput()
                 .context(new Context(dataLoaderRegistry))
-                .query(readResource("/graphql/gom/" + testMethodName + ".query"))
+                .query(readResource(baseResourceName + ".query"))
                 .build();
 
         GraphQL graphQL = newGraphQL(graphQLSchema)
@@ -85,7 +93,7 @@ public final class QueryResolverTest {
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverMandatoryFuture {
+    public static final class MandatoryFuture {
 
         public CompletableFuture<String> foobar() {
             return completedFuture("foobar");
@@ -94,16 +102,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverMandatoryFuture() {
+    public void mandatoryFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverMandatoryFuture()))
+                .resolvers(singletonList(new MandatoryFuture()))
                 .build();
         assertEquals("foobar", callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverMandatoryNoFuture {
+    public static final class MandatoryNoFuture {
 
         public String foobar() {
             return "foobar";
@@ -112,16 +120,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverMandatoryNoFuture() {
+    public void mandatoryNoFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverMandatoryNoFuture()))
+                .resolvers(singletonList(new MandatoryNoFuture()))
                 .build();
         assertEquals("foobar", callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverOptionalPresentFuture {
+    public static final class OptionalPresentFuture {
 
         public CompletableFuture<Optional<String>> foobar() {
             return completedFuture(Optional.of("foobar"));
@@ -130,16 +138,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverOptionalPresentFuture() {
+    public void optionalPresentFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverOptionalPresentFuture()))
+                .resolvers(singletonList(new OptionalPresentFuture()))
                 .build();
         assertEquals("foobar", callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverOptionalPresentNoFuture {
+    public static final class OptionalPresentNoFuture {
 
         public Optional<String> foobar() {
             return Optional.of("foobar");
@@ -148,16 +156,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverOptionalPresentNoFuture() {
+    public void optionalPresentNoFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverOptionalPresentNoFuture()))
+                .resolvers(singletonList(new OptionalPresentNoFuture()))
                 .build();
         assertEquals("foobar", callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverOptionalAbsentFuture {
+    public static final class OptionalAbsentFuture {
 
         public CompletableFuture<Optional<String>> foobar() {
             return completedFuture(Optional.empty());
@@ -166,16 +174,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverOptionalAbsentFuture() {
+    public void optionalAbsentFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverOptionalAbsentFuture()))
+                .resolvers(singletonList(new OptionalAbsentFuture()))
                 .build();
         assertNull(callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverOptionalAbsentNoFuture {
+    public static final class OptionalAbsentNoFuture {
 
         public Optional<String> foobar() {
             return Optional.empty();
@@ -184,34 +192,16 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverOptionalAbsentNoFuture() {
+    public void optionalAbsentNoFuture() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverOptionalAbsentNoFuture()))
+                .resolvers(singletonList(new OptionalAbsentNoFuture()))
                 .build();
         assertNull(callData(gomConfig).get("foobar"));
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverWithArguments {
-
-        public String foobar(GomArguments arguments) {
-            return arguments.get("foobar");
-        }
-
-    }
-
-    @Test
-    public void testQueryResolverWithArguments() {
-        GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverWithArguments()))
-                .build();
-        assertEquals("foobar", callData(gomConfig).get("foobar"));
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @GomResolver("Query")
-    public static final class TestQueryResolverWithSource {
+    public static final class WithSource {
 
         public static final class Source {
         }
@@ -223,16 +213,34 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverWithSource() {
+    public void withSource() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverWithSource()))
+                .resolvers(singletonList(new WithSource()))
                 .build();
         assertEquals(1, callErrors(gomConfig).size());
     }
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("Query")
-    public static final class TestQueryResolverWithSourceAndArguments {
+    public static final class WithArguments {
+
+        public String foobar(GomArguments arguments) {
+            return arguments.get("foobar");
+        }
+
+    }
+
+    @Test
+    public void withArguments() {
+        GomConfig gomConfig = newGomConfig()
+                .resolvers(singletonList(new WithArguments()))
+                .build();
+        assertEquals("foobar", callData(gomConfig).get("foobar"));
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    @GomResolver("Query")
+    public static final class WithSourceAndArguments {
 
         public static final class Source {
         }
@@ -244,9 +252,9 @@ public final class QueryResolverTest {
     }
 
     @Test
-    public void testQueryResolverWithSourceAndArguments() {
+    public void withSourceAndArguments() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(singletonList(new TestQueryResolverWithSourceAndArguments()))
+                .resolvers(singletonList(new WithSourceAndArguments()))
                 .build();
         assertEquals(1, callErrors(gomConfig).size());
     }
