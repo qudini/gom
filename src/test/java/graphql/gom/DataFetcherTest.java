@@ -46,7 +46,7 @@ public final class DataFetcherTest {
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("MyType")
-    public static final class MandatoryNoFuture {
+    public static final class WithSource {
 
         public String name(MyType myType) {
             return myType.getName() + "bar";
@@ -55,9 +55,9 @@ public final class DataFetcherTest {
     }
 
     @Test
-    public void mandatoryNoFuture() {
+    public void withSource() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(asList(new QueryResolver(), new MandatoryNoFuture()))
+                .resolvers(asList(new QueryResolver(), new WithSource()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gomConfig).get("myType")).get("name"));
     }

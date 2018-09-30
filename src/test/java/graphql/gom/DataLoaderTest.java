@@ -57,7 +57,7 @@ public final class DataLoaderTest {
 
     @NoArgsConstructor(access = PRIVATE)
     @GomResolver("MyType")
-    public static final class MandatoryNoFuture {
+    public static final class WithSources {
 
         @GomBatched
         public Map<MyType, String> name(Set<MyType> myTypes) {
@@ -69,9 +69,9 @@ public final class DataLoaderTest {
     }
 
     @Test
-    public void mandatoryNoFuture() {
+    public void withSources() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(asList(new FooBarQueryResolver(), new MandatoryNoFuture()))
+                .resolvers(asList(new FooBarQueryResolver(), new WithSources()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gomConfig).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
@@ -81,7 +81,7 @@ public final class DataLoaderTest {
     @Test
     public void sourceOrder() {
         GomConfig gomConfig = newGomConfig()
-                .resolvers(asList(new BarFooQueryResolver(), new MandatoryNoFuture()))
+                .resolvers(asList(new BarFooQueryResolver(), new WithSources()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gomConfig).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));
