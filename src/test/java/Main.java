@@ -44,6 +44,7 @@ public final class Main {
     static {
         RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
         GOM_CONFIG.decorateRuntimeWiringBuilder(builder);
+        builder.scalar(new DateTimeScalar());
         SCHEMA = new SchemaGenerator().makeExecutableSchema(
                 new SchemaParser().parse(ResourceReader.read("schema.graphql")),
                 builder.build()

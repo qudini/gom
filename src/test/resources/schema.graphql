@@ -1,3 +1,5 @@
+scalar DateTime
+
 type Comment {
     id: Int!
     title: String!
@@ -14,7 +16,7 @@ type Article {
 type Blog {
     id: Int!
     title: String!
-    articles(title: String): [Article!]!
+    articles(title: String, date: DateTime): [Article!]!
 }
 
 type Query {
