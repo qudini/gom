@@ -27,6 +27,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public CompletableFuture<String> foobar() {
                 called.set(true);
                 return completedFuture("foobar");
@@ -47,6 +48,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public String foobar() {
                 called.set(true);
                 return "foobar";
@@ -67,6 +69,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public CompletableFuture<Optional<String>> foobar() {
                 called.set(true);
                 return completedFuture(Optional.of("foobar"));
@@ -87,6 +90,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public Optional<String> foobar() {
                 called.set(true);
                 return Optional.of("foobar");
@@ -107,6 +111,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public CompletableFuture<Optional<String>> foobar() {
                 called.set(true);
                 return completedFuture(Optional.empty());
@@ -127,6 +132,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public Optional<String> foobar() {
                 called.set(true);
                 return Optional.empty();
@@ -154,6 +160,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public MyWrapper foobar() {
                 resolverCalled.set(true);
                 return new MyWrapper("foobar");
@@ -197,6 +204,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public MyWrapper foobar() {
                 resolverCalled.set(true);
                 return new MyWrapper<>(new MyWrapper<>("foobar"));
@@ -241,6 +249,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public MySuperWrapper foobar() {
                 resolverCalled.set(true);
                 return new MySuperWrapper("foobar");
@@ -290,6 +299,7 @@ public final class ConvertersTest {
         @Resolver("Query")
         final class QueryResolver {
 
+            @Fetcher
             public MySubWrapper foobar() {
                 resolverCalled.set(true);
                 return new MySubWrapper("foobar");

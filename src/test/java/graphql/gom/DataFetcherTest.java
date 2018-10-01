@@ -33,6 +33,7 @@ public final class DataFetcherTest {
     @Resolver("Query")
     public static final class QueryResolver {
 
+        @Fetcher
         public MyType myType() {
             return new MyType("foo");
         }
@@ -54,6 +55,7 @@ public final class DataFetcherTest {
         @Resolver("MyType")
         final class MyTypeResolver {
 
+            @Fetcher
             public String name() {
                 called.set(true);
                 return "foobar";
@@ -74,6 +76,7 @@ public final class DataFetcherTest {
         @Resolver("MyType")
         final class MyTypeResolver {
 
+            @Fetcher
             public String name(MyType myType) {
                 called.set(true);
                 return myType.getName() + "bar";
@@ -94,6 +97,7 @@ public final class DataFetcherTest {
         @Resolver("MyType")
         final class MyTypeResolver {
 
+            @Fetcher
             public String name(Arguments arguments) {
                 called.set(true);
                 return arguments.get("name");
@@ -114,6 +118,7 @@ public final class DataFetcherTest {
         @Resolver("MyType")
         final class MyTypeResolver {
 
+            @Fetcher
             public String name(MyType myType, Arguments arguments) {
                 called.set(true);
                 return myType.getName() + arguments.get("suffix");

@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.dataloader.DataLoader;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -15,10 +14,12 @@ import java.util.stream.Stream;
 
 import static graphql.gom.utils.Futures.parallelise;
 import static graphql.gom.utils.Reductions.failIfDifferent;
+import static java.util.UUID.randomUUID;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PRIVATE;
+import static org.dataloader.DataLoader.newMappedDataLoader;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
@@ -59,8 +60,8 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
     }
 
     private <S, R> void createBatchedFieldWiring(String type, Method method, Object instance) {
-        String dataLoaderKey = UUID.randomUUID().toString();
-        Supplier<DataLoader<DataLoaderKey<S, C>, R>> dataLoaderSupplier = () -> DataLoader.newMappedDataLoader(keys -> {
+        String dataLoaderKey = randomUUID().toString();
+        Supplier<DataLoader<DataLoaderKey<S, C>, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
             Optional<C> maybeContext = keys
                     .stream()
                     .map(DataLoaderKey::getContext)
@@ -146,8 +147,7 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
                     String type = clazz.getAnnotation(Resolver.class).value();
                     Stream
                             .of(clazz.getDeclaredMethods())
-                            .filter(method -> Modifier.isPublic(method.getModifiers()))
-                            .filter(method -> !Modifier.isStatic(method.getModifiers()))
+                            .filter(method -> method.isAnnotationPresent(Fetcher.class))
                             .forEach(method -> {
                                 if (!method.isAccessible()) {
                                     method.setAccessible(true);
