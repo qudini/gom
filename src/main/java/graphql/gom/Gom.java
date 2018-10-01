@@ -6,9 +6,9 @@ import org.dataloader.DataLoaderRegistry;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.BinaryOperator;
 
 import static graphql.gom.Converters.newConverters;
-import static graphql.gom.utils.Reductions.fail;
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 import static java.util.stream.Collectors.groupingBy;
 import static lombok.AccessLevel.PRIVATE;
@@ -70,6 +70,12 @@ public final class Gom {
 
     public static <C extends DataLoaderRegistryGetter> Builder<C> newGom(Class<C> contextClass) {
         return new Builder<>(contextClass);
+    }
+
+    private static <T> BinaryOperator<T> fail() {
+        return (x, y) -> {
+            throw new IllegalStateException("This combiner shouldn't have been called");
+        };
     }
 
 }
