@@ -79,18 +79,10 @@ public final class QueryRunner {
         return result.getData();
     }
 
-    public static Map<String, ?> callData(Gom gom) {
-        return callData(gom, Context::new);
-    }
-
     public static List<GraphQLError> callErrors(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
         ExecutionResult result = call(gom, contextSupplier);
         assertNull(result.getData());
         return result.getErrors();
-    }
-
-    public static List<GraphQLError> callErrors(Gom gom) {
-        return callErrors(gom, Context::new);
     }
 
 }

@@ -23,11 +23,11 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
         private final Class<?> clazz;
 
         @EqualsAndHashCode.Exclude
-        private final BiFunction<T, C, CompletableFuture<?>> function;
+        private final BiFunction<T, C, ?> function;
 
         @SuppressWarnings("unchecked")
-        private <R> CompletableFuture<R> convert(Object value, C context) {
-            return (CompletableFuture<R>) function.apply((T) value, context);
+        private Object convert(Object value, C context) {
+            return function.apply((T) value, context);
         }
 
         @Override
@@ -52,7 +52,7 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
 
         private final Set<Converter<?, C>> converters = new HashSet<>();
 
-        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, CompletableFuture<?>> converter) {
+        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, ?> converter) {
             converters.add(new Converter<>(clazz, converter));
             return this;
         }
@@ -75,10 +75,11 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
                 .sorted()
                 .findFirst()
                 .map(converter -> converter.convert(value, context))
+                .map(object -> convert(object, context))
                 .orElse(CompletableFuture.completedFuture(value));
     }
 
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newConverters() {
+    public static <C extends DataLoaderRegistryGetter> Builder<C> newConverters(Class<C> contextClass) {
         return new Builder<>();
     }
 

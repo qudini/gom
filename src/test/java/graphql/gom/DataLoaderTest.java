@@ -1,5 +1,6 @@
 package graphql.gom;
 
+import graphql.gom.utils.Context;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +63,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -88,10 +89,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom, Context::new).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
         assertTrue(called.get());
@@ -111,10 +112,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -137,10 +138,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom, Context::new).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
         assertTrue(called.get());
@@ -165,10 +166,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(false), new MyTypeResolver()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom, Context::new).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));
         assertEquals("foobar", myTypes.get(1).get("name"));
         assertTrue(called.get());
@@ -195,10 +196,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom, Context::new).get("myTypes");
         assertEquals("foo", myTypes.get(0).get("nameWithoutSuffix"));
         assertEquals("foofoo", myTypes.get(0).get("nameWithFooSuffix"));
         assertEquals("foobar", myTypes.get(0).get("nameWithBarSuffix"));
@@ -230,10 +231,10 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
-        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom, Context::new).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("nameWithSuffix1"));
         assertEquals("foobar", myTypes.get(0).get("nameWithSuffix2"));
         assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));

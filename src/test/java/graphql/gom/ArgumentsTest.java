@@ -1,5 +1,6 @@
 package graphql.gom;
 
+import graphql.gom.utils.Context;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
@@ -215,10 +216,10 @@ public final class ArgumentsTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("MY_VALUE", callData(gom).get("foobar"));
+        assertEquals("MY_VALUE", callData(gom, Context::new).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -235,10 +236,10 @@ public final class ArgumentsTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom).get("foo"));
+        assertEquals("foobar", callData(gom, Context::new).get("foo"));
         assertTrue(called.get());
     }
 

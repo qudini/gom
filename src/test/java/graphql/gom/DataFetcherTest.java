@@ -1,5 +1,6 @@
 package graphql.gom;
 
+import graphql.gom.utils.Context;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,10 @@ public final class DataFetcherTest {
 
     @Test
     public void defaultsToGetter() {
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foo", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
+        assertEquals("foo", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
     }
 
     @Test
@@ -59,10 +60,10 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -79,10 +80,10 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
         assertTrue(called.get());
     }
 
@@ -99,10 +100,10 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -119,10 +120,10 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
         assertTrue(called.get());
     }
 

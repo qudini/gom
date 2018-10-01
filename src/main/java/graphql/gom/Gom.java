@@ -1,13 +1,13 @@
 package graphql.gom;
 
 import graphql.schema.idl.RuntimeWiring;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoaderRegistry;
 
 import java.util.Collection;
 import java.util.HashSet;
 
+import static graphql.gom.Converters.newConverters;
 import static graphql.gom.utils.Reductions.fail;
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 import static java.util.stream.Collectors.groupingBy;
@@ -16,11 +16,15 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 public final class Gom {
 
-    @NoArgsConstructor(access = PRIVATE)
     public static final class Builder<C extends DataLoaderRegistryGetter> {
 
-        private Collection<Object> resolvers = new HashSet<>();
-        private Converters<C> converters = Converters.<C>newConverters().build();
+        private Collection<Object> resolvers;
+        private Converters<C> converters;
+
+        private Builder(Class<C> contextClass) {
+            this.resolvers = new HashSet<>();
+            this.converters = newConverters(contextClass).build();
+        }
 
         public Builder<C> resolvers(Collection<Object> resolvers) {
             this.resolvers = resolvers;
@@ -64,8 +68,8 @@ public final class Gom {
         dataLoaderRegistrars.forEach(registrar -> registrar.register(registry));
     }
 
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newGom() {
-        return new Builder<>();
+    public static <C extends DataLoaderRegistryGetter> Builder<C> newGom(Class<C> contextClass) {
+        return new Builder<>(contextClass);
     }
 
 }

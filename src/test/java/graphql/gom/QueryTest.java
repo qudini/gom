@@ -1,5 +1,6 @@
 package graphql.gom;
 
+import graphql.gom.utils.Context;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
@@ -29,10 +30,10 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom).get("foobar"));
+        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -52,10 +53,10 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -72,10 +73,10 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom).get("foobar"));
+        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -95,10 +96,10 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom()
+        Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertFalse(callErrors(gom).isEmpty());
+        assertFalse(callErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
