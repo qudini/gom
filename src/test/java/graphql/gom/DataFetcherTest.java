@@ -46,74 +46,70 @@ public final class DataFetcherTest {
         assertEquals("foo", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithoutSourceNorArguments {
-
-        public String name() {
-            return "foobar";
-        }
-
-    }
-
     @Test
     public void withoutSourceNorArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            public String name() {
+                return "foobar";
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new QueryResolver(), new WithoutSourceNorArguments()))
+                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithSource {
-
-        public String name(MyType myType) {
-            return myType.getName() + "bar";
-        }
-
     }
 
     @Test
     public void withSource() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            public String name(MyType myType) {
+                return myType.getName() + "bar";
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new QueryResolver(), new WithSource()))
+                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithArguments {
-
-        public String name(Arguments arguments) {
-            return arguments.get("name");
-        }
-
-    }
-
     @Test
     public void withArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            public String name(Arguments arguments) {
+                return arguments.get("name");
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new QueryResolver(), new WithArguments()))
+                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithSourceAndArguments {
-
-        public String name(MyType myType, Arguments arguments) {
-            return myType.getName() + arguments.get("suffix");
-        }
-
-    }
-
     @Test
     public void withSourceAndArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            public String name(MyType myType, Arguments arguments) {
+                return myType.getName() + arguments.get("suffix");
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new QueryResolver(), new WithSourceAndArguments()))
+                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
     }

@@ -32,110 +32,95 @@ public final class DataLoaderTest {
 
     }
 
-    @NoArgsConstructor(access = PRIVATE)
+    @RequiredArgsConstructor(access = PRIVATE)
     @Resolver("Query")
-    public static final class FooBarQueryResolver {
+    public static final class QueryResolver {
+
+        private final boolean fooFirst;
 
         public List<MyType> myTypes() {
             return asList(
-                    new MyType("foo"),
-                    new MyType("bar")
+                    fooFirst ? new MyType("foo") : new MyType("bar"),
+                    fooFirst ? new MyType("bar") : new MyType("foo")
             );
-        }
-
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class BarFooQueryResolver {
-
-        public List<MyType> myTypes() {
-            return asList(
-                    new MyType("bar"),
-                    new MyType("foo")
-            );
-        }
-
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithoutSourcesNorArguments {
-
-        @Batched
-        public Map<MyType, String> name() {
-            return new HashMap<>();
         }
 
     }
 
     @Test
     public void withoutSourcesNorArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name() {
+                return new HashMap<>();
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new FooBarQueryResolver(), new WithoutSourcesNorArguments()))
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithSources {
-
-        @Batched
-        public Map<MyType, String> name(Set<MyType> myTypes) {
-            return myTypes
-                    .stream()
-                    .collect(toMap(identity(), myType -> myType.getName() + "bar"));
-        }
-
-    }
-
     @Test
     public void withSources() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Set<MyType> myTypes) {
+                return myTypes
+                        .stream()
+                        .collect(toMap(identity(), myType -> myType.getName() + "bar"));
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new FooBarQueryResolver(), new WithSources()))
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithArguments {
-
-        @Batched
-        public Map<MyType, String> name(Arguments arguments) {
-            return new HashMap<>();
-        }
-
-    }
-
     @Test
     public void withArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Arguments arguments) {
+                return new HashMap<>();
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new FooBarQueryResolver(), new WithArguments()))
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("MyType")
-    public static final class WithSourcesAndArguments {
-
-        @Batched
-        public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
-            return myTypes
-                    .stream()
-                    .collect(toMap(identity(), myType -> myType.getName() + arguments.get("suffix")));
-        }
-
-    }
-
     @Test
     public void withSourcesAndArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                return myTypes
+                        .stream()
+                        .collect(toMap(identity(), myType -> myType.getName() + arguments.get("suffix")));
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new FooBarQueryResolver(), new WithSourcesAndArguments()))
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
@@ -144,8 +129,20 @@ public final class DataLoaderTest {
 
     @Test
     public void sourceOrder() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Set<MyType> myTypes) {
+                return myTypes
+                        .stream()
+                        .collect(toMap(identity(), myType -> myType.getName() + "bar"));
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(asList(new BarFooQueryResolver(), new WithSources()))
+                .resolvers(asList(new QueryResolver(false), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));

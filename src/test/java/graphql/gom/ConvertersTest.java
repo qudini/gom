@@ -16,110 +16,104 @@ import static org.junit.Assert.assertNull;
 
 public final class ConvertersTest {
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class MandatoryFuture {
-
-        public CompletableFuture<String> foobar() {
-            return completedFuture("foobar");
-        }
-
-    }
-
     @Test
     public void mandatoryFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public CompletableFuture<String> foobar() {
+                return completedFuture("foobar");
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new MandatoryFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class MandatoryNoFuture {
-
-        public String foobar() {
-            return "foobar";
-        }
-
     }
 
     @Test
     public void mandatoryNoFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public String foobar() {
+                return "foobar";
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new MandatoryNoFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class OptionalPresentFuture {
-
-        public CompletableFuture<Optional<String>> foobar() {
-            return completedFuture(Optional.of("foobar"));
-        }
-
     }
 
     @Test
     public void optionalPresentFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public CompletableFuture<Optional<String>> foobar() {
+                return completedFuture(Optional.of("foobar"));
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new OptionalPresentFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class OptionalPresentNoFuture {
-
-        public Optional<String> foobar() {
-            return Optional.of("foobar");
-        }
-
     }
 
     @Test
     public void optionalPresentNoFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public Optional<String> foobar() {
+                return Optional.of("foobar");
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new OptionalPresentNoFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class OptionalAbsentFuture {
-
-        public CompletableFuture<Optional<String>> foobar() {
-            return completedFuture(Optional.empty());
-        }
-
-    }
-
     @Test
     public void optionalAbsentFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public CompletableFuture<Optional<String>> foobar() {
+                return completedFuture(Optional.empty());
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new OptionalAbsentFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callData(gom).get("foobar"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class OptionalAbsentNoFuture {
-
-        public Optional<String> foobar() {
-            return Optional.empty();
-        }
-
-    }
-
     @Test
     public void optionalAbsentNoFuture() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            public Optional<String> foobar() {
+                return Optional.empty();
+            }
+
+        }
         Gom gom = newGom()
-                .resolvers(singletonList(new OptionalAbsentNoFuture()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callData(gom).get("foobar"));
     }

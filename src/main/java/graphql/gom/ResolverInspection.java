@@ -149,6 +149,9 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
                             .filter(method -> Modifier.isPublic(method.getModifiers()))
                             .filter(method -> !Modifier.isStatic(method.getModifiers()))
                             .forEach(method -> {
+                                if (!method.isAccessible()) {
+                                    method.setAccessible(true);
+                                }
                                 if (method.isAnnotationPresent(Batched.class)) {
                                     createBatchedFieldWiring(type, method, resolver);
                                 } else {

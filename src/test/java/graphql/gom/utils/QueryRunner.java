@@ -23,8 +23,8 @@ import static graphql.gom.utils.ResourceReader.readResource;
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 import static java.lang.Thread.currentThread;
 import static lombok.AccessLevel.PRIVATE;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class QueryRunner {
@@ -74,7 +74,7 @@ public final class QueryRunner {
 
     public static Map<String, ?> callData(Gom gom) {
         ExecutionResult result = call(gom);
-        assertEquals(0, result.getErrors().size());
+        assertTrue(result.getErrors().isEmpty());
         return result.getData();
     }
 

@@ -15,78 +15,74 @@ import static org.junit.Assert.assertFalse;
 @NoArgsConstructor(access = PUBLIC)
 public final class QueryTest {
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class WithoutSourceNorArguments {
-
-        public String foobar() {
-            return "foobar";
-        }
-
-    }
-
     @Test
     public void withoutSourceNorArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class WithoutSourceNorArguments {
+
+            public String foobar() {
+                return "foobar";
+            }
+
+        }
         Gom gom = newGom()
                 .resolvers(singletonList(new WithoutSourceNorArguments()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class WithSource {
-
-        public static final class Source {
-        }
-
-        public String foobar(Source source) {
-            return "foobar";
-        }
-
-    }
-
     @Test
     public void withSource() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class WithSource {
+
+            final class Source {
+            }
+
+            public String foobar(Source source) {
+                return "foobar";
+            }
+
+        }
         Gom gom = newGom()
                 .resolvers(singletonList(new WithSource()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class WithArguments {
-
-        public String foobar(Arguments arguments) {
-            return arguments.get("foobar");
-        }
-
-    }
-
     @Test
     public void withArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class WithArguments {
+
+            public String foobar(Arguments arguments) {
+                return arguments.get("foobar");
+            }
+
+        }
         Gom gom = newGom()
                 .resolvers(singletonList(new WithArguments()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
-    public static final class WithSourceAndArguments {
-
-        public static final class Source {
-        }
-
-        public String foobar(Source source, Arguments arguments) {
-            return arguments.get("foobar");
-        }
-
-    }
-
     @Test
     public void withSourceAndArguments() {
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class WithSourceAndArguments {
+
+            final class Source {
+            }
+
+            public String foobar(Source source, Arguments arguments) {
+                return arguments.get("foobar");
+            }
+
+        }
         Gom gom = newGom()
                 .resolvers(singletonList(new WithSourceAndArguments()))
                 .build();
