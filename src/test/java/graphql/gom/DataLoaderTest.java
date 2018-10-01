@@ -246,7 +246,7 @@ public final class DataLoaderTest {
         assertEquals("foobar", myTypes.get(0).get("nameWithSuffix1"));
         assertEquals("foobar", myTypes.get(0).get("nameWithSuffix2"));
         assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
-        assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
+        assertEquals("barbar", myTypes.get(1).get("nameWithSuffix2"));
         assertEquals(1, count.get());
         assertTrue(called.get());
     }
