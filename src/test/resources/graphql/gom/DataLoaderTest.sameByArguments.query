@@ -1,0 +1,6 @@
+query {
+    myTypes {
+        nameWithSuffix1: name(suffix: "bar")
+        nameWithSuffix2: name(suffix: "bar")
+    }
+}

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
@@ -75,7 +76,10 @@ public final class DataLoaderTest {
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 return myTypes
                         .stream()
-                        .collect(toMap(identity(), myType -> myType.getName() + "bar"));
+                        .collect(toMap(
+                                identity(),
+                                myType -> myType.getName() + "bar"
+                        ));
             }
 
         }
@@ -115,7 +119,10 @@ public final class DataLoaderTest {
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 return myTypes
                         .stream()
-                        .collect(toMap(identity(), myType -> myType.getName() + arguments.get("suffix")));
+                        .collect(toMap(
+                                identity(),
+                                myType -> myType.getName() + arguments.get("suffix")
+                        ));
             }
 
         }
@@ -137,7 +144,10 @@ public final class DataLoaderTest {
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 return myTypes
                         .stream()
-                        .collect(toMap(identity(), myType -> myType.getName() + "bar"));
+                        .collect(toMap(
+                                identity(),
+                                myType -> myType.getName() + "bar"
+                        ));
             }
 
         }
@@ -147,6 +157,68 @@ public final class DataLoaderTest {
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));
         assertEquals("foobar", myTypes.get(1).get("name"));
+    }
+
+    @Test
+    public void distinctByArguments() {
+        AtomicInteger count = new AtomicInteger(0);
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                count.incrementAndGet();
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> myType.getName() + arguments.getOptional("suffix").orElse("")
+                        ));
+            }
+
+        }
+        Gom gom = newGom()
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        assertEquals("foo", myTypes.get(0).get("nameWithoutSuffix"));
+        assertEquals("foofoo", myTypes.get(0).get("nameWithFooSuffix"));
+        assertEquals("foobar", myTypes.get(0).get("nameWithBarSuffix"));
+        assertEquals("bar", myTypes.get(1).get("nameWithoutSuffix"));
+        assertEquals("barfoo", myTypes.get(1).get("nameWithFooSuffix"));
+        assertEquals("barbar", myTypes.get(1).get("nameWithBarSuffix"));
+        assertEquals(3, count.get());
+    }
+
+    @Test
+    public void sameByArguments() {
+        AtomicInteger count = new AtomicInteger(0);
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                count.incrementAndGet();
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> myType.getName() + arguments.get("suffix")
+                        ));
+            }
+
+        }
+        Gom gom = newGom()
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
+        assertEquals("foobar", myTypes.get(0).get("nameWithSuffix1"));
+        assertEquals("foobar", myTypes.get(0).get("nameWithSuffix2"));
+        assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
+        assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
+        assertEquals(1, count.get());
     }
 
 }
