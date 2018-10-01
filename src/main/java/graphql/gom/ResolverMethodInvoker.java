@@ -18,7 +18,7 @@ final class ResolverMethodInvoker<C extends DataLoaderRegistryGetter> {
         try {
             return method.invoke(instance, arguments);
         } catch (Exception e) {
-            throw new IllegalStateException(
+            throw new GomException(
                     format(
                             "An error occurred while invoking %s on %s with arguments %s",
                             method,
@@ -37,7 +37,7 @@ final class ResolverMethodInvoker<C extends DataLoaderRegistryGetter> {
                 if (source == null) {
                     returnedValue = invoke(method, instance);
                 } else {
-                    throw new IllegalStateException(format(
+                    throw new GomException(format(
                             "Method %s doesn't take the source(s) as its first argument, while isn't mapped to the GraphQL type Query",
                             method
                     ));
@@ -50,7 +50,7 @@ final class ResolverMethodInvoker<C extends DataLoaderRegistryGetter> {
                 break;
             case 2:
                 if (source == null) {
-                    throw new IllegalStateException(format(
+                    throw new GomException(format(
                             "Method %s takes the source(s) as its first argument, while is mapped to the GraphQL type Query",
                             method
                     ));
@@ -62,7 +62,7 @@ final class ResolverMethodInvoker<C extends DataLoaderRegistryGetter> {
                 int min = source == null
                         ? 0
                         : 1;
-                throw new IllegalStateException(format(
+                throw new GomException(format(
                         "Method %s should take %d or %d argument(s), while currently expects %s",
                         method,
                         min,

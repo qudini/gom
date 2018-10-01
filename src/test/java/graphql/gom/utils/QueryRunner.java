@@ -36,13 +36,19 @@ public final class QueryRunner {
         String testClassName;
         try {
             testClassName = Class.forName(caller.getClassName()).getSimpleName();
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
+        } catch (ClassNotFoundException | NullPointerException e) {
+            throw new IllegalStateException("Test class name couldn't be found", e);
         }
         String testMethodName = caller.getMethodName();
         String baseResourceName = "/graphql/gom/" + testClassName + "." + testMethodName;
 
-        TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(readResource(baseResourceName + ".graphql"));
+        String graphqlFile = baseResourceName + ".graphql";
+        TypeDefinitionRegistry typeDefinitionRegistry;
+        try {
+            typeDefinitionRegistry = new SchemaParser().parse(readResource(graphqlFile));
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("File not found: " + graphqlFile, e);
+        }
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
         gom.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
@@ -56,10 +62,16 @@ public final class QueryRunner {
         DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
         gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
-        ExecutionInput executionInput = newExecutionInput()
-                .context(contextSupplier.apply(dataLoaderRegistry))
-                .query(readResource(baseResourceName + ".query"))
-                .build();
+        String queryFile = baseResourceName + ".query";
+        ExecutionInput executionInput;
+        try {
+            executionInput = newExecutionInput()
+                    .context(contextSupplier.apply(dataLoaderRegistry))
+                    .query(readResource(queryFile))
+                    .build();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("File not found: " + queryFile, e);
+        }
 
         GraphQL graphQL = newGraphQL(graphQLSchema)
                 .instrumentation(new DataLoaderDispatcherInstrumentation(dataLoaderRegistry))
