@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static graphql.gom.Gom.newGom;
@@ -19,8 +20,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class DataLoaderTest {
@@ -50,12 +50,14 @@ public final class DataLoaderTest {
 
     @Test
     public void withoutSourcesNorArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             @Batched
             public Map<MyType, String> name() {
+                called.set(true);
                 return new HashMap<>();
             }
 
@@ -64,16 +66,19 @@ public final class DataLoaderTest {
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
     @Test
     public void withSources() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             @Batched
             public Map<MyType, String> name(Set<MyType> myTypes) {
+                called.set(true);
                 return myTypes
                         .stream()
                         .collect(toMap(
@@ -89,16 +94,19 @@ public final class DataLoaderTest {
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
+        assertTrue(called.get());
     }
 
     @Test
     public void withArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             @Batched
             public Map<MyType, String> name(Arguments arguments) {
+                called.set(true);
                 return new HashMap<>();
             }
 
@@ -107,16 +115,19 @@ public final class DataLoaderTest {
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
     @Test
     public void withSourcesAndArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             @Batched
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                called.set(true);
                 return myTypes
                         .stream()
                         .collect(toMap(
@@ -132,16 +143,19 @@ public final class DataLoaderTest {
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("foobar", myTypes.get(0).get("name"));
         assertEquals("barbar", myTypes.get(1).get("name"));
+        assertTrue(called.get());
     }
 
     @Test
     public void sourceOrder() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             @Batched
             public Map<MyType, String> name(Set<MyType> myTypes) {
+                called.set(true);
                 return myTypes
                         .stream()
                         .collect(toMap(
@@ -157,10 +171,12 @@ public final class DataLoaderTest {
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callData(gom).get("myTypes");
         assertEquals("barbar", myTypes.get(0).get("name"));
         assertEquals("foobar", myTypes.get(1).get("name"));
+        assertTrue(called.get());
     }
 
     @Test
     public void distinctByArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         AtomicInteger count = new AtomicInteger(0);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
@@ -168,6 +184,7 @@ public final class DataLoaderTest {
 
             @Batched
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                called.set(true);
                 count.incrementAndGet();
                 return myTypes
                         .stream()
@@ -189,10 +206,12 @@ public final class DataLoaderTest {
         assertEquals("barfoo", myTypes.get(1).get("nameWithFooSuffix"));
         assertEquals("barbar", myTypes.get(1).get("nameWithBarSuffix"));
         assertEquals(3, count.get());
+        assertTrue(called.get());
     }
 
     @Test
     public void sameByArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         AtomicInteger count = new AtomicInteger(0);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
@@ -200,6 +219,7 @@ public final class DataLoaderTest {
 
             @Batched
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
+                called.set(true);
                 count.incrementAndGet();
                 return myTypes
                         .stream()
@@ -219,6 +239,7 @@ public final class DataLoaderTest {
         assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
         assertEquals("barbar", myTypes.get(1).get("nameWithSuffix1"));
         assertEquals(1, count.get());
+        assertTrue(called.get());
     }
 
 }

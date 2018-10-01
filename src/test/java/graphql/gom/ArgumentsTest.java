@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static graphql.gom.ArgumentsTest.MyEnum.MY_VALUE;
 import static graphql.gom.Gom.newGom;
@@ -12,8 +13,7 @@ import static graphql.gom.utils.QueryRunner.callData;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class ArgumentsTest {
@@ -204,11 +204,13 @@ public final class ArgumentsTest {
 
     @Test
     public void enumArgument() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
 
             public MyEnum foobar(Arguments arguments) {
+                called.set(true);
                 return arguments.getEnum("foobar", MyEnum.class);
             }
 
@@ -217,15 +219,18 @@ public final class ArgumentsTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("MY_VALUE", callData(gom).get("foobar"));
+        assertTrue(called.get());
     }
 
     @Test
     public void inputArgument() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
 
             public String foo(Arguments arguments) {
+                called.set(true);
                 return arguments.getInput("foo").get("bar");
             }
 
@@ -234,6 +239,7 @@ public final class ArgumentsTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foo"));
+        assertTrue(called.get());
     }
 
 }

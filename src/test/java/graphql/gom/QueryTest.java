@@ -3,25 +3,28 @@ package graphql.gom;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
 import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class QueryTest {
 
     @Test
     public void withoutSourceNorArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
 
             public String foobar() {
+                called.set(true);
                 return "foobar";
             }
 
@@ -30,10 +33,12 @@ public final class QueryTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
+        assertTrue(called.get());
     }
 
     @Test
     public void withSource() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
@@ -42,6 +47,7 @@ public final class QueryTest {
             }
 
             public String foobar(Source source) {
+                called.set(true);
                 return "foobar";
             }
 
@@ -50,15 +56,18 @@ public final class QueryTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
     @Test
     public void withArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
 
             public String foobar(Arguments arguments) {
+                called.set(true);
                 return arguments.get("foobar");
             }
 
@@ -67,10 +76,12 @@ public final class QueryTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
+        assertTrue(called.get());
     }
 
     @Test
     public void withSourceAndArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
         final class QueryResolver {
@@ -79,6 +90,7 @@ public final class QueryTest {
             }
 
             public String foobar(Source source, Arguments arguments) {
+                called.set(true);
                 return arguments.get("foobar");
             }
 
@@ -87,6 +99,7 @@ public final class QueryTest {
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
 }

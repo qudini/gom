@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
@@ -14,8 +15,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class DataFetcherTest {
@@ -48,11 +48,13 @@ public final class DataFetcherTest {
 
     @Test
     public void withoutSourceNorArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             public String name() {
+                called.set(true);
                 return "foobar";
             }
 
@@ -61,15 +63,18 @@ public final class DataFetcherTest {
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
     @Test
     public void withSource() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             public String name(MyType myType) {
+                called.set(true);
                 return myType.getName() + "bar";
             }
 
@@ -78,15 +83,18 @@ public final class DataFetcherTest {
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
+        assertTrue(called.get());
     }
 
     @Test
     public void withArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             public String name(Arguments arguments) {
+                called.set(true);
                 return arguments.get("name");
             }
 
@@ -95,15 +103,18 @@ public final class DataFetcherTest {
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
+        assertFalse(called.get());
     }
 
     @Test
     public void withSourceAndArguments() {
+        AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("MyType")
         final class MyTypeResolver {
 
             public String name(MyType myType, Arguments arguments) {
+                called.set(true);
                 return myType.getName() + arguments.get("suffix");
             }
 
@@ -112,6 +123,7 @@ public final class DataFetcherTest {
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callData(gom).get("myType")).get("name"));
+        assertTrue(called.get());
     }
 
 }
