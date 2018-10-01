@@ -1,9 +1,15 @@
 package graphql.gom;
 
 import graphql.gom.utils.Context;
+import graphql.language.StringValue;
+import graphql.schema.Coercing;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
+import graphql.schema.GraphQLScalarType;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static graphql.gom.ArgumentsTest.MyEnum.MY_VALUE;
 import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callData;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
@@ -243,6 +250,69 @@ public final class ArgumentsTest {
                 .build();
         assertEquals("foobar", callData(gom, Context::new).get("foo"));
         assertTrue(called.get());
+    }
+
+    @Test
+    public void scalarArgument() {
+        AtomicBoolean scalarCalled = new AtomicBoolean(false);
+        final class ZonedDateTimeCoercing implements Coercing<ZonedDateTime, String> {
+
+            @Override
+            public String serialize(Object value) {
+                scalarCalled.set(true);
+                if (value instanceof ZonedDateTime) {
+                    return ISO_OFFSET_DATE_TIME.format((ZonedDateTime) value);
+                } else {
+                    throw new CoercingSerializeException();
+                }
+            }
+
+            @Override
+            public ZonedDateTime parseValue(Object value) {
+                scalarCalled.set(true);
+                if (value instanceof String) {
+                    return ZonedDateTime.parse((String) value, ISO_OFFSET_DATE_TIME);
+                } else {
+                    throw new CoercingParseValueException();
+                }
+            }
+
+            @Override
+            public ZonedDateTime parseLiteral(Object value) {
+                scalarCalled.set(true);
+                if (value instanceof StringValue) {
+                    return ZonedDateTime.parse(((StringValue) value).getValue(), ISO_OFFSET_DATE_TIME);
+                } else {
+                    return null;
+                }
+            }
+
+        }
+        AtomicBoolean resolverCalled = new AtomicBoolean(false);
+        @NoArgsConstructor(access = PRIVATE)
+        @Resolver("Query")
+        final class QueryResolver {
+
+            @Resolving("foobar")
+            public ZonedDateTime foobar(Arguments arguments) {
+                resolverCalled.set(true);
+                return arguments.get("foobar");
+            }
+
+        }
+        Gom gom = newGom(Context.class)
+                .resolvers(singletonList(new QueryResolver()))
+                .build();
+        assertEquals(
+                "2011-12-03T10:15:30+01:00",
+                callData(
+                        gom,
+                        Context::new,
+                        new GraphQLScalarType("DateTime", "ZonedDateTime", new ZonedDateTimeCoercing())
+                ).get("foobar")
+        );
+        assertTrue(resolverCalled.get());
+        assertTrue(scalarCalled.get());
     }
 
 }

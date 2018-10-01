@@ -6,6 +6,7 @@ import graphql.GraphQL;
 import graphql.GraphQLError;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import graphql.gom.Gom;
+import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -17,6 +18,7 @@ import org.dataloader.DataLoaderRegistry;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static graphql.ExecutionInput.newExecutionInput;
 import static graphql.GraphQL.newGraphQL;
@@ -30,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 @NoArgsConstructor(access = PRIVATE)
 public final class QueryRunner {
 
-    private static ExecutionResult call(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
+    private static ExecutionResult call(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType[] scalars) {
 
         StackTraceElement caller = currentThread().getStackTrace()[3];
         String testClassName;
@@ -51,6 +53,7 @@ public final class QueryRunner {
         }
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
+        Stream.of(scalars).forEach(runtimeWiringBuilder::scalar);
         gom.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
         RuntimeWiring runtimeWiring = runtimeWiringBuilder.build();
 
@@ -85,14 +88,14 @@ public final class QueryRunner {
 
     }
 
-    public static Map<String, ?> callData(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
-        ExecutionResult result = call(gom, contextSupplier);
+    public static Map<String, ?> callData(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType... scalars) {
+        ExecutionResult result = call(gom, contextSupplier, scalars);
         assertTrue(result.getErrors().isEmpty());
         return result.getData();
     }
 
-    public static List<GraphQLError> callErrors(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
-        ExecutionResult result = call(gom, contextSupplier);
+    public static List<GraphQLError> callErrors(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType... scalars) {
+        ExecutionResult result = call(gom, contextSupplier, scalars);
         assertNull(result.getData());
         return result.getErrors();
     }
