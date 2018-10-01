@@ -19,7 +19,7 @@ public final class QueryTest {
     public void withoutSourceNorArguments() {
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
-        final class WithoutSourceNorArguments {
+        final class QueryResolver {
 
             public String foobar() {
                 return "foobar";
@@ -27,7 +27,7 @@ public final class QueryTest {
 
         }
         Gom gom = newGom()
-                .resolvers(singletonList(new WithoutSourceNorArguments()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
     }
@@ -36,7 +36,7 @@ public final class QueryTest {
     public void withSource() {
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
-        final class WithSource {
+        final class QueryResolver {
 
             final class Source {
             }
@@ -47,7 +47,7 @@ public final class QueryTest {
 
         }
         Gom gom = newGom()
-                .resolvers(singletonList(new WithSource()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }
@@ -56,7 +56,7 @@ public final class QueryTest {
     public void withArguments() {
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
-        final class WithArguments {
+        final class QueryResolver {
 
             public String foobar(Arguments arguments) {
                 return arguments.get("foobar");
@@ -64,7 +64,7 @@ public final class QueryTest {
 
         }
         Gom gom = newGom()
-                .resolvers(singletonList(new WithArguments()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callData(gom).get("foobar"));
     }
@@ -73,7 +73,7 @@ public final class QueryTest {
     public void withSourceAndArguments() {
         @NoArgsConstructor(access = PRIVATE)
         @Resolver("Query")
-        final class WithSourceAndArguments {
+        final class QueryResolver {
 
             final class Source {
             }
@@ -84,7 +84,7 @@ public final class QueryTest {
 
         }
         Gom gom = newGom()
-                .resolvers(singletonList(new WithSourceAndArguments()))
+                .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callErrors(gom).isEmpty());
     }

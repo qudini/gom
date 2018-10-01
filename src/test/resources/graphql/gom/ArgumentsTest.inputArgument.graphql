@@ -1,0 +1,7 @@
+input MyInput {
+    bar: String!
+}
+
+type Query {
+    foo(foo: MyInput!): String!
+}
