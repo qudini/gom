@@ -7,7 +7,9 @@ import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import lombok.NoArgsConstructor;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -21,10 +23,14 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class ArgumentsTest {
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     public enum MyEnum {
         MY_VALUE
@@ -35,7 +41,8 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
-        assertNull(arguments.get("wrongkey"));
+        exception.expect(NullPointerException.class);
+        arguments.get("wrongkey");
     }
 
     @Test
@@ -91,7 +98,8 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
-        assertNull(arguments.getEnum("wrongkey", MyEnum.class));
+        exception.expect(NullPointerException.class);
+        arguments.getEnum("wrongkey", MyEnum.class);
     }
 
     @Test
@@ -149,7 +157,8 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
-        assertNull(arguments.getInput("wrongkey"));
+        exception.expect(NullPointerException.class);
+        arguments.getInput("wrongkey");
     }
 
     @Test

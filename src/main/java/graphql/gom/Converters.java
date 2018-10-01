@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,11 +53,13 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
 
         private final Set<Converter<?, C>> converters = new HashSet<>();
 
+        @Nonnull
         public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, ?> converter) {
             converters.add(new Converter<>(clazz, converter));
             return this;
         }
 
+        @Nonnull
         public Converters<C> build() {
             return new Converters<>(unmodifiableCollection(converters));
         }
@@ -79,6 +82,7 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
                 .orElse(CompletableFuture.completedFuture(value));
     }
 
+    @Nonnull
     public static <C extends DataLoaderRegistryGetter> Builder<C> newConverters(Class<C> contextClass) {
         return new Builder<>();
     }

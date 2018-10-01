@@ -4,6 +4,7 @@ import graphql.schema.idl.RuntimeWiring;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoaderRegistry;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.BinaryOperator;
@@ -26,16 +27,19 @@ public final class Gom {
             this.converters = newConverters(contextClass).build();
         }
 
+        @Nonnull
         public Builder<C> resolvers(Collection<Object> resolvers) {
             this.resolvers = resolvers;
             return this;
         }
 
+        @Nonnull
         public Builder<C> converters(Converters<C> converters) {
             this.converters = converters;
             return this;
         }
 
+        @Nonnull
         public Gom build() {
             ResolverInspection<C> inspection = ResolverInspection.inspect(resolvers, converters);
             return new Gom(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
@@ -68,6 +72,7 @@ public final class Gom {
         dataLoaderRegistrars.forEach(registrar -> registrar.register(registry));
     }
 
+    @Nonnull
     public static <C extends DataLoaderRegistryGetter> Builder<C> newGom(Class<C> contextClass) {
         return new Builder<>(contextClass);
     }
