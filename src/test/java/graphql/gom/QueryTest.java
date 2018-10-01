@@ -24,7 +24,7 @@ public final class QueryTest {
         @Resolver("Query")
         final class QueryResolver {
 
-            @Fetcher
+            @Resolving("foobar")
             public String foobar() {
                 called.set(true);
                 return "foobar";
@@ -48,7 +48,7 @@ public final class QueryTest {
             final class Source {
             }
 
-            @Fetcher
+            @Resolving("foobar")
             public String foobar(Source source) {
                 called.set(true);
                 return "foobar";
@@ -69,7 +69,7 @@ public final class QueryTest {
         @Resolver("Query")
         final class QueryResolver {
 
-            @Fetcher
+            @Resolving("foobar")
             public String foobar(Arguments arguments) {
                 called.set(true);
                 return arguments.get("foobar");
@@ -93,7 +93,7 @@ public final class QueryTest {
             final class Source {
             }
 
-            @Fetcher
+            @Resolving("foobar")
             public String foobar(Source source, Arguments arguments) {
                 called.set(true);
                 return arguments.get("foobar");

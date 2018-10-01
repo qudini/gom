@@ -8,5 +8,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-public @interface Fetcher {
+public @interface Resolving {
+
+    String value();
+
 }

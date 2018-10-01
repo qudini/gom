@@ -210,7 +210,7 @@ public final class ArgumentsTest {
         @Resolver("Query")
         final class QueryResolver {
 
-            @Fetcher
+            @Resolving("foobar")
             public MyEnum foobar(Arguments arguments) {
                 called.set(true);
                 return arguments.getEnum("foobar", MyEnum.class);
@@ -231,7 +231,7 @@ public final class ArgumentsTest {
         @Resolver("Query")
         final class QueryResolver {
 
-            @Fetcher
+            @Resolving("foo")
             public String foo(Arguments arguments) {
                 called.set(true);
                 return arguments.getInput("foo").get("bar");

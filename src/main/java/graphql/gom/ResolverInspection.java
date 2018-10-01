@@ -59,7 +59,7 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
         return converters.convert(returnedValue, context);
     }
 
-    private <S, R> void createBatchedFieldWiring(String type, Method method, Object instance) {
+    private <S, R> void createBatchedFieldWiring(String type, String field, Method method, Object instance) {
         String dataLoaderKey = randomUUID().toString();
         Supplier<DataLoader<DataLoaderKey<S, C>, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
             Optional<C> maybeContext = keys
@@ -109,7 +109,7 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
         );
         fieldWirings.add(new FieldWiring<>(
                 type,
-                method.getName(),
+                field,
                 environment -> {
                     C context = environment.getContext();
                     return context
@@ -124,10 +124,10 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
         ));
     }
 
-    private void createSimpleFieldWiring(String type, Method method, Object instance) {
+    private void createSimpleFieldWiring(String type, String field, Method method, Object instance) {
         fieldWirings.add(new FieldWiring<>(
                 type,
-                method.getName(),
+                field,
                 environment -> invoke(
                         method,
                         instance,
@@ -147,15 +147,16 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
                     String type = clazz.getAnnotation(Resolver.class).value();
                     Stream
                             .of(clazz.getDeclaredMethods())
-                            .filter(method -> method.isAnnotationPresent(Fetcher.class))
+                            .filter(method -> method.isAnnotationPresent(Resolving.class))
                             .forEach(method -> {
+                                String field = method.getAnnotation(Resolving.class).value();
                                 if (!method.isAccessible()) {
                                     method.setAccessible(true);
                                 }
                                 if (method.isAnnotationPresent(Batched.class)) {
-                                    createBatchedFieldWiring(type, method, resolver);
+                                    createBatchedFieldWiring(type, field, method, resolver);
                                 } else {
-                                    createSimpleFieldWiring(type, method, resolver);
+                                    createSimpleFieldWiring(type, field, method, resolver);
                                 }
                             });
                 });

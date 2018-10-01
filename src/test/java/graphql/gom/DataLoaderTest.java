@@ -40,7 +40,7 @@ public final class DataLoaderTest {
 
         private final boolean fooFirst;
 
-        @Fetcher
+        @Resolving("myTypes")
         public List<MyType> myTypes() {
             return asList(
                     fooFirst ? new MyType("foo") : new MyType("bar"),
@@ -58,7 +58,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name() {
                 called.set(true);
                 return new HashMap<>();
@@ -80,7 +80,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 called.set(true);
                 return myTypes
@@ -109,7 +109,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Arguments arguments) {
                 called.set(true);
                 return new HashMap<>();
@@ -131,7 +131,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 return myTypes
@@ -160,7 +160,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 called.set(true);
                 return myTypes
@@ -190,7 +190,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 count.incrementAndGet();
@@ -226,7 +226,7 @@ public final class DataLoaderTest {
         final class MyTypeResolver {
 
             @Batched
-            @Fetcher
+            @Resolving("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 count.incrementAndGet();
