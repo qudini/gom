@@ -16,6 +16,7 @@ import org.dataloader.DataLoaderRegistry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static graphql.ExecutionInput.newExecutionInput;
 import static graphql.GraphQL.newGraphQL;
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 @NoArgsConstructor(access = PRIVATE)
 public final class QueryRunner {
 
-    private static ExecutionResult call(Gom gom) {
+    private static ExecutionResult call(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
 
         StackTraceElement caller = currentThread().getStackTrace()[3];
         String testClassName;
@@ -56,7 +57,7 @@ public final class QueryRunner {
         gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
         ExecutionInput executionInput = newExecutionInput()
-                .context(new Context(dataLoaderRegistry))
+                .context(contextSupplier.apply(dataLoaderRegistry))
                 .query(readResource(baseResourceName + ".query"))
                 .build();
 
@@ -72,17 +73,24 @@ public final class QueryRunner {
 
     }
 
-    public static Map<String, ?> callData(Gom gom) {
-        ExecutionResult result = call(gom);
+    public static Map<String, ?> callData(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
+        ExecutionResult result = call(gom, contextSupplier);
         assertTrue(result.getErrors().isEmpty());
         return result.getData();
     }
 
-    public static List<GraphQLError> callErrors(Gom gom) {
-        ExecutionResult result = call(gom);
+    public static Map<String, ?> callData(Gom gom) {
+        return callData(gom, Context::new);
+    }
+
+    public static List<GraphQLError> callErrors(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier) {
+        ExecutionResult result = call(gom, contextSupplier);
         assertNull(result.getData());
         return result.getErrors();
     }
 
+    public static List<GraphQLError> callErrors(Gom gom) {
+        return callErrors(gom, Context::new);
+    }
 
 }

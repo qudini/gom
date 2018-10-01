@@ -1,13 +1,17 @@
 package graphql.gom.utils;
 
+import lombok.NoArgsConstructor;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static lombok.AccessLevel.PRIVATE;
 
-public final class ResourceReader {
+@NoArgsConstructor(access = PRIVATE)
+final class ResourceReader {
 
-    public static String readResource(String resource) {
+    static String readResource(String resource) {
         try {
             return new String(
                     Files.readAllBytes(Paths.get(

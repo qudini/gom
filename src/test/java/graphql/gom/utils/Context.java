@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoaderRegistry;
 
-@RequiredArgsConstructor
+import static lombok.AccessLevel.PACKAGE;
+
+@RequiredArgsConstructor(access = PACKAGE)
 @Getter
-public final class Context implements DataLoaderRegistryGetter {
+final class Context implements DataLoaderRegistryGetter {
 
     private final DataLoaderRegistry dataLoaderRegistry;
 
