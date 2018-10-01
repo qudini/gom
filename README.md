@@ -1,1 +1,1 @@
-# graphql-java-dataloader-tests
+# graphql-gom
