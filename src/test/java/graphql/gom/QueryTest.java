@@ -10,6 +10,7 @@ import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class QueryTest {
@@ -50,7 +51,7 @@ public final class QueryTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new WithSource()))
                 .build();
-        assertEquals(1, callErrors(gom).size());
+        assertFalse(callErrors(gom).isEmpty());
     }
 
     @NoArgsConstructor(access = PRIVATE)
@@ -89,7 +90,7 @@ public final class QueryTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new WithSourceAndArguments()))
                 .build();
-        assertEquals(1, callErrors(gom).size());
+        assertFalse(callErrors(gom).isEmpty());
     }
 
 }

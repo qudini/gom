@@ -15,6 +15,7 @@ import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @NoArgsConstructor(access = PUBLIC)
 public final class DataFetcherTest {
@@ -60,7 +61,7 @@ public final class DataFetcherTest {
         Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithoutSourceNorArguments()))
                 .build();
-        assertEquals(1, callErrors(gom).size());
+        assertFalse(callErrors(gom).isEmpty());
     }
 
     @NoArgsConstructor(access = PRIVATE)
@@ -96,7 +97,7 @@ public final class DataFetcherTest {
         Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new WithArguments()))
                 .build();
-        assertEquals(1, callErrors(gom).size());
+        assertFalse(callErrors(gom).isEmpty());
     }
 
     @NoArgsConstructor(access = PRIVATE)
