@@ -11,10 +11,8 @@ import static graphql.gom.utils.QueryRunner.callData;
 import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.*;
 
-@NoArgsConstructor(access = PUBLIC)
 public final class QueryTest {
 
     @Test

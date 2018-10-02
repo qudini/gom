@@ -9,9 +9,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-final class ResourceReader {
+public final class ResourceReader {
 
-    static String readResource(String resource) {
+    public static String readResource(String resource) {
         try {
             return new String(
                     Files.readAllBytes(Paths.get(

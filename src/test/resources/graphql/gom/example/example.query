@@ -1,0 +1,23 @@
+query {
+    blogs {
+        name
+        articles {
+            title
+            blog {
+                name
+            }
+            allComments: comments {
+                content
+                article {
+                    title
+                }
+            }
+            commentsContainingFoobar: comments(containing: "foobar") {
+                 content
+                 article {
+                     title
+                 }
+             }
+        }
+    }
+}

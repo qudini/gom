@@ -15,10 +15,8 @@ import static graphql.gom.utils.QueryRunner.callErrors;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.*;
 
-@NoArgsConstructor(access = PUBLIC)
 public final class DataFetcherTest {
 
     @RequiredArgsConstructor(access = PRIVATE)

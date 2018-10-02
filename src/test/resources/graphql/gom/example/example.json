@@ -1,0 +1,121 @@
+{
+  "data": {
+    "blogs": [
+      {
+        "name": "Blog #1",
+        "articles": [
+          {
+            "title": "Article #11",
+            "blog": {
+              "name": "Blog #1"
+            },
+            "allComments": [
+              {
+                "content": "Comment #111 foobar",
+                "article": {
+                  "title": "Article #11"
+                }
+              }, {
+                "content": "Comment #112",
+                "article": {
+                  "title": "Article #11"
+                }
+              }
+            ],
+            "commentsContainingFoobar": [
+              {
+                "content": "Comment #111 foobar",
+                "article": {
+                  "title": "Article #11"
+                }
+              }
+            ]
+          }, {
+            "title": "Article #12",
+            "blog": {
+              "name": "Blog #1"
+            },
+            "allComments": [
+              {
+                "content": "Comment #121",
+                "article": {
+                  "title": "Article #12"
+                }
+              }, {
+                "content": "Comment #122 foobar",
+                "article": {
+                  "title": "Article #12"
+                }
+              }
+            ],
+            "commentsContainingFoobar": [
+              {
+                "content": "Comment #122 foobar",
+                "article": {
+                  "title": "Article #12"
+                }
+              }
+            ]
+          }
+        ]
+      }, {
+        "name": "Blog #2",
+        "articles": [
+          {
+            "title": "Article #21",
+            "blog": {
+              "name": "Blog #2"
+            },
+            "allComments": [
+              {
+                "content": "Comment #211 foobar",
+                "article": {
+                  "title": "Article #21"
+                }
+              }, {
+                "content": "Comment #212",
+                "article": {
+                  "title": "Article #21"
+                }
+              }
+            ],
+            "commentsContainingFoobar": [
+              {
+                "content": "Comment #211 foobar",
+                "article": {
+                  "title": "Article #21"
+                }
+              }
+            ]
+          }, {
+            "title": "Article #22",
+            "blog": {
+              "name": "Blog #2"
+            },
+            "allComments": [
+              {
+                "content": "Comment #221",
+                "article": {
+                  "title": "Article #22"
+                }
+              }, {
+                "content": "Comment #222 foobar",
+                "article": {
+                  "title": "Article #22"
+                }
+              }
+            ],
+            "commentsContainingFoobar": [
+              {
+                "content": "Comment #222 foobar",
+                "article": {
+                  "title": "Article #22"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

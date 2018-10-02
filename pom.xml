@@ -11,9 +11,11 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <jsr305.version>3.0.2</jsr305.version>
         <graphql-java.version>10.0</graphql-java.version>
         <lombok.version>1.16.22</lombok.version>
         <junit.version>4.12</junit.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
         <reactor-core.version>3.1.8.RELEASE</reactor-core.version>
         <jackson-databind.version>2.9.6</jackson-databind.version>
     </properties>
@@ -27,7 +29,7 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
+            <version>${jsr305.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -39,6 +41,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

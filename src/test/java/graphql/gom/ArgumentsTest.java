@@ -22,11 +22,9 @@ import static graphql.gom.utils.QueryRunner.callData;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@NoArgsConstructor(access = PUBLIC)
 public final class ArgumentsTest {
 
     @Rule

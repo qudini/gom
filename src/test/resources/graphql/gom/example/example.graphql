@@ -1,0 +1,33 @@
+type Query {
+    # Lists all the blogs:
+    blogs: [Blog!]!
+}
+
+type Blog {
+    # Gets a blog's id:
+    id: Int!
+    # Gets a blog's name:
+    name: String!
+    # Lists all articles of a blog:
+    articles: [Article!]!
+}
+
+type Article {
+    # Gets an article's id:
+    id: Int!
+    # Gets an article's title:
+    title: String!
+    # Gets an article's blog:
+    blog: Blog!
+    # Lists all comments of an article, possibly filtered by content:
+    comments(containing: String): [Comment!]!
+}
+
+type Comment {
+    # Gets a comment's id:
+    id: Int!
+    # Gets a comment's content:
+    content: String!
+    # Gets a comment's article:
+    article: Article!
+}

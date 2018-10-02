@@ -20,10 +20,8 @@ import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PUBLIC;
 import static org.junit.Assert.*;
 
-@NoArgsConstructor(access = PUBLIC)
 public final class DataLoaderTest {
 
     @RequiredArgsConstructor(access = PRIVATE)
