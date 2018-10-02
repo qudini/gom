@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
 import static java.util.Collections.unmodifiableCollection;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
@@ -79,7 +80,7 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
                 .findFirst()
                 .map(converter -> converter.convert(value, context))
                 .map(object -> convert(object, context))
-                .orElse(CompletableFuture.completedFuture(value));
+                .orElse(completedFuture(value));
     }
 
     @Nonnull
