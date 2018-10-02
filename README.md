@@ -76,11 +76,11 @@ public class ArticleResolver {
 A resolver's method takes one or two parameters:
 
 - the source, mandatory,
-- the arguments, optional (see FIXME add link to Arguments section).
+- the arguments, optional (see the [Arguments](#arguments) section).
 
 Special case for types that have no source (e.g. `Query`), their resolvers' methods will only accept an optional parameter for the arguments (i.e. no source).
 
-A resolver's method can return anything (FIXME add link to converters section).
+A resolver's method can return anything (more details in the [Converters](#convertersmyconvertersinstance) section).
 
 All of the following resolvers are thus valid ones:
 
