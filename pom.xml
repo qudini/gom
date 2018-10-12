@@ -10,6 +10,10 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <name>GOM</name>
+    <description>GraphQL-Object Mapping</description>
+    <url>https://github.com/sp00m/graphql-gom</url>
+
     <properties>
         <java.version>1.8</java.version>
         <jsr305.version>3.0.2</jsr305.version>
