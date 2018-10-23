@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dataloader.DataLoader;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
@@ -28,7 +29,7 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> CompletableFuture<R> invoke(MethodInvoker methodInvoker, Object source, Arguments arguments, C context) {
+    private <R> CompletableFuture<R> invoke(MethodInvoker methodInvoker, @Nullable Object source, Arguments arguments, C context) {
         final Object returnedValue;
         int parameterCount = methodInvoker.getParameterCount();
         switch (parameterCount) {
