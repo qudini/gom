@@ -1,10 +1,10 @@
 # GOM
 
-GOM stands for GraphQL-Object Mapping (just like ORM stands for Object-Relational Mapping). Largely inspired by [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools), its purpose is to still allow batching resolvers, but by implementing the recommended approach of [using `DataLoader`s](https://graphql-java.readthedocs.io/en/latest/batching.html). Put simply, GOM will prepare `DataFetcher`s and `DataLoader`s for you, so that you just need to _decorate_ your `RuntimeWiring` and `DataLoaderRegistry` instances.
+GOM stands for GraphQL-Object Mapping (just like ORM stands for Object-Relational Mapping). Largely inspired by [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools), its purpose is to still allow batching resolvers, but by implementing the recommended approach of [using `DataLoader`s](https://www.graphql-java.com/documentation/master/batching/). Put simply, GOM will prepare `DataFetcher`s and `DataLoader`s for you, so that you just need to _decorate_ your `RuntimeWiring` and `DataLoaderRegistry` instances.
 
 ## Why?
 
-[graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) used to cover everything that GOM does, but unfortunately (yet legitimately as not spec conform), [BatchedExecutionStrategy got deprecated](https://github.com/graphql-java/graphql-java/issues/963). The recommended way is now to [use `DataLoader`s](https://graphql-java.readthedocs.io/en/latest/batching.html), but [it's not yet (officially?) supported by graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools/issues/58). Also, [`DataLoader`s make it way harder to customise the queries to your data source](https://github.com/graphql-java/java-dataloader/issues/26), because they are "DataFetchingEnvironment-agnostic" by design.
+[graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) used to cover everything that GOM does, but unfortunately (yet legitimately as not spec conform), [BatchedExecutionStrategy got deprecated](https://github.com/graphql-java/graphql-java/issues/963). The recommended way is now to [use `DataLoader`s](https://www.graphql-java.com/documentation/master/batching/), but [it's not yet (officially?) supported by graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools/issues/58). Also, [`DataLoader`s make it way harder to customise the queries to your data source](https://github.com/graphql-java/java-dataloader/issues/26), because they are "DataFetchingEnvironment-agnostic" by design.
 
 So basically, **GOM tries to provide a Java-friendly match between data query optimisation and `DataLoader`s**.
 
@@ -277,7 +277,7 @@ Once you have your `Gom` instance created (either stored as a singleton or as a 
 gom.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
 ``` 
 
-When you create your java-dataloader's `DataLoaderRegistry` ([usually at query runtime](https://graphql-java.readthedocs.io/en/latest/batching.html#per-request-data-loaders), depending on how you want the cache to behave), just call:
+When you create your java-dataloader's `DataLoaderRegistry` ([usually at query runtime](https://www.graphql-java.com/documentation/master/batching/#per-request-data-loaders), depending on how you want the cache to behave), just call:
 
 ```java
 gom.decorateDataLoaderRegistry(dataLoaderRegistry);
