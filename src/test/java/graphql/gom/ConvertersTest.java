@@ -24,10 +24,10 @@ public final class ConvertersTest {
     public void mandatoryFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public CompletableFuture<String> foobar() {
                 called.set(true);
                 return completedFuture("foobar");
@@ -45,10 +45,10 @@ public final class ConvertersTest {
     public void mandatoryNoFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public String foobar() {
                 called.set(true);
                 return "foobar";
@@ -66,10 +66,10 @@ public final class ConvertersTest {
     public void optionalPresentFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public CompletableFuture<Optional<String>> foobar() {
                 called.set(true);
                 return completedFuture(Optional.of("foobar"));
@@ -87,10 +87,10 @@ public final class ConvertersTest {
     public void optionalPresentNoFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public Optional<String> foobar() {
                 called.set(true);
                 return Optional.of("foobar");
@@ -108,10 +108,10 @@ public final class ConvertersTest {
     public void optionalAbsentFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public CompletableFuture<Optional<String>> foobar() {
                 called.set(true);
                 return completedFuture(Optional.empty());
@@ -129,10 +129,10 @@ public final class ConvertersTest {
     public void optionalAbsentNoFuture() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public Optional<String> foobar() {
                 called.set(true);
                 return Optional.empty();
@@ -157,10 +157,10 @@ public final class ConvertersTest {
         AtomicBoolean resolverCalled = new AtomicBoolean(false);
         AtomicBoolean converterCalled = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public MyWrapper foobar() {
                 resolverCalled.set(true);
                 return new MyWrapper("foobar");
@@ -201,10 +201,10 @@ public final class ConvertersTest {
         AtomicBoolean resolverCalled = new AtomicBoolean(false);
         AtomicBoolean converterCalled = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public MyWrapper foobar() {
                 resolverCalled.set(true);
                 return new MyWrapper<>(new MyWrapper<>("foobar"));
@@ -246,10 +246,10 @@ public final class ConvertersTest {
         AtomicBoolean superConverterCalled = new AtomicBoolean(false);
         AtomicBoolean subConverterCalled = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public MySuperWrapper foobar() {
                 resolverCalled.set(true);
                 return new MySuperWrapper("foobar");
@@ -296,10 +296,10 @@ public final class ConvertersTest {
         AtomicBoolean superConverterCalled = new AtomicBoolean(false);
         AtomicBoolean subConverterCalled = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public MySubWrapper foobar() {
                 resolverCalled.set(true);
                 return new MySubWrapper("foobar");

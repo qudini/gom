@@ -33,12 +33,12 @@ public final class DataLoaderTest {
     }
 
     @RequiredArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
+    @TypeResolver("Query")
     public static final class QueryResolver {
 
         private final boolean fooFirst;
 
-        @Resolving("myTypes")
+        @FieldResolver("myTypes")
         public List<MyType> myTypes() {
             return asList(
                     fooFirst ? new MyType("foo") : new MyType("bar"),
@@ -52,11 +52,11 @@ public final class DataLoaderTest {
     public void withoutSourcesNorArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name() {
                 called.set(true);
                 return new HashMap<>();
@@ -74,11 +74,11 @@ public final class DataLoaderTest {
     public void withSources() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 called.set(true);
                 return myTypes
@@ -103,11 +103,11 @@ public final class DataLoaderTest {
     public void withArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Arguments arguments) {
                 called.set(true);
                 return new HashMap<>();
@@ -125,11 +125,11 @@ public final class DataLoaderTest {
     public void withSourcesAndArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 return myTypes
@@ -154,11 +154,11 @@ public final class DataLoaderTest {
     public void sourceOrder() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Set<MyType> myTypes) {
                 called.set(true);
                 return myTypes
@@ -184,11 +184,11 @@ public final class DataLoaderTest {
         AtomicBoolean called = new AtomicBoolean(false);
         AtomicInteger count = new AtomicInteger(0);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 count.incrementAndGet();
@@ -220,11 +220,11 @@ public final class DataLoaderTest {
         AtomicBoolean called = new AtomicBoolean(false);
         AtomicInteger count = new AtomicInteger(0);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
             @Batched
-            @Resolving("name")
+            @FieldResolver("name")
             public Map<MyType, String> name(Set<MyType> myTypes, Arguments arguments) {
                 called.set(true);
                 count.incrementAndGet();

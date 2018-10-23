@@ -19,10 +19,10 @@ public final class QueryTest {
     public void withoutSourceNorArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public String foobar() {
                 called.set(true);
                 return "foobar";
@@ -40,13 +40,13 @@ public final class QueryTest {
     public void withSource() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
             final class Source {
             }
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public String foobar(Source source) {
                 called.set(true);
                 return "foobar";
@@ -64,10 +64,10 @@ public final class QueryTest {
     public void withArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public String foobar(Arguments arguments) {
                 called.set(true);
                 return arguments.get("foobar");
@@ -85,13 +85,13 @@ public final class QueryTest {
     public void withSourceAndArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
             final class Source {
             }
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public String foobar(Source source, Arguments arguments) {
                 called.set(true);
                 return arguments.get("foobar");

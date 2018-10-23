@@ -2,8 +2,8 @@ package graphql.gom.example.resolvers.loading;
 
 import graphql.gom.Arguments;
 import graphql.gom.Batched;
-import graphql.gom.Resolver;
-import graphql.gom.Resolving;
+import graphql.gom.TypeResolver;
+import graphql.gom.FieldResolver;
 import graphql.gom.example.entities.Article;
 import graphql.gom.example.entities.Blog;
 import graphql.gom.example.entities.Comment;
@@ -15,21 +15,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Resolver("Article")
+@TypeResolver("Article")
 public final class ArticleResolverByLoading {
 
     private static final AtomicInteger GET_BLOG_CALL_COUNT = new AtomicInteger(0);
     private static final AtomicInteger GET_COMMENTS_CALL_COUNT = new AtomicInteger(0);
 
     @Batched
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Map<Article, Blog> getBlog(Set<Article> articles) {
         GET_BLOG_CALL_COUNT.incrementAndGet();
         return BlogService.findManyByArticles(articles);
     }
 
     @Batched
-    @Resolving("comments")
+    @FieldResolver("comments")
     public Map<Article, List<Comment>> getComments(Set<Article> articles, Arguments arguments) {
         GET_COMMENTS_CALL_COUNT.incrementAndGet();
         return CommentService.findManyByArticles(articles, arguments.getOptional("containing"));

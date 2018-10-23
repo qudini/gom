@@ -221,10 +221,10 @@ public final class ArgumentsTest {
     public void enumArgument() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public MyEnum foobar(Arguments arguments) {
                 called.set(true);
                 return arguments.getEnum("foobar", MyEnum.class);
@@ -242,10 +242,10 @@ public final class ArgumentsTest {
     public void inputArgument() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foo")
+            @FieldResolver("foo")
             public String foo(Arguments arguments) {
                 called.set(true);
                 return arguments.getInput("foo").get("bar");
@@ -297,10 +297,10 @@ public final class ArgumentsTest {
         }
         AtomicBoolean resolverCalled = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("Query")
+        @TypeResolver("Query")
         final class QueryResolver {
 
-            @Resolving("foobar")
+            @FieldResolver("foobar")
             public ZonedDateTime foobar(Arguments arguments) {
                 resolverCalled.set(true);
                 return arguments.get("foobar");

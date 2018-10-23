@@ -1,8 +1,8 @@
 package graphql.gom.example.resolvers.loading;
 
 import graphql.gom.Batched;
-import graphql.gom.Resolver;
-import graphql.gom.Resolving;
+import graphql.gom.TypeResolver;
+import graphql.gom.FieldResolver;
 import graphql.gom.example.entities.Article;
 import graphql.gom.example.entities.Blog;
 import graphql.gom.example.services.ArticleService;
@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Resolver("Blog")
+@TypeResolver("Blog")
 public final class BlogResolverByLoading {
 
     private static final AtomicInteger GET_ARTICLES_CALL_COUNT = new AtomicInteger();
 
     @Batched
-    @Resolving("articles")
+    @FieldResolver("articles")
     public Map<Blog, List<Article>> getArticles(Set<Blog> blogs) {
         GET_ARTICLES_CALL_COUNT.incrementAndGet();
         return ArticleService.findManyByBlogs(blogs);

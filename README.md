@@ -50,22 +50,22 @@ I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-k
 
 ### Resolvers
 
-To create a resolver, just annotate a class with `@graphq.gom.Resolver` while passing the GraphQL type this resolver will handle:
+To create a resolver, just annotate a class with `@graphq.gom.TypeResolver` while passing the GraphQL type this resolver will handle:
 
 ```java
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
 }
 ```
 
-Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotation one of `ArticleResolver`'s methods with `@graphq.gom.Resolving` while passing the field name this method will handle:
+Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotation one of `ArticleResolver`'s methods with `@graphq.gom.FieldResolver` while passing the field name this method will handle:
 
 ```java
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
-    @Resolving("blog")
+    @FieldResolver("blog")
     public ... getArticleBlog(...) {
         ...
     }
@@ -85,40 +85,40 @@ A resolver's method can return anything (more details in the [Converters](#conve
 All of the following resolvers are thus valid ones:
 
 ```java
-@Resolver("Query")
+@TypeResolver("Query")
 public class QueryResolver {
     
-    @Resolving("articles")
+    @FieldResolver("articles")
     public List<Article> listArticles() {
         return articleService.find();
     }
     
 }
 
-@Resolver("Query")
+@TypeResolver("Query")
 public class QueryResolver {
     
-    @Resolving("articles")
+    @FieldResolver("articles")
     public List<Article> listArticles(Arguments arguments) {
         return articleService.find(arguments);
     }
     
 }
 
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Blog getArticleBlog(Article article) {
         return blogService.findByArticle(article);
     }
     
 }
 
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Blog getArticleBlog(Article article, Arguments arguments) {
         return blogService.findByArticle(article, arguments);
     }
@@ -130,14 +130,14 @@ The above resolvers will have one `DataFetcher` implemented by method.
 
 #### @Batched
 
-To have a `DataLoader` implemented instead of only a `DataFetcher`, use the `@graphq.gom.Batched` annotation in addition to the `@Resolving` one:
+To have a `DataLoader` implemented instead of only a `DataFetcher`, use the `@graphq.gom.Batched` annotation in addition to the `@FieldResolver` one:
 
 ```java
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
     @Batched
-    @Resolving("blog")
+    @FieldResolver("blog")
     public ... getArticleBlog(...) {
         ...
     }
@@ -157,17 +157,17 @@ What doesn't change:
 For example:
 
 ```java
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
     @Batched
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Map<Article, Blog> getArticleBlog(Set<Article> articles, Arguments arguments) {
         return blogService.findByArticles(articles, arguments);
     }
     
     @Batched
-    @Resolving("comments")
+    @FieldResolver("comments")
     public Map<Article, List<Comment>> getArticleComments(Set<Article> articles) {
         return commentService.findByArticles(articles);
     }
@@ -403,55 +403,55 @@ For the following examples, let's imagine your DB has two blogs, two articles pe
 A naive implementation could be to implement the resolution of this GraphQL schema via `DataFetcher`s. GOM allows you to do it in a Java-friendly way:
 
 ```java
-@Resolver("Query")
+@TypeResolver("Query")
 public class QueryResolver {
     
     private BlogService blogService;
     
-    @Resolving("blogs")
+    @FieldResolver("blogs")
     public List<Blog> getBlogs() {
         return blogService.findAll();
     }
     
 }
 
-@Resolver("Blog")
+@TypeResolver("Blog")
 public class BlogResolver {
     
     private ArticleService articleService;
     
-    @Resolving("articles")
+    @FieldResolver("articles")
     public List<Article> getArticles(Blog blog) {
         return articleService.findManyByBlog(blog);
     }
     
 }
 
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
     private BlogService blogService;
     
     private CommentService commentService;
     
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Blog getBlog(Article article) {
         return blogService.findOneByArticle(article);
     }
     
-    @Resolving("comments")
+    @FieldResolver("comments")
     public List<Comment> getComments(Article article, Arguments arguments) {
         return commentService.findManyByArticle(article, arguments.getOptional("containing"));
     }
     
 }
 
-@Resolver("Comment")
+@TypeResolver("Comment")
 public class CommentResolver {
     
     private ArticleService articleService;
     
-    @Resolving("article")
+    @FieldResolver("article")
     public Article getArticle(Comment comment) {
         return articleService.findOneByComment(comment);
     }
@@ -474,32 +474,32 @@ If resolvers are actually doing IOs to a database for example, this can quite qu
 Let's improve this query resolution by using `DataLoader`s instead:
 
 ```java
-@Resolver("Query")
+@TypeResolver("Query")
 public class QueryResolver {
     
     private BlogService blogService;
     
-    @Resolving("blogs")
+    @FieldResolver("blogs")
     public List<Blog> getBlogs() {
         return blogService.findAll();
     }
     
 }
 
-@Resolver("Blog")
+@TypeResolver("Blog")
 public class BlogResolver {
     
     private ArticleService articleService;
     
     @Batched
-    @Resolving("articles")
+    @FieldResolver("articles")
     public Map<Blog, List<Article>> getArticles(Set<Blog> blogs) {
         return articleService.findManyByBlogs(blogs);
     }
     
 }
 
-@Resolver("Article")
+@TypeResolver("Article")
 public class ArticleResolver {
     
     private BlogService blogService;
@@ -507,26 +507,26 @@ public class ArticleResolver {
     private CommentService commentService;
     
     @Batched
-    @Resolving("blog")
+    @FieldResolver("blog")
     public Map<Article, Blog> getBlog(Set<Article> articles) {
         return blogService.findManyByArticles(articles);
     }
     
     @Batched
-    @Resolving("comments")
+    @FieldResolver("comments")
     public Map<Article, List<Comment>> getComments(Set<Article> articles, Arguments arguments) {
         return commentService.findManyByArticles(articles, arguments.getOptional("containing"));
     }
     
 }
 
-@Resolver("Comment")
+@TypeResolver("Comment")
 public class CommentResolver {
     
     private ArticleService articleService;
     
     @Batched
-    @Resolving("article")
+    @FieldResolver("article")
     public Map<Comment, Article> getArticle(Set<Comment> comments) {
         return articleService.findManyByComments(comments);
     }

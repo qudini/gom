@@ -28,10 +28,10 @@ public final class DataFetcherTest {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    @Resolver("Query")
+    @TypeResolver("Query")
     public static final class QueryResolver {
 
-        @Resolving("myType")
+        @FieldResolver("myType")
         public MyType myType() {
             return new MyType("foo");
         }
@@ -50,10 +50,10 @@ public final class DataFetcherTest {
     public void withoutSourceNorArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
-            @Resolving("name")
+            @FieldResolver("name")
             public String name() {
                 called.set(true);
                 return "foobar";
@@ -71,10 +71,10 @@ public final class DataFetcherTest {
     public void withSource() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
-            @Resolving("name")
+            @FieldResolver("name")
             public String name(MyType myType) {
                 called.set(true);
                 return myType.getName() + "bar";
@@ -92,10 +92,10 @@ public final class DataFetcherTest {
     public void withArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
-            @Resolving("name")
+            @FieldResolver("name")
             public String name(Arguments arguments) {
                 called.set(true);
                 return arguments.get("name");
@@ -113,10 +113,10 @@ public final class DataFetcherTest {
     public void withSourceAndArguments() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)
-        @Resolver("MyType")
+        @TypeResolver("MyType")
         final class MyTypeResolver {
 
-            @Resolving("name")
+            @FieldResolver("name")
             public String name(MyType myType, Arguments arguments) {
                 called.set(true);
                 return myType.getName() + arguments.get("suffix");

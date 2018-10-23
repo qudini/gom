@@ -158,14 +158,14 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
         Stream
                 .of(resolver)
                 .map(Object::getClass)
-                .filter(clazz -> clazz.isAnnotationPresent(Resolver.class))
+                .filter(clazz -> clazz.isAnnotationPresent(TypeResolver.class))
                 .forEach(clazz -> {
-                    String type = clazz.getAnnotation(Resolver.class).value();
+                    String type = clazz.getAnnotation(TypeResolver.class).value();
                     Stream
                             .of(clazz.getDeclaredMethods())
-                            .filter(method -> method.isAnnotationPresent(Resolving.class))
+                            .filter(method -> method.isAnnotationPresent(FieldResolver.class))
                             .forEach(method -> {
-                                String field = method.getAnnotation(Resolving.class).value();
+                                String field = method.getAnnotation(FieldResolver.class).value();
                                 MethodInvoker methodInvoker = MethodInvoker.of(method, resolver);
                                 if (method.isAnnotationPresent(Batched.class)) {
                                     createBatchedFieldWiring(type, field, methodInvoker);
