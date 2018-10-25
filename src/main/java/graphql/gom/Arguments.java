@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PACKAGE;
@@ -86,6 +87,14 @@ public final class Arguments {
         return arguments.containsKey(name)
                 ? Optional.of(getOptionalInput(name))
                 : Optional.empty();
+    }
+
+    public int size() {
+        return arguments.size();
+    }
+
+    public static Arguments empty() {
+        return new Arguments(emptyMap());
     }
 
 }

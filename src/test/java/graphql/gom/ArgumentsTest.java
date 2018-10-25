@@ -39,6 +39,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         exception.expect(NullPointerException.class);
         arguments.get("wrongkey");
     }
@@ -48,6 +49,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         assertEquals("value", arguments.get("key"));
     }
 
@@ -56,6 +58,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getOptional("wrongkey"));
     }
 
@@ -64,6 +67,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of("value"), arguments.getOptional("key"));
     }
 
@@ -72,6 +76,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getNullable("wrongkey"));
     }
 
@@ -80,6 +85,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(Optional.empty()), arguments.getNullable("key"));
     }
 
@@ -88,6 +94,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(Optional.of("value")), arguments.getNullable("key"));
     }
 
@@ -96,6 +103,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         exception.expect(NullPointerException.class);
         arguments.getEnum("wrongkey", MyEnum.class);
     }
@@ -105,6 +113,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(MY_VALUE, arguments.getEnum("key", MyEnum.class));
     }
 
@@ -113,6 +122,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getOptionalEnum("wrongkey", MyEnum.class));
     }
 
@@ -121,6 +131,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(MY_VALUE), arguments.getOptionalEnum("key", MyEnum.class));
     }
 
@@ -129,6 +140,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getNullableEnum("wrongkey", MyEnum.class));
     }
 
@@ -137,6 +149,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(Optional.empty()), arguments.getNullableEnum("key", MyEnum.class));
     }
 
@@ -145,6 +158,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(Optional.of(MY_VALUE)), arguments.getNullableEnum("key", MyEnum.class));
     }
 
@@ -155,6 +169,7 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         exception.expect(NullPointerException.class);
         arguments.getInput("wrongkey");
     }
@@ -166,6 +181,7 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         assertEquals("value", arguments.getInput("key").get("subkey"));
     }
 
@@ -176,6 +192,7 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getOptionalInput("wrongkey"));
     }
 
@@ -186,6 +203,7 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         assertEquals("value", arguments.getOptionalInput("key").get().get("subkey"));
     }
 
@@ -196,6 +214,7 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getNullableInput("wrongkey"));
     }
 
@@ -204,6 +223,7 @@ public final class ArgumentsTest {
         Arguments arguments = new Arguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
+        assertEquals(1, arguments.size());
         assertEquals(Optional.of(Optional.empty()), arguments.getNullableInput("key"));
     }
 
@@ -214,7 +234,14 @@ public final class ArgumentsTest {
                 put("subkey", "value");
             }});
         }});
+        assertEquals(1, arguments.size());
         assertEquals("value", arguments.getNullableInput("key").get().get().get("subkey"));
+    }
+
+    @Test
+    public void empty() {
+        Arguments arguments = Arguments.empty();
+        assertEquals(0, arguments.size());
     }
 
     @Test
