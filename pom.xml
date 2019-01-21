@@ -22,7 +22,7 @@
         <junit.version>4.12</junit.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <reactor-core.version>3.1.8.RELEASE</reactor-core.version>
-        <jackson-databind.version>2.9.6</jackson-databind.version>
+        <jackson-databind.version>2.9.8</jackson-databind.version>
     </properties>
 
     <dependencies>
