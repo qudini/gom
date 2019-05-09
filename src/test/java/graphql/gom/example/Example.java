@@ -92,10 +92,11 @@ public final class Example {
         ExecutionInput executionInput = newExecutionInput()
                 .context(new Context(dataLoaderRegistry))
                 .query(query)
+                .dataLoaderRegistry(dataLoaderRegistry)
                 .build();
 
         GraphQL graphQL = newGraphQL(graphQLSchema)
-                .instrumentation(new DataLoaderDispatcherInstrumentation(dataLoaderRegistry))
+                .instrumentation(new DataLoaderDispatcherInstrumentation())
                 .build();
 
         return graphQL.executeAsync(executionInput);

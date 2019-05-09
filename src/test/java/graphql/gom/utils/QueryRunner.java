@@ -71,13 +71,14 @@ public final class QueryRunner {
             executionInput = newExecutionInput()
                     .context(contextSupplier.apply(dataLoaderRegistry))
                     .query(readResource(queryFile))
+                    .dataLoaderRegistry(dataLoaderRegistry)
                     .build();
         } catch (NullPointerException e) {
             throw new IllegalStateException("File not found: " + queryFile, e);
         }
 
         GraphQL graphQL = newGraphQL(graphQLSchema)
-                .instrumentation(new DataLoaderDispatcherInstrumentation(dataLoaderRegistry))
+                .instrumentation(new DataLoaderDispatcherInstrumentation())
                 .build();
 
         try {
