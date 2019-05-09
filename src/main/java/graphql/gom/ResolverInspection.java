@@ -132,7 +132,7 @@ final class ResolverInspection<C> {
                         .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
                         .load(new DataLoaderKey<>(
                                 environment.getSource(),
-                                new Arguments(environment.getArguments()),
+                                new MapBasedArguments(environment.getArguments()),
                                 environment.getContext()
                         ))
         ));
@@ -145,7 +145,7 @@ final class ResolverInspection<C> {
                 environment -> invoke(
                         methodInvoker,
                         environment.getSource(),
-                        new Arguments(environment.getArguments()),
+                        new MapBasedArguments(environment.getArguments()),
                         environment.getContext()
                 )
         ));
