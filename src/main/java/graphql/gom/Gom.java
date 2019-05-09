@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 public final class Gom {
 
-    public static final class Builder<C extends DataLoaderRegistryGetter> {
+    public static final class Builder<C> {
 
         private Collection<Object> resolvers;
         private Converters<C> converters;
@@ -73,7 +73,7 @@ public final class Gom {
     }
 
     @Nonnull
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newGom(Class<C> contextClass) {
+    public static <C> Builder<C> newGom(Class<C> contextClass) {
         return new Builder<>(contextClass);
     }
 

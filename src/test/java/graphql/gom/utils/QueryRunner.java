@@ -17,7 +17,7 @@ import org.dataloader.DataLoaderRegistry;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static graphql.ExecutionInput.newExecutionInput;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 @NoArgsConstructor(access = PRIVATE)
 public final class QueryRunner {
 
-    private static ExecutionResult call(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType[] scalars) {
+    private static ExecutionResult call(Gom gom, Object context, GraphQLScalarType[] scalars) {
 
         StackTraceElement caller = currentThread().getStackTrace()[3];
         String testClassName;
@@ -69,7 +69,7 @@ public final class QueryRunner {
         ExecutionInput executionInput;
         try {
             executionInput = newExecutionInput()
-                    .context(contextSupplier.apply(dataLoaderRegistry))
+                    .context(context)
                     .query(readResource(queryFile))
                     .dataLoaderRegistry(dataLoaderRegistry)
                     .build();
@@ -89,13 +89,13 @@ public final class QueryRunner {
 
     }
 
-    public static Map<String, ?> callData(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType... scalars) {
-        ExecutionResult result = call(gom, contextSupplier, scalars);
+    public static Map<String, ?> callData(Gom gom, Object context, GraphQLScalarType... scalars) {
+        ExecutionResult result = call(gom, context, scalars);
         assertTrue(result.getErrors().isEmpty());
         return result.getData();
     }
 
-    public static List<GraphQLError> callErrors(Gom gom, Function<DataLoaderRegistry, ?> contextSupplier, GraphQLScalarType... scalars) {
+    public static List<GraphQLError> callErrors(Gom gom, Supplier<?> contextSupplier, GraphQLScalarType... scalars) {
         ExecutionResult result = call(gom, contextSupplier, scalars);
         assertNull(result.getData());
         return result.getErrors();

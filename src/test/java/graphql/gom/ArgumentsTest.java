@@ -261,7 +261,7 @@ public final class ArgumentsTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("MY_VALUE", callData(gom, Context::new).get("foobar"));
+        assertEquals("MY_VALUE", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -282,7 +282,7 @@ public final class ArgumentsTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foo"));
+        assertEquals("foobar", callData(gom, new Context()).get("foo"));
         assertTrue(called.get());
     }
 
@@ -341,7 +341,7 @@ public final class ArgumentsTest {
                 "2011-12-03T10:15:30+01:00",
                 callData(
                         gom,
-                        Context::new,
+                        new Context(),
                         new GraphQLScalarType("DateTime", "ZonedDateTime", new ZonedDateTimeCoercing())
                 ).get("foobar")
         );

@@ -37,7 +37,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -58,7 +58,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -79,7 +79,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -100,7 +100,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -121,7 +121,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertNull(callData(gom, Context::new).get("foobar"));
+        assertNull(callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -142,7 +142,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertNull(callData(gom, Context::new).get("foobar"));
+        assertNull(callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -167,25 +167,22 @@ public final class ConvertersTest {
             }
 
         }
-        AtomicReference<Context> queryContext = new AtomicReference<>();
+        Context queryContext = new Context();
         AtomicReference<Context> converterContext = new AtomicReference<>();
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
                         newConverters(Context.class)
-                                .converter(MyWrapper.class, (myWrapper, context) -> {
+                                .converter(MyWrapper.class, (myWrapper, converterContextValue) -> {
                                     converterCalled.set(true);
-                                    converterContext.set(context);
+                                    converterContext.set(converterContextValue);
                                     return myWrapper.value;
                                 })
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, registry -> {
-            queryContext.set(new Context(registry));
-            return queryContext.get();
-        }).get("foobar"));
-        assertEquals(queryContext.get(), converterContext.get());
+        assertEquals("foobar", callData(gom, queryContext).get("foobar"));
+        assertEquals(queryContext, converterContext.get());
         assertTrue(converterCalled.get());
         assertTrue(resolverCalled.get());
     }
@@ -222,7 +219,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(converterCalled.get());
         assertTrue(resolverCalled.get());
     }
@@ -271,7 +268,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(superConverterCalled.get());
         assertFalse(subConverterCalled.get());
         assertTrue(resolverCalled.get());
@@ -321,7 +318,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertFalse(superConverterCalled.get());
         assertTrue(subConverterCalled.get());
         assertTrue(resolverCalled.get());

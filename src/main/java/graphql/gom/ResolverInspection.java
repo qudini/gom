@@ -21,7 +21,7 @@ import static org.dataloader.DataLoader.newMappedDataLoader;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class ResolverInspection<C extends DataLoaderRegistryGetter> {
+final class ResolverInspection<C> {
 
     private final Converters<C> converters;
 
@@ -128,17 +128,13 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
         fieldWirings.add(new FieldWiring<>(
                 type,
                 field,
-                environment -> {
-                    C context = environment.getContext();
-                    return context
-                            .getDataLoaderRegistry()
-                            .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
-                            .load(new DataLoaderKey<>(
-                                    environment.getSource(),
-                                    new Arguments(environment.getArguments()),
-                                    context
-                            ));
-                }
+                environment -> environment
+                        .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
+                        .load(new DataLoaderKey<>(
+                                environment.getSource(),
+                                new Arguments(environment.getArguments()),
+                                environment.getContext()
+                        ))
         ));
     }
 
@@ -177,7 +173,7 @@ final class ResolverInspection<C extends DataLoaderRegistryGetter> {
                 });
     }
 
-    static <C extends DataLoaderRegistryGetter> ResolverInspection<C> inspect(Collection<Object> resolvers, Converters<C> converters) {
+    static <C> ResolverInspection<C> inspect(Collection<Object> resolvers, Converters<C> converters) {
         ResolverInspection<C> inspector = new ResolverInspection<>(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;

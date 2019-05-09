@@ -90,7 +90,7 @@ public final class Example {
         gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
         ExecutionInput executionInput = newExecutionInput()
-                .context(new Context(dataLoaderRegistry))
+                .context(new Context())
                 .query(query)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build();
