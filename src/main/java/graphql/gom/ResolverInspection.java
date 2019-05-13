@@ -71,14 +71,14 @@ final class ResolverInspection {
         return converters.convert(returnedValue, context);
     }
 
-    private <R> void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
+    private void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
         String dataLoaderKey = randomUUID().toString();
-        Supplier<DataLoader<DataLoaderKey, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
+        Supplier<DataLoader<DataLoaderKey, Object>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
             Optional<Object> maybeContext = keys
                     .stream()
                     .map(DataLoaderKey::getContext)
                     .reduce(failIfDifferent());
-            List<CompletableFuture<Map<DataLoaderKey, R>>> futures = keys
+            List<CompletableFuture<Map<DataLoaderKey, Object>>> futures = keys
                     .stream()
                     .collect(groupingBy(DataLoaderKey::getDiscriminator))
                     .entrySet()
@@ -89,7 +89,7 @@ final class ResolverInspection {
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
-                                .<Map<Object, R>>invoke(
+                                .<Map<Object, Object>>invoke(
                                         methodInvoker,
                                         keysBySource.keySet(),
                                         entry.getKey().getArguments(),
@@ -114,22 +114,22 @@ final class ResolverInspection {
                     );
         });
         dataLoaderRegistrars.add(
-                new DataLoaderRegistrar<>(
+                new DataLoaderRegistrar(
                         dataLoaderKey,
                         dataLoaderSupplier
                 )
         );
-        fieldWirings.add(new FieldWiring<>(
+        fieldWirings.add(new FieldWiring(
                 type,
                 field,
                 environment -> environment
-                        .<DataLoaderKey, R>getDataLoader(dataLoaderKey)
+                        .<DataLoaderKey, Object>getDataLoader(dataLoaderKey)
                         .load(new DataLoaderKey(environment))
         ));
     }
 
     private void createSimpleFieldWiring(String type, String field, MethodInvoker methodInvoker) {
-        fieldWirings.add(new FieldWiring<>(
+        fieldWirings.add(new FieldWiring(
                 type,
                 field,
                 environment -> invoke(

@@ -10,12 +10,12 @@ import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
-final class FieldWiring<R> {
+final class FieldWiring {
 
     private final String typeName;
 
     private final String fieldName;
 
-    private final DataFetcher<CompletableFuture<R>> dataFetcher;
+    private final DataFetcher<CompletableFuture<Object>> dataFetcher;
 
 }
