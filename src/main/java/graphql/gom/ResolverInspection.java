@@ -71,25 +71,25 @@ final class ResolverInspection {
         return converters.convert(returnedValue, context);
     }
 
-    private <S, R> void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
+    private <R> void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
         String dataLoaderKey = randomUUID().toString();
-        Supplier<DataLoader<DataLoaderKey<S>, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
+        Supplier<DataLoader<DataLoaderKey, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
             Optional<Object> maybeContext = keys
                     .stream()
                     .map(DataLoaderKey::getContext)
                     .reduce(failIfDifferent());
-            List<CompletableFuture<Map<DataLoaderKey<S>, R>>> futures = keys
+            List<CompletableFuture<Map<DataLoaderKey, R>>> futures = keys
                     .stream()
                     .collect(groupingBy(DataLoaderKey::getDiscriminator))
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        Map<S, DataLoaderKey<S>> sameArgumentsKeysBySource = entry
+                        Map<Object, DataLoaderKey> sameArgumentsKeysBySource = entry
                                 .getValue()
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
-                                .<Map<S, R>>invoke(
+                                .<Map<Object, R>>invoke(
                                         methodInvoker,
                                         sameArgumentsKeysBySource.keySet(),
                                         entry.getKey().getArguments(),
@@ -123,8 +123,8 @@ final class ResolverInspection {
                 type,
                 field,
                 environment -> environment
-                        .<DataLoaderKey<S>, R>getDataLoader(dataLoaderKey)
-                        .load(new DataLoaderKey<>(environment))
+                        .<DataLoaderKey, R>getDataLoader(dataLoaderKey)
+                        .load(new DataLoaderKey(environment))
         ));
     }
 
