@@ -5,7 +5,6 @@ import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
-import graphql.schema.GraphQLScalarType;
 import lombok.NoArgsConstructor;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static graphql.gom.ArgumentsTest.MyEnum.MY_VALUE;
 import static graphql.gom.Gom.newGom;
 import static graphql.gom.utils.QueryRunner.callExpectingData;
+import static graphql.schema.GraphQLScalarType.newScalar;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
@@ -342,7 +342,11 @@ public final class ArgumentsTest {
                 callExpectingData(
                         gom,
                         new Context(),
-                        new GraphQLScalarType("DateTime", "ZonedDateTime", new ZonedDateTimeCoercing())
+                        newScalar()
+                                .name("DateTime")
+                                .description("ZonedDateTime")
+                                .coercing(new ZonedDateTimeCoercing())
+                                .build()
                 ).get("foobar")
         );
         assertTrue(resolverCalled.get());
