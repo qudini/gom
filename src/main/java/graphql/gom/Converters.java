@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
-import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -62,7 +62,7 @@ public final class Converters<C> {
 
         @Nonnull
         public Converters<C> build() {
-            return new Converters<>(unmodifiableCollection(converters));
+            return new Converters<>(unmodifiableSet(converters));
         }
 
     }

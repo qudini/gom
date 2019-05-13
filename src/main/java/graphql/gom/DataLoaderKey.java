@@ -1,20 +1,41 @@
 package graphql.gom;
 
+import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
 
-@RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
 @EqualsAndHashCode
 final class DataLoaderKey<S, C> {
 
+    @RequiredArgsConstructor(access = PRIVATE)
+    @Getter(PACKAGE)
+    @EqualsAndHashCode
+    static final class Discriminator {
+
+        private final Arguments arguments;
+
+        private final Selection selection;
+
+    }
+
     private final S source;
 
-    private final Arguments arguments;
+    private final Discriminator discriminator;
 
     private final C context;
+
+    DataLoaderKey(DataFetchingEnvironment environment) {
+        this.source = environment.getSource();
+        this.discriminator = new Discriminator(
+                new DefaultArguments(environment),
+                new DefaultSelection(environment)
+        );
+        this.context = environment.getContext();
+    }
 
 }

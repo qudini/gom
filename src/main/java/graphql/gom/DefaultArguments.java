@@ -1,21 +1,28 @@
 package graphql.gom;
 
+import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static lombok.AccessLevel.PACKAGE;
 
-@RequiredArgsConstructor(access = PACKAGE)
 @EqualsAndHashCode
-final class MapBasedArguments implements Arguments {
+final class DefaultArguments implements Arguments {
 
     private final Map<String, Object> arguments;
+
+    DefaultArguments(Map<String, Object> arguments) {
+        this.arguments = unmodifiableMap(arguments);
+    }
+
+    DefaultArguments(DataFetchingEnvironment environment) {
+        this(environment.getArguments());
+    }
 
     @SuppressWarnings("unchecked")
     private <T> T getNull(String name) {
@@ -70,16 +77,14 @@ final class MapBasedArguments implements Arguments {
                 : Optional.empty();
     }
 
-    private MapBasedArguments getNullInput(String name) {
-        Map<String, Object> arguments = getNull(name);
-        return arguments == null
-                ? null
-                : new MapBasedArguments(arguments);
+    private DefaultArguments getNullInput(String name) {
+        Map<String, Object> input = getNull(name);
+        return input == null ? null : new DefaultArguments(input);
     }
 
     @Override
     @Nonnull
-    public MapBasedArguments getInput(String name) {
+    public DefaultArguments getInput(String name) {
         return requireNonNull(getNullInput(name));
     }
 

@@ -49,28 +49,6 @@ public final class DataLoaderTest {
     }
 
     @Test
-    public void withoutSourcesNorArguments() {
-        AtomicBoolean called = new AtomicBoolean(false);
-        @NoArgsConstructor(access = PRIVATE)
-        @TypeResolver("MyType")
-        final class MyTypeResolver {
-
-            @Batched
-            @FieldResolver("name")
-            public Map<MyType, String> name() {
-                called.set(true);
-                return new HashMap<>();
-            }
-
-        }
-        Gom gom = newGom(Context.class)
-                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
-                .build();
-        assertFalse(callErrors(gom, Context::new).isEmpty());
-        assertFalse(called.get());
-    }
-
-    @Test
     public void withSources() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)

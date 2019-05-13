@@ -47,27 +47,6 @@ public final class DataFetcherTest {
     }
 
     @Test
-    public void withoutSourceNorArguments() {
-        AtomicBoolean called = new AtomicBoolean(false);
-        @NoArgsConstructor(access = PRIVATE)
-        @TypeResolver("MyType")
-        final class MyTypeResolver {
-
-            @FieldResolver("name")
-            public String name() {
-                called.set(true);
-                return "foobar";
-            }
-
-        }
-        Gom gom = newGom(Context.class)
-                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
-                .build();
-        assertFalse(callErrors(gom, Context::new).isEmpty());
-        assertFalse(called.get());
-    }
-
-    @Test
     public void withSource() {
         AtomicBoolean called = new AtomicBoolean(false);
         @NoArgsConstructor(access = PRIVATE)

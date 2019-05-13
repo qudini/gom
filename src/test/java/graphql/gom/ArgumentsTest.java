@@ -36,7 +36,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -46,7 +46,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -55,7 +55,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -64,7 +64,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -73,7 +73,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -82,7 +82,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullablePresentButNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
         assertEquals(1, arguments.size());
@@ -91,7 +91,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullablePresentNotNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
@@ -100,7 +100,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getEnumAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -110,7 +110,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getEnumPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -119,7 +119,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalEnumAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -128,7 +128,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalEnumPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -137,7 +137,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableEnumAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -146,7 +146,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableEnumPresentButNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
         assertEquals(1, arguments.size());
@@ -155,7 +155,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableEnumPresentNotNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
@@ -164,7 +164,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getInputAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});
@@ -176,7 +176,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getInputPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});
@@ -187,7 +187,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalInputAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});
@@ -198,7 +198,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getOptionalInputPresent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});
@@ -209,7 +209,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableInputAbsent() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});
@@ -220,7 +220,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableInputPresentButNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", null);
         }});
         assertEquals(1, arguments.size());
@@ -229,7 +229,7 @@ public final class ArgumentsTest {
 
     @Test
     public void getNullableInputPresentNotNull() {
-        Arguments arguments = new MapBasedArguments(new HashMap<String, Object>() {{
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", new HashMap<String, Object>() {{
                 put("subkey", "value");
             }});

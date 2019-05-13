@@ -91,7 +91,7 @@ public final class QueryRunner {
 
     public static Map<String, ?> callData(Gom gom, Object context, GraphQLScalarType... scalars) {
         ExecutionResult result = call(gom, context, scalars);
-        assertTrue(result.getErrors().isEmpty());
+        assertTrue(result.getErrors().toString(), result.getErrors().isEmpty());
         return result.getData();
     }
 

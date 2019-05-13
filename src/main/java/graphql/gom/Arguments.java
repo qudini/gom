@@ -36,8 +36,8 @@ public interface Arguments {
 
     int size();
 
-    static MapBasedArguments empty() {
-        return new MapBasedArguments(emptyMap());
+    static DefaultArguments empty() {
+        return new DefaultArguments(emptyMap());
     }
 
 }
