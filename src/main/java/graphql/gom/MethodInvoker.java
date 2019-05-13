@@ -40,6 +40,10 @@ final class MethodInvoker {
         return method.getParameterCount();
     }
 
+    boolean hasParameterType(Class<?> parameterType) {
+        return asList(method.getParameterTypes()).contains(parameterType);
+    }
+
     @Override
     public String toString() {
         return method.toString();

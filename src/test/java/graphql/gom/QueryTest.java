@@ -7,8 +7,8 @@ import org.junit.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static graphql.gom.Gom.newGom;
-import static graphql.gom.utils.QueryRunner.callData;
-import static graphql.gom.utils.QueryRunner.callErrors;
+import static graphql.gom.utils.QueryRunner.callExpectingData;
+import static graphql.gom.utils.QueryRunner.callExpectingErrors;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static org.junit.Assert.*;
@@ -32,7 +32,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -56,7 +56,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertFalse(callErrors(gom, Context::new).isEmpty());
+        assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 
@@ -77,7 +77,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -101,7 +101,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertFalse(callErrors(gom, Context::new).isEmpty());
+        assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
         assertFalse(called.get());
     }
 

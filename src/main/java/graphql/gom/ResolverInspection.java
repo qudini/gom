@@ -29,50 +29,37 @@ final class ResolverInspection<C> {
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
-    private <R> CompletableFuture<R> invoke(MethodInvoker methodInvoker, @Nullable Object source, Arguments arguments, C context) {
+    private Object argumentsOrSelection(MethodInvoker methodInvoker, Arguments arguments, Selection selection) {
+        return methodInvoker.hasParameterType(Arguments.class) ? arguments : selection;
+    }
+
+    private <R> CompletableFuture<R> invoke(MethodInvoker methodInvoker, @Nullable Object source, Arguments arguments, Selection selection, C context) {
         final Object returnedValue;
         int parameterCount = methodInvoker.getParameterCount();
         switch (parameterCount) {
 
             case 0:
-                if (source == null) {
-                    returnedValue = methodInvoker.invoke();
-                } else {
-                    throw new GomException(format(
-                            "Method %s doesn't take the source(s) as its first argument, while isn't mapped to the GraphQL type Query",
-                            methodInvoker
-                    ));
-                }
+                returnedValue = methodInvoker.invoke();
                 break;
 
             case 1:
                 returnedValue = source == null
-                        ? methodInvoker.invoke(arguments)
+                        ? methodInvoker.invoke(argumentsOrSelection(methodInvoker, arguments, selection))
                         : methodInvoker.invoke(source);
                 break;
 
             case 2:
-                if (source == null) {
-                    throw new GomException(format(
-                            "Method %s takes the source(s) as its first argument, while is mapped to the GraphQL type Query",
-                            methodInvoker
-                    ));
-                } else {
-                    returnedValue = methodInvoker.invoke(source, arguments);
-                }
+                returnedValue = source == null
+                        ? methodInvoker.invoke(arguments, selection)
+                        : methodInvoker.invoke(source, argumentsOrSelection(methodInvoker, arguments, selection));
+                break;
+
+            case 3:
+                returnedValue = methodInvoker.invoke(source, arguments, selection);
                 break;
 
             default:
-                int min = source == null
-                        ? 0
-                        : 1;
-                throw new GomException(format(
-                        "Method %s should take %d or %d argument(s), while currently expects %s",
-                        methodInvoker,
-                        min,
-                        min + 1,
-                        parameterCount
-                ));
+                throw new IllegalStateException(format("Invalid resolver: %s", methodInvoker));
 
         }
         return converters.convert(returnedValue, context);
@@ -87,7 +74,7 @@ final class ResolverInspection<C> {
                     .reduce(failIfDifferent());
             List<CompletableFuture<Map<DataLoaderKey<S, C>, R>>> futures = keys
                     .stream()
-                    .collect(groupingBy(DataLoaderKey::getArguments))
+                    .collect(groupingBy(DataLoaderKey::getDiscriminator))
                     .entrySet()
                     .stream()
                     .map(entry -> {
@@ -99,7 +86,8 @@ final class ResolverInspection<C> {
                                 .<Map<S, R>>invoke(
                                         methodInvoker,
                                         sameArgumentsKeysBySource.keySet(),
-                                        entry.getKey(),
+                                        entry.getKey().getArguments(),
+                                        entry.getKey().getSelection(),
                                         maybeContext.orElseThrow(IllegalStateException::new)
                                 )
                                 .thenApply(resultsBySource -> resultsBySource
@@ -130,11 +118,7 @@ final class ResolverInspection<C> {
                 field,
                 environment -> environment
                         .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
-                        .load(new DataLoaderKey<>(
-                                environment.getSource(),
-                                new MapBasedArguments(environment.getArguments()),
-                                environment.getContext()
-                        ))
+                        .load(new DataLoaderKey<>(environment))
         ));
     }
 
@@ -145,7 +129,8 @@ final class ResolverInspection<C> {
                 environment -> invoke(
                         methodInvoker,
                         environment.getSource(),
-                        new MapBasedArguments(environment.getArguments()),
+                        new DefaultArguments(environment),
+                        new DefaultSelection(environment),
                         environment.getContext()
                 )
         ));

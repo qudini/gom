@@ -1,0 +1,12 @@
+type MyName {
+    id: Int!
+    value: String!
+}
+
+type MyType {
+    name(suffix: String!): MyName!
+}
+
+type Query {
+    myTypes: [MyType!]!
+}

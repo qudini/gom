@@ -1,0 +1,10 @@
+query {
+    myTypes {
+        nameId: name {
+            id            
+        }
+        nameValue: name {
+            value
+        }
+    }
+}

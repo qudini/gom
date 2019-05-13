@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static graphql.gom.Converters.newConverters;
 import static graphql.gom.Gom.newGom;
-import static graphql.gom.utils.QueryRunner.callData;
+import static graphql.gom.utils.QueryRunner.callExpectingData;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
@@ -37,7 +37,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -58,7 +58,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -79,7 +79,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -100,7 +100,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -121,7 +121,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertNull(callData(gom, new Context()).get("foobar"));
+        assertNull(callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -142,7 +142,7 @@ public final class ConvertersTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertNull(callData(gom, new Context()).get("foobar"));
+        assertNull(callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -181,7 +181,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, queryContext).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, queryContext).get("foobar"));
         assertEquals(queryContext, converterContext.get());
         assertTrue(converterCalled.get());
         assertTrue(resolverCalled.get());
@@ -219,7 +219,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(converterCalled.get());
         assertTrue(resolverCalled.get());
     }
@@ -268,7 +268,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(superConverterCalled.get());
         assertFalse(subConverterCalled.get());
         assertTrue(resolverCalled.get());
@@ -318,7 +318,7 @@ public final class ConvertersTest {
                                 .build()
                 )
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
         assertFalse(superConverterCalled.get());
         assertTrue(subConverterCalled.get());
         assertTrue(resolverCalled.get());

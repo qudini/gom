@@ -1,0 +1,7 @@
+query {
+    myType {
+        name(suffix: "bar") {
+            value
+        }
+    }
+}

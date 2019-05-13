@@ -1,0 +1,12 @@
+query {
+    myTypes {
+        name1: name {
+            id
+            value            
+        }
+        name2: name {
+            value
+            id
+        }
+    }
+}
