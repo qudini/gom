@@ -68,7 +68,7 @@ final class ResolverInspection {
                 throw new IllegalStateException(format("Invalid resolver: %s", methodInvoker));
 
         }
-        return converters.convert(returnedValue, context);
+        return (CompletableFuture<R>) converters.convert(returnedValue, context);
     }
 
     private void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {

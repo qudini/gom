@@ -24,7 +24,6 @@ final class DefaultArguments implements Arguments {
         this(environment.getArguments());
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T getNull(String name) {
         return (T) arguments.get(name);
     }

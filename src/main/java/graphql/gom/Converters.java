@@ -20,20 +20,19 @@ public final class Converters {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @EqualsAndHashCode
-    private static final class Converter<T, C> implements Comparable<Converter<?, C>> {
+    private static final class Converter implements Comparable<Converter> {
 
         private final Class<?> clazz;
 
         @EqualsAndHashCode.Exclude
-        private final BiFunction<T, C, ?> function;
+        private final BiFunction<Object, Object, Object> function;
 
-        @SuppressWarnings("unchecked")
         private Object convert(Object value, Object context) {
-            return function.apply((T) value, (C) context);
+            return function.apply(value, context);
         }
 
         @Override
-        public int compareTo(Converter<?, C> o) {
+        public int compareTo(Converter o) {
             final int result;
             if (clazz.equals(o.clazz)) {
                 result = 0;
@@ -52,11 +51,11 @@ public final class Converters {
     @NoArgsConstructor(access = PRIVATE)
     public static final class Builder<C> {
 
-        private final Set<Converter<?, C>> converters = new HashSet<>();
+        private final Set<Converter> converters = new HashSet<>();
 
         @Nonnull
-        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, ?> converter) {
-            converters.add(new Converter<>(clazz, converter));
+        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, Object> converter) {
+            converters.add(new Converter(clazz, (BiFunction<Object, Object, Object>) converter));
             return this;
         }
 
@@ -67,13 +66,12 @@ public final class Converters {
 
     }
 
-    private final Collection<Converter<?, ?>> converters;
+    private final Collection<Converter> converters;
 
-    @SuppressWarnings("unchecked")
-    <T, R> CompletableFuture<R> convert(T value, Object context) {
+    CompletableFuture<Object> convert(Object value, Object context) {
         return value instanceof CompletableFuture
-                ? (CompletableFuture<R>) value
-                : (CompletableFuture<R>) converters
+                ? (CompletableFuture<Object>) value
+                : converters
                 .stream()
                 .filter(converter -> converter.clazz.isInstance(value))
                 .sorted()
