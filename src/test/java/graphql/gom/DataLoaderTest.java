@@ -321,4 +321,124 @@ public final class DataLoaderTest {
         assertEquals(1, count.get());
     }
 
+    @Test
+    public void distinctBySelection() {
+        AtomicInteger callCount = new AtomicInteger(0);
+        @RequiredArgsConstructor(access = PRIVATE)
+        @Getter
+        final class MyName {
+
+            private final int id;
+
+            private final String value;
+
+        }
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            @FieldResolver("name")
+            public Map<MyType, MyName> name(Set<MyType> myTypes, Selection selection) {
+                callCount.incrementAndGet();
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> new MyName(selection.contains("id") ? 1 : 2, myType.getName())
+                        ));
+            }
+
+        }
+        Gom gom = newGom(Context.class)
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
+        assertEquals(1, myTypes.get(0).get("nameId").get("id"));
+        assertNull(myTypes.get(0).get("nameId").get("value"));
+        assertNull(myTypes.get(1).get("nameValue").get("id"));
+        assertEquals("bar", myTypes.get(1).get("nameValue").get("value"));
+        assertEquals(2, callCount.get());
+    }
+
+    @Test
+    public void sameBySelection() {
+        AtomicInteger callCount = new AtomicInteger(0);
+        @RequiredArgsConstructor(access = PRIVATE)
+        @Getter
+        final class MyName {
+
+            private final int id;
+
+            private final String value;
+
+        }
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            @FieldResolver("name")
+            public Map<MyType, MyName> name(Set<MyType> myTypes) {
+                callCount.incrementAndGet();
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> new MyName("foo".equals(myType.getName()) ? 1 : 2, myType.getName())
+                        ));
+            }
+
+        }
+        Gom gom = newGom(Context.class)
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
+        assertEquals(1, myTypes.get(0).get("name1").get("id"));
+        assertEquals("foo", myTypes.get(0).get("name1").get("value"));
+        assertEquals(2, myTypes.get(1).get("name2").get("id"));
+        assertEquals("bar", myTypes.get(1).get("name2").get("value"));
+        assertEquals(1, callCount.get());
+    }
+
+    @Test
+    public void sameByArgumentsAndSelection() {
+        AtomicInteger callCount = new AtomicInteger(0);
+        @RequiredArgsConstructor(access = PRIVATE)
+        @Getter
+        final class MyName {
+
+            private final int id;
+
+            private final String value;
+
+        }
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            @FieldResolver("name")
+            public Map<MyType, MyName> name(Set<MyType> myTypes, Arguments arguments) {
+                callCount.incrementAndGet();
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> new MyName("foo".equals(myType.getName()) ? 1 : 2, myType.getName() + arguments.get("suffix"))
+                        ));
+            }
+
+        }
+        Gom gom = newGom(Context.class)
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
+        assertEquals(1, myTypes.get(0).get("name1").get("id"));
+        assertEquals("foobar", myTypes.get(0).get("name1").get("value"));
+        assertEquals(2, myTypes.get(1).get("name2").get("id"));
+        assertEquals("barbar", myTypes.get(1).get("name2").get("value"));
+        assertEquals(1, callCount.get());
+    }
+
 }
