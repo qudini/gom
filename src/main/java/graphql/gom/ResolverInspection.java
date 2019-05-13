@@ -84,14 +84,14 @@ final class ResolverInspection {
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        Map<Object, DataLoaderKey> sameArgumentsKeysBySource = entry
+                        Map<Object, DataLoaderKey> keysBySource = entry
                                 .getValue()
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
                         return this
                                 .<Map<Object, R>>invoke(
                                         methodInvoker,
-                                        sameArgumentsKeysBySource.keySet(),
+                                        keysBySource.keySet(),
                                         entry.getKey().getArguments(),
                                         entry.getKey().getSelection(),
                                         maybeContext.orElseThrow(IllegalStateException::new)
@@ -100,7 +100,7 @@ final class ResolverInspection {
                                         .entrySet()
                                         .stream()
                                         .collect(toMap(
-                                                sourceResultEntry -> sameArgumentsKeysBySource.get(sourceResultEntry.getKey()),
+                                                sourceResultEntry -> keysBySource.get(sourceResultEntry.getKey()),
                                                 Map.Entry::getValue
                                         ))
                                 );
