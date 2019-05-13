@@ -21,9 +21,9 @@ import static org.dataloader.DataLoader.newMappedDataLoader;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
-final class ResolverInspection<C> {
+final class ResolverInspection {
 
-    private final Converters<C> converters;
+    private final Converters converters;
 
     private final Set<FieldWiring> fieldWirings = new HashSet<>();
 
@@ -33,7 +33,13 @@ final class ResolverInspection<C> {
         return methodInvoker.hasParameterType(Arguments.class) ? arguments : selection;
     }
 
-    private <R> CompletableFuture<R> invoke(MethodInvoker methodInvoker, @Nullable Object source, Arguments arguments, Selection selection, C context) {
+    private <R> CompletableFuture<R> invoke(
+            MethodInvoker methodInvoker,
+            @Nullable Object source,
+            Arguments arguments,
+            Selection selection,
+            Object context
+    ) {
         final Object returnedValue;
         int parameterCount = methodInvoker.getParameterCount();
         switch (parameterCount) {
@@ -67,18 +73,18 @@ final class ResolverInspection<C> {
 
     private <S, R> void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
         String dataLoaderKey = randomUUID().toString();
-        Supplier<DataLoader<DataLoaderKey<S, C>, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
-            Optional<C> maybeContext = keys
+        Supplier<DataLoader<DataLoaderKey<S>, R>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
+            Optional<Object> maybeContext = keys
                     .stream()
                     .map(DataLoaderKey::getContext)
                     .reduce(failIfDifferent());
-            List<CompletableFuture<Map<DataLoaderKey<S, C>, R>>> futures = keys
+            List<CompletableFuture<Map<DataLoaderKey<S>, R>>> futures = keys
                     .stream()
                     .collect(groupingBy(DataLoaderKey::getDiscriminator))
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        Map<S, DataLoaderKey<S, C>> sameArgumentsKeysBySource = entry
+                        Map<S, DataLoaderKey<S>> sameArgumentsKeysBySource = entry
                                 .getValue()
                                 .stream()
                                 .collect(toMap(DataLoaderKey::getSource, identity()));
@@ -117,7 +123,7 @@ final class ResolverInspection<C> {
                 type,
                 field,
                 environment -> environment
-                        .<DataLoaderKey<S, C>, R>getDataLoader(dataLoaderKey)
+                        .<DataLoaderKey<S>, R>getDataLoader(dataLoaderKey)
                         .load(new DataLoaderKey<>(environment))
         ));
     }
@@ -158,8 +164,8 @@ final class ResolverInspection<C> {
                 });
     }
 
-    static <C> ResolverInspection<C> inspect(Collection<Object> resolvers, Converters<C> converters) {
-        ResolverInspection<C> inspector = new ResolverInspection<>(converters);
+    static ResolverInspection inspect(Collection<Object> resolvers, Converters converters) {
+        ResolverInspection inspector = new ResolverInspection(converters);
         resolvers.forEach(inspector::inspect);
         return inspector;
     }

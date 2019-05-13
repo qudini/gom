@@ -41,7 +41,7 @@ public final class DataFetcherTest {
 
     @Test
     public void defaultsToGetter() {
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foo", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -61,7 +61,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -82,7 +82,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -103,7 +103,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -124,7 +124,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -154,7 +154,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foo", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));
@@ -185,7 +185,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));

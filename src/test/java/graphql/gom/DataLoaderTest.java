@@ -68,7 +68,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -92,7 +92,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -114,7 +114,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -141,7 +141,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -179,7 +179,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -218,7 +218,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -248,7 +248,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(false), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -277,7 +277,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -310,7 +310,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Object>> myTypes = (List<Map<String, Object>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -350,7 +350,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -390,7 +390,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
@@ -430,7 +430,7 @@ public final class DataLoaderTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
                 .build();
         List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");

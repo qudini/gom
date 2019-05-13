@@ -16,7 +16,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
-public final class Converters<C> {
+public final class Converters {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @EqualsAndHashCode
@@ -28,8 +28,8 @@ public final class Converters<C> {
         private final BiFunction<T, C, ?> function;
 
         @SuppressWarnings("unchecked")
-        private Object convert(Object value, C context) {
-            return function.apply((T) value, context);
+        private Object convert(Object value, Object context) {
+            return function.apply((T) value, (C) context);
         }
 
         @Override
@@ -61,16 +61,16 @@ public final class Converters<C> {
         }
 
         @Nonnull
-        public Converters<C> build() {
-            return new Converters<>(unmodifiableSet(converters));
+        public Converters build() {
+            return new Converters(unmodifiableSet(converters));
         }
 
     }
 
-    private final Collection<Converter<?, C>> converters;
+    private final Collection<Converter<?, ?>> converters;
 
     @SuppressWarnings("unchecked")
-    <T, R> CompletableFuture<R> convert(T value, C context) {
+    <T, R> CompletableFuture<R> convert(T value, Object context) {
         return value instanceof CompletableFuture
                 ? (CompletableFuture<R>) value
                 : (CompletableFuture<R>) converters
