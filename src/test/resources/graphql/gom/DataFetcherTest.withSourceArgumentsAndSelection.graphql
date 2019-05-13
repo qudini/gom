@@ -1,0 +1,11 @@
+type MyName {
+    value: String!
+}
+
+type MyType {
+    name(suffix: String!): MyName!
+}
+
+type Query {
+    myType: MyType!
+}

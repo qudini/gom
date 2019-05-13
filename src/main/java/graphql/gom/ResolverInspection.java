@@ -59,7 +59,7 @@ final class ResolverInspection<C> {
                 break;
 
             default:
-                throw new GomException(format("Invalid resolver: %s", methodInvoker));
+                throw new IllegalStateException(format("Invalid resolver: %s", methodInvoker));
 
         }
         return converters.convert(returnedValue, context);

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static graphql.gom.ArgumentsTest.MyEnum.MY_VALUE;
 import static graphql.gom.Gom.newGom;
-import static graphql.gom.utils.QueryRunner.callData;
+import static graphql.gom.utils.QueryRunner.callExpectingData;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
@@ -261,7 +261,7 @@ public final class ArgumentsTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("MY_VALUE", callData(gom, new Context()).get("foobar"));
+        assertEquals("MY_VALUE", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -282,7 +282,7 @@ public final class ArgumentsTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, new Context()).get("foo"));
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foo"));
         assertTrue(called.get());
     }
 
@@ -339,7 +339,7 @@ public final class ArgumentsTest {
                 .build();
         assertEquals(
                 "2011-12-03T10:15:30+01:00",
-                callData(
+                callExpectingData(
                         gom,
                         new Context(),
                         new GraphQLScalarType("DateTime", "ZonedDateTime", new ZonedDateTimeCoercing())

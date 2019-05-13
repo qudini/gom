@@ -89,13 +89,13 @@ public final class QueryRunner {
 
     }
 
-    public static Map<String, ?> callData(Gom gom, Object context, GraphQLScalarType... scalars) {
+    public static Map<String, ?> callExpectingData(Gom gom, Object context, GraphQLScalarType... scalars) {
         ExecutionResult result = call(gom, context, scalars);
         assertTrue(result.getErrors().toString(), result.getErrors().isEmpty());
         return result.getData();
     }
 
-    public static List<GraphQLError> callErrors(Gom gom, Supplier<?> contextSupplier, GraphQLScalarType... scalars) {
+    public static List<GraphQLError> callExpectingErrors(Gom gom, Supplier<?> contextSupplier, GraphQLScalarType... scalars) {
         ExecutionResult result = call(gom, contextSupplier, scalars);
         assertNull(result.getData());
         return result.getErrors();
