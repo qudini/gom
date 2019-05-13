@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE)
-final class DataLoaderRegistrar<S, C extends DataLoaderRegistryGetter, R> {
+final class DataLoaderRegistrar<S, C, R> {
 
     private final String dataLoaderKey;
 

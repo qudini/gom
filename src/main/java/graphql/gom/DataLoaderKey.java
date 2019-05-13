@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PACKAGE;
 @RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
 @EqualsAndHashCode
-final class DataLoaderKey<S, C extends DataLoaderRegistryGetter> {
+final class DataLoaderKey<S, C> {
 
     private final S source;
 

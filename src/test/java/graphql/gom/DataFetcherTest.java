@@ -43,7 +43,7 @@ public final class DataFetcherTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foo", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
+        assertEquals("foo", ((Map<String, ?>) callData(gom, new Context()).get("myType")).get("name"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public final class DataFetcherTest {
         Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom, new Context()).get("myType")).get("name"));
         assertTrue(called.get());
     }
 
@@ -126,7 +126,7 @@ public final class DataFetcherTest {
         Gom gom = newGom(Context.class)
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
-        assertEquals("foobar", ((Map<String, ?>) callData(gom, Context::new).get("myType")).get("name"));
+        assertEquals("foobar", ((Map<String, ?>) callData(gom, new Context()).get("myType")).get("name"));
         assertTrue(called.get());
     }
 

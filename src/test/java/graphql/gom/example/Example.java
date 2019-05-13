@@ -90,12 +90,13 @@ public final class Example {
         gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
         ExecutionInput executionInput = newExecutionInput()
-                .context(new Context(dataLoaderRegistry))
+                .context(new Context())
                 .query(query)
+                .dataLoaderRegistry(dataLoaderRegistry)
                 .build();
 
         GraphQL graphQL = newGraphQL(graphQLSchema)
-                .instrumentation(new DataLoaderDispatcherInstrumentation(dataLoaderRegistry))
+                .instrumentation(new DataLoaderDispatcherInstrumentation())
                 .build();
 
         return graphQL.executeAsync(executionInput);

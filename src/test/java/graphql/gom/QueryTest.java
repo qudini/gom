@@ -32,7 +32,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
@@ -77,7 +77,7 @@ public final class QueryTest {
         Gom gom = newGom(Context.class)
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("foobar", callData(gom, Context::new).get("foobar"));
+        assertEquals("foobar", callData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 

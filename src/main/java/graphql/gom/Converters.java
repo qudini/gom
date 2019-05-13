@@ -16,11 +16,11 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
 
 @RequiredArgsConstructor(access = PRIVATE)
-public final class Converters<C extends DataLoaderRegistryGetter> {
+public final class Converters<C> {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @EqualsAndHashCode
-    private static final class Converter<T, C extends DataLoaderRegistryGetter> implements Comparable<Converter<?, C>> {
+    private static final class Converter<T, C> implements Comparable<Converter<?, C>> {
 
         private final Class<?> clazz;
 
@@ -50,7 +50,7 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    public static final class Builder<C extends DataLoaderRegistryGetter> {
+    public static final class Builder<C> {
 
         private final Set<Converter<?, C>> converters = new HashSet<>();
 
@@ -84,7 +84,7 @@ public final class Converters<C extends DataLoaderRegistryGetter> {
     }
 
     @Nonnull
-    public static <C extends DataLoaderRegistryGetter> Builder<C> newConverters(Class<C> contextClass) {
+    public static <C> Builder<C> newConverters(Class<C> contextClass) {
         return new Builder<>();
     }
 
