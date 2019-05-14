@@ -39,7 +39,7 @@ import static java.util.Arrays.asList;
 import static lombok.AccessLevel.PUBLIC;
 
 @NoArgsConstructor(access = PUBLIC)
-public final class Example {
+public final class ExampleTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .enable(INDENT_OUTPUT);
