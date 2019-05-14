@@ -258,7 +258,7 @@ public final class ArgumentsTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("MY_VALUE", callExpectingData(gom, new Context()).get("foobar"));
@@ -279,7 +279,7 @@ public final class ArgumentsTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foo"));
@@ -334,7 +334,7 @@ public final class ArgumentsTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals(

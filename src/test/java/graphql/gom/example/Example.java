@@ -64,7 +64,7 @@ public final class Example {
     }
 
     private Gom createGom(Object... resolvers) {
-        return newGom(Context.class)
+        return newGom()
                 .resolvers(asList(resolvers))
                 .build();
     }

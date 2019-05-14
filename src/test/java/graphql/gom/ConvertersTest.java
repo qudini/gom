@@ -34,7 +34,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -55,7 +55,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -76,7 +76,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -97,7 +97,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -118,7 +118,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callExpectingData(gom, new Context()).get("foobar"));
@@ -139,7 +139,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callExpectingData(gom, new Context()).get("foobar"));
@@ -169,7 +169,7 @@ public final class ConvertersTest {
         }
         Context queryContext = new Context();
         AtomicReference<Context> converterContext = new AtomicReference<>();
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
                         newConverters(Context.class)
@@ -208,7 +208,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
                         newConverters(Context.class)
@@ -253,7 +253,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
                         newConverters(Context.class)
@@ -303,7 +303,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
                         newConverters(Context.class)

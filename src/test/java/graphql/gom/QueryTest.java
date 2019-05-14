@@ -29,7 +29,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -53,7 +53,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -74,7 +74,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -98,7 +98,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = newGom(Context.class)
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());

@@ -10,7 +10,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Getter(PACKAGE)
 @EqualsAndHashCode
-final class DataLoaderKey<S, C> {
+final class DataLoaderKey {
 
     @RequiredArgsConstructor(access = PRIVATE)
     @Getter(PACKAGE)
@@ -23,11 +23,11 @@ final class DataLoaderKey<S, C> {
 
     }
 
-    private final S source;
+    private final Object source;
 
     private final Discriminator discriminator;
 
-    private final C context;
+    private final Object context;
 
     DataLoaderKey(DataFetchingEnvironment environment) {
         this.source = environment.getSource();

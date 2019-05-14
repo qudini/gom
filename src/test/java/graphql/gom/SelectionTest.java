@@ -28,4 +28,11 @@ public final class SelectionTest {
         assertEquals("foobar", selection.stream().collect(joining()));
     }
 
+    @Test
+    public void empty() {
+        Selection selection = Selection.empty();
+        assertFalse(selection.contains("foo"));
+        assertEquals("", selection.stream().collect(joining()));
+    }
+
 }

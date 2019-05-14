@@ -17,31 +17,31 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 public final class Gom {
 
-    public static final class Builder<C> {
+    public static final class Builder {
 
         private Collection<Object> resolvers;
-        private Converters<C> converters;
+        private Converters converters;
 
-        private Builder(Class<C> contextClass) {
+        private Builder() {
             this.resolvers = new HashSet<>();
-            this.converters = newConverters(contextClass).build();
+            this.converters = newConverters(Object.class).build();
         }
 
         @Nonnull
-        public Builder<C> resolvers(Collection<Object> resolvers) {
+        public Builder resolvers(Collection<Object> resolvers) {
             this.resolvers = resolvers;
             return this;
         }
 
         @Nonnull
-        public Builder<C> converters(Converters<C> converters) {
+        public Builder converters(Converters converters) {
             this.converters = converters;
             return this;
         }
 
         @Nonnull
         public Gom build() {
-            ResolverInspection<C> inspection = ResolverInspection.inspect(resolvers, converters);
+            ResolverInspection inspection = ResolverInspection.inspect(resolvers, converters);
             return new Gom(inspection.getFieldWirings(), inspection.getDataLoaderRegistrars());
         }
 
@@ -73,8 +73,8 @@ public final class Gom {
     }
 
     @Nonnull
-    public static <C> Builder<C> newGom(Class<C> contextClass) {
-        return new Builder<>(contextClass);
+    public static Builder newGom() {
+        return new Builder();
     }
 
     private static <T> BinaryOperator<T> fail() {
