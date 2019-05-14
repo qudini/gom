@@ -26,7 +26,7 @@ BatchLoader<Integer, Article> articleBatchLoader = new BatchLoader<Integer, Arti
 };
 ```
 
-Well, what GOM does, is basically "enhancing" those keys by passing instances of `DataLoaderKey` instead (internal class):
+What GOM actually does, is basically "enhancing" those keys by passing instances of `DataLoaderKey` instead (internal class):
 
 ```java
 class DataLoaderKey {
@@ -37,17 +37,20 @@ class DataLoaderKey {
     // the arguments, got via DataFetchingEnvironment#getArguments
     private Object arguments;
     
+    // the selection, got via DataFetchingEnvironment#getSelectionSet
+    private Object selection;
+    
     // the context, got via DataFetchingEnvironment#getContext
     private Object context;
     
 }
 ```
 
-This trick then allows a `BatchLoader` to "group the keys by arguments", and thus call _your resolvers_ as many times as there are distinct arguments, but each time will all the sources.
+This trick then allows a `BatchLoader` to "group the keys by arguments and selection", and thus call _your resolvers_ as many times as there are distinct arguments and selection, but each time will all the sources.
 
 ### Anything else?
 
-I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) brings a very nice feature that isn't implemented by GOM (yet?): the validation of your resolvers **on server startup**. GOM will make your server startup successfully anyway, and will only fail **at query runtime** if any mapping is wrong (well, this is actually how [graphql-java](https://github.com/graphql-java/graphql-java) behaves, GOM adds no logic here).
+I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) brings a very nice feature that isn't implemented by GOM (yet?): the validation of your resolvers **on server startup**. GOM will allow your server to start successfully anyway, and will only fail **at query runtime** if any mapping is wrong (this is actually how [graphql-java](https://github.com/graphql-java/graphql-java) behaves, GOM adds no logic here).
 
 ## Specs
 
@@ -76,12 +79,13 @@ public class ArticleResolver {
 }
 ```
 
-A resolver's method takes one or two parameters:
+A resolver's method takes one, two or three parameters, **in this specific order**:
 
-- the source, mandatory,
-- the arguments, optional (see the [Arguments](#arguments) section).
+1. the `source`, mandatory,
+2. the `arguments`, optional (see the [Arguments](#arguments) section).
+3. the `selection`, optional (see the [Selection](#selection) section).
 
-Special case for types that have no source (e.g. `Query`), their resolvers' methods will only accept an optional parameter for the arguments (i.e. no source).
+Special case for types that have no `source` (e.g. `Query`), their resolvers' methods will only accept `arguments` and/or `selection`.
 
 A resolver's method can return anything (more details in the [Converters](#convertersmyconvertersinstance) section).
 
@@ -108,6 +112,26 @@ public class QueryResolver {
     
 }
 
+@TypeResolver("Query")
+public class QueryResolver {
+    
+    @FieldResolver("articles")
+    public List<Article> listArticles(Selection selection) {
+        return articleService.find(selection);
+    }
+    
+}
+
+@TypeResolver("Query")
+public class QueryResolver {
+    
+    @FieldResolver("articles")
+    public List<Article> listArticles(Arguments arguments, Selection selection) {
+        return articleService.find(arguments, selection);
+    }
+    
+}
+
 @TypeResolver("Article")
 public class ArticleResolver {
     
@@ -127,9 +151,29 @@ public class ArticleResolver {
     }
     
 }
+
+@TypeResolver("Article")
+public class ArticleResolver {
+    
+    @FieldResolver("blog")
+    public Blog getArticleBlog(Article article, Selection selection) {
+        return blogService.findByArticle(article, selection);
+    }
+    
+}
+
+@TypeResolver("Article")
+public class ArticleResolver {
+    
+    @FieldResolver("blog")
+    public Blog getArticleBlog(Article article, Arguments arguments, Selection selection) {
+        return blogService.findByArticle(article, arguments, selection);
+    }
+    
+}
 ```
 
-The above resolvers will have one `DataFetcher` implemented by method.
+The above resolvers will have one `DataFetcher` implemented for each declared method.
 
 #### @Batched
 
@@ -155,7 +199,7 @@ What changes:
 
 What doesn't change:
 
-- the arguments are still available as a second parameter.
+- the `arguments` and `selection` are still available as parameters.
 
 For example:
 
@@ -165,8 +209,8 @@ public class ArticleResolver {
     
     @Batched
     @FieldResolver("blog")
-    public Map<Article, Blog> getArticleBlog(Set<Article> articles, Arguments arguments) {
-        return blogService.findByArticles(articles, arguments);
+    public Map<Article, Blog> getArticleBlog(Set<Article> articles, Arguments arguments, Selection selection) {
+        return blogService.findByArticles(articles, arguments, selection);
     }
     
     @Batched
@@ -182,7 +226,7 @@ public class ArticleResolver {
 
 #### Arguments
 
-When asking for the arguments as a second parameter of your resolvers, you'll receive an instance of `graphql.gom.Arguments`. This is basically an abstraction of the value returned by `DataFetchingEnvironment#getArguments` (`Map<String, Object>`). It provides three main methods:
+When asking for the `arguments` as a parameter of your resolvers, you'll receive an instance of `graphql.gom.Arguments`. This is basically an abstraction of the value returned by `DataFetchingEnvironment#getArguments` (`Map<String, Object>`). It provides three main methods:
 
 - `<T> T get(String name)`: to be used when an argument is mandatory according to the GraphQL schema (will fail if the returned value is `null` or absent).
 - `<T> Optional<T> getOptional(String name)`: to be used when an argument is optional according to the GraphQL schema (an empty `Optional` will be returned if the value is `null` or absent).
@@ -194,7 +238,43 @@ When asking for the arguments as a second parameter of your resolvers, you'll re
 You'll also find:
 
 - `<T extends Enum<T>> T getEnum(String name, Class<T> clazz)` (plus the `Optional` and `Nullable` variants) to deserialise directly into an `Enum`.
-- `Arguments getNullInput(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s so that you can use `Arguments` for these too.
+- `Arguments getInput(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s so that you can use `Arguments` for these too.
+
+#### Selection
+
+When asking for the `selection` as a parameter of your resolvers, you'll receive an instance of `graphql.gom.Selection`, which exposes two methods:
+
+- `boolean contains(String field)`: returns `true` if the given field is part of the selection.
+- `Stream<String> stream()`: streams the selected fields.
+
+For example, given the following query:
+
+```text
+article {
+    id
+    title
+}
+```
+
+The `selection` injected in the resolver of `article` will behave the following way:
+
+- `selection.contains("id")`: `true`
+- `selection.stream().anyMatch("title"::equals)`: `true`
+- `selection.contains("foobar")`: `false`
+
+**Important note:** the nested selections won't be taken into account. For example, with:
+
+```text
+article {
+    id
+    title
+    comments {
+        content
+    }
+}
+```
+
+The `selection` will only contain `id`, `title` and `comments`. A resolver on `comments` would then receive the `content` field in its `selection`.
 
 ### Gom
 
@@ -202,34 +282,11 @@ Once you've implemented your resolvers, you then need to create is an instance o
 
 ```java
 Gom gom = Gom
-    .newGom(MyGraphQLContext.class)
+    .newGom()
     .resolvers(myResolverInstances)
     .converters(myConvertersInstance)
     .build();
 ```
-
-#### .newGom(MyGraphQLContext.class)
-
-GOM needs the context class (the one that you'll pass to `ExecutionInput.Builder#context`) to implement `graphql.gom.DataLoaderRegistryGetter`. The simplest implementation could be:
-
-```java
-public class MyGraphQLContext implements DataLoaderRegistryGetter {
-
-    private final DataLoaderRegistry dataLoaderRegistry;
-    
-    public MyGraphQLContext(DataLoaderRegistry dataLoaderRegistry) {
-        this.dataLoaderRegistry = dataLoaderRegistry;
-    }
-    
-    @Override
-    public DataLoaderRegistry getDataLoaderRegistry() {
-        return this.dataLoaderRegistry;
-    }
-
-}
-```
-
-`Gom#newGom` then needs to know this class (only to have its generics happy): `.newGom(MyGraphQLContext.class)`.
 
 #### .resolvers(myResolverInstances)
 
@@ -252,15 +309,15 @@ For example, say you're using [Project Reactor](https://projectreactor.io/)'s re
 
 ```java
 Converters converters = Converters
-    .newConverters(MyGraphQLContext.class) // again, just like Gom#newGom, the class of the GraphQL query context
+    .newConverters(MyGraphQLContext.class) // the class of the GraphQL query context that you passed to ExecutionInput.Builder#context
     .converter(Mono.class, (mono, context) -> mono.toFuture())
     .converter(Flux.class, (flux, context) -> flux.collectList().toFuture())
     .build(); 
 ```
 
-You'll then have to pass `converters` to `Gom#converters` so that they get successfully registered.
+You'll then have to pass these `converters` to `Gom#converters` so that they get successfully registered.
 
-The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like this one. If you make `MyGraphQLContext` hold an instance of a Project Reactor's `reactor.util.context.Context`, then you can pass it through to your resolvers transparently (and thus being able to use Spring Security with your resolvers for example):
+The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: if you make `MyGraphQLContext` hold an instance of a Project Reactor's `reactor.util.context.Context` (or simply be that instance), then you can pass it through to your resolvers transparently (and thus being able to use Spring Security with your resolvers for example):
 
 ```java
 .converter(Mono.class, (mono, context) -> mono
