@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static java.util.UUID.randomUUID;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PACKAGE;
@@ -72,7 +71,7 @@ final class ResolverInspection {
     }
 
     private void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
-        String dataLoaderKey = randomUUID().toString();
+        String dataLoaderKey = methodInvoker.toString();
         Supplier<DataLoader<DataLoaderKey, Object>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
             Optional<Object> maybeContext = keys
                     .stream()
