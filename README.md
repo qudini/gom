@@ -523,7 +523,7 @@ Let see how many times the above methods were run:
 
 - `QueryResolver#getBlogs`: 1 time (entry point, returning 2 blogs),
 - `BlogResolver#getArticles`: 2 times (2 blogs, returning 4 articles),
-- `ArticleResolver#getGetBlog`: 4 times (4 articles, returning 4 blogs),
+- `ArticleResolver#getBlog`: 4 times (4 articles, returning 4 blogs),
 - `ArticleResolver#getComments`: 8 times (4 articles but two calls per article - one filtering by "foobar" and another one without filtering - returning respectively 4 and 8 comments, so 12 comments in total),
 - `CommentResolver#getArticle`: 12 times (12 comments, returning 12 articles).
 
@@ -594,7 +594,7 @@ public class CommentResolver {
 }
 ```
 
-Let compare how many times the above methods were run:
+Let's compare how many times the above methods were now run:
 
 - `QueryResolver#getBlogs`: 1 time (entry point, returning 2 blogs),
 - `BlogResolver#getArticles`: 1 time (takes 2 blogs, returns 4 articles),
