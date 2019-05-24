@@ -2,7 +2,7 @@
 
 GOM stands for GraphQL-Object Mapping (just like ORM stands for Object-Relational Mapping). Largely inspired by [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools), its purpose is to still allow batching resolvers, but by implementing the recommended approach of [using `DataLoader`s](https://www.graphql-java.com/documentation/master/batching/). Put simply, GOM will prepare `DataFetcher`s and `DataLoader`s for you, so that you just need to _decorate_ your `RuntimeWiring` and `DataLoaderRegistry` instances.
 
-[![CircleCI](https://circleci.com/gh/qudini/gom.svg?style=svg)](https://circleci.com/gh/qudini/gom)
+[![Build](https://img.shields.io/circleci/build/github/qudini/gom.svg)](https://circleci.com/gh/qudini/gom)
 [![Coverage](https://img.shields.io/codecov/c/github/qudini/gom.svg)](https://codecov.io/gh/qudini/gom)
 
 ## Why?
