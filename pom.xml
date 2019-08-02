@@ -21,7 +21,7 @@
         <lombok.version>1.18.8</lombok.version>
         <junit.version>4.12</junit.version>
         <jsonassert.version>1.5.0</jsonassert.version>
-        <jackson-databind.version>2.9.9</jackson-databind.version>
+        <jackson-databind.version>2.9.9.2</jackson-databind.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <jacoco-plugin.version>0.8.4</jacoco-plugin.version>
