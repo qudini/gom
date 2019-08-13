@@ -1,7 +1,7 @@
 package graphql.gom.example.resolvers.fetching;
 
-import graphql.gom.TypeResolver;
 import graphql.gom.FieldResolver;
+import graphql.gom.TypeResolver;
 import graphql.gom.example.entities.Article;
 import graphql.gom.example.entities.Blog;
 import graphql.gom.example.services.ArticleService;

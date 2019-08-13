@@ -5,7 +5,11 @@ import graphql.gom.example.entities.Blog;
 import graphql.gom.example.entities.Entity;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static graphql.gom.example.entities.Database.BLOGS_BY_ID;
 import static java.util.function.Function.identity;

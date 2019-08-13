@@ -1,8 +1,8 @@
 package graphql.gom.example.resolvers.loading;
 
 import graphql.gom.Batched;
-import graphql.gom.TypeResolver;
 import graphql.gom.FieldResolver;
+import graphql.gom.TypeResolver;
 import graphql.gom.example.entities.Article;
 import graphql.gom.example.entities.Blog;
 import graphql.gom.example.services.ArticleService;

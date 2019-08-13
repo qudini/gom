@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class SelectionTest {
 

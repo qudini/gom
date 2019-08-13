@@ -16,7 +16,10 @@ import static graphql.gom.utils.QueryRunner.callExpectingData;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static lombok.AccessLevel.PRIVATE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public final class ConvertersTest {
 

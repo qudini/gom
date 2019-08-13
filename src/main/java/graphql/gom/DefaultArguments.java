@@ -7,12 +7,15 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 @EqualsAndHashCode
 final class DefaultArguments implements Arguments {
+
+    private static final String UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT = "'%s' must not be null";
 
     private final Map<String, Object> arguments;
 
@@ -31,7 +34,7 @@ final class DefaultArguments implements Arguments {
     @Override
     @Nonnull
     public <T> T get(String name) {
-        return requireNonNull(getNull(name));
+        return requireNonNull(getNull(name), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
     }
 
     @Override
@@ -59,7 +62,7 @@ final class DefaultArguments implements Arguments {
     @Override
     @Nonnull
     public <T extends Enum<T>> T getEnum(String name, Class<T> clazz) {
-        return requireNonNull(getNullEnum(name, clazz));
+        return requireNonNull(getNullEnum(name, clazz), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
     }
 
     @Override
@@ -84,7 +87,7 @@ final class DefaultArguments implements Arguments {
     @Override
     @Nonnull
     public DefaultArguments getInput(String name) {
-        return requireNonNull(getNullInput(name));
+        return requireNonNull(getNullInput(name), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
     }
 
     @Override

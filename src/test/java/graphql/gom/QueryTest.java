@@ -11,7 +11,9 @@ import static graphql.gom.utils.QueryRunner.callExpectingData;
 import static graphql.gom.utils.QueryRunner.callExpectingErrors;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class QueryTest {
 
