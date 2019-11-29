@@ -109,4 +109,9 @@ final class DefaultArguments implements Arguments {
         return arguments.size();
     }
 
+    @Override
+    public String toString() {
+        return arguments.toString();
+    }
+
 }

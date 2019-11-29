@@ -38,4 +38,9 @@ final class DefaultSelection implements Selection {
         return fields.stream();
     }
 
+    @Override
+    public String toString() {
+        return fields.toString();
+    }
+
 }
