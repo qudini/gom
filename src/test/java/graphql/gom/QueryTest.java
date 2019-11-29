@@ -107,4 +107,56 @@ public final class QueryTest {
         assertFalse(called.get());
     }
 
+    @Test
+    public void withAnnotationsOnParentClassWithoutOverride() {
+        AtomicBoolean called = new AtomicBoolean(false);
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("Query")
+        class ParentQueryResolver {
+
+            @FieldResolver("foobar")
+            public String foobar() {
+                called.set(true);
+                return "foobar";
+            }
+
+        }
+        class QueryResolver extends ParentQueryResolver {
+        }
+        Gom gom = newGom()
+                .resolvers(singletonList(new QueryResolver()))
+                .build();
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
+        assertTrue(called.get());
+    }
+
+    @Test
+    public void withAnnotationsOnParentClassWithOverride() {
+        AtomicBoolean called = new AtomicBoolean(false);
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("Query")
+        class ParentQueryResolver {
+
+            @FieldResolver("foobar")
+            public String foobar() {
+                called.set(true);
+                return "foobar";
+            }
+
+        }
+        class QueryResolver extends ParentQueryResolver {
+
+            @Override
+            public String foobar() {
+                return super.foobar();
+            }
+
+        }
+        Gom gom = newGom()
+                .resolvers(singletonList(new QueryResolver()))
+                .build();
+        assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
+        assertTrue(called.get());
+    }
+
 }

@@ -7,7 +7,7 @@
 
     <groupId>com.qudini</groupId>
     <artifactId>gom</artifactId>
-    <version>3.0.2</version>
+    <version>3.1.0</version>
     <packaging>jar</packaging>
 
     <name>GOM</name>
