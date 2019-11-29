@@ -7,7 +7,7 @@
 
     <groupId>com.qudini</groupId>
     <artifactId>gom</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <packaging>jar</packaging>
 
     <name>GOM</name>
@@ -21,7 +21,7 @@
         <lombok.version>1.18.8</lombok.version>
         <junit.version>4.12</junit.version>
         <jsonassert.version>1.5.0</jsonassert.version>
-        <jackson-databind.version>2.9.9.2</jackson-databind.version>
+        <jackson-databind.version>2.9.10.1</jackson-databind.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <jacoco-plugin.version>0.8.4</jacoco-plugin.version>
@@ -109,6 +109,33 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
