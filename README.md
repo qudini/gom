@@ -239,6 +239,7 @@ You'll also find:
 
 - `<T extends Enum<T>> T getEnum(String name, Class<T> clazz)` (plus the `Optional` and `Nullable` variants) to deserialise directly into an `Enum`.
 - `Arguments getInput(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s so that you can use `Arguments` for these too.
+- `List<Arguments> getInputArray(String name)` (plus the `Optional` and `Nullable` variants) when dealing with an array of GraphQL `input`s.
 
 #### Selection
 
