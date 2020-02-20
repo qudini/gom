@@ -4,6 +4,7 @@ import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 @EqualsAndHashCode
 final class DefaultArguments implements Arguments {
@@ -79,14 +81,14 @@ final class DefaultArguments implements Arguments {
                 : Optional.empty();
     }
 
-    private DefaultArguments getNullInput(String name) {
+    private Arguments getNullInput(String name) {
         Map<String, Object> input = getNull(name);
         return input == null ? null : new DefaultArguments(input);
     }
 
     @Override
     @Nonnull
-    public DefaultArguments getInput(String name) {
+    public Arguments getInput(String name) {
         return requireNonNull(getNullInput(name), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
     }
 
@@ -101,6 +103,31 @@ final class DefaultArguments implements Arguments {
     public Optional<Optional<Arguments>> getNullableInput(String name) {
         return arguments.containsKey(name)
                 ? Optional.of(getOptionalInput(name))
+                : Optional.empty();
+    }
+
+    private List<Arguments> getNullInputArray(String name) {
+        List<Map<String, Object>> inputArray = getNull(name);
+        return inputArray == null ? null : inputArray.stream().map(DefaultArguments::new).collect(toList());
+    }
+
+    @Override
+    @Nonnull
+    public List<Arguments> getInputArray(String name) {
+        return requireNonNull(getNullInputArray(name), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
+    }
+
+    @Override
+    @Nonnull
+    public Optional<List<Arguments>> getOptionalInputArray(String name) {
+        return ofNullable(getNullInputArray(name));
+    }
+
+    @Override
+    @Nonnull
+    public Optional<Optional<List<Arguments>>> getNullableInputArray(String name) {
+        return arguments.containsKey(name)
+                ? Optional.of(getOptionalInputArray(name))
                 : Optional.empty();
     }
 

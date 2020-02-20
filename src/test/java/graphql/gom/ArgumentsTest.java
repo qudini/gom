@@ -11,7 +11,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -236,6 +238,94 @@ public final class ArgumentsTest {
         }});
         assertEquals(1, arguments.size());
         assertEquals("value", arguments.getNullableInput("key").get().get().get("subkey"));
+    }
+
+    @Test
+    public void getInputArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        exception.expect(NullPointerException.class);
+        arguments.getInputArray("wrongkey");
+    }
+
+    @Test
+    public void getInputArrayPresent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals("value", arguments.getInputArray("key").get(0).get("subkey"));
+    }
+
+    @Test
+    public void getOptionalInputArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.empty(), arguments.getOptionalInputArray("wrongkey"));
+    }
+
+    @Test
+    public void getOptionalInputArrayPresent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals("value", arguments.getOptionalInputArray("key").get().get(0).get("subkey"));
+    }
+
+    @Test
+    public void getNullableInputArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.empty(), arguments.getNullableInputArray("wrongkey"));
+    }
+
+    @Test
+    public void getNullableInputArrayPresentButNull() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", null);
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.of(Optional.empty()), arguments.getNullableInputArray("key"));
+    }
+
+    @Test
+    public void getNullableInputArrayPresentNotNull() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>() {{
+                add(new HashMap<String, Object>() {{
+                    put("subkey", "value");
+                }});
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals("value", arguments.getNullableInputArray("key").get().get().get(0).get("subkey"));
     }
 
     @Test

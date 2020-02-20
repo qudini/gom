@@ -1,6 +1,7 @@
 package graphql.gom;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
@@ -34,9 +35,18 @@ public interface Arguments {
     @Nonnull
     Optional<Optional<Arguments>> getNullableInput(String name);
 
+    @Nonnull
+    List<Arguments> getInputArray(String name);
+
+    @Nonnull
+    Optional<List<Arguments>> getOptionalInputArray(String name);
+
+    @Nonnull
+    Optional<Optional<List<Arguments>>> getNullableInputArray(String name);
+
     int size();
 
-    static DefaultArguments empty() {
+    static Arguments empty() {
         return new DefaultArguments(emptyMap());
     }
 
