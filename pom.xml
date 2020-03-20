@@ -14,6 +14,14 @@
     <description>GraphQL-Object Mapping</description>
     <url>https://github.com/qudini/gom</url>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub</name>
+            <url>https://maven.pkg.github.com/qudini/gom</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <java.version>1.8</java.version>
         <jsr305.version>3.0.2</jsr305.version>
