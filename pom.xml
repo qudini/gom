@@ -14,6 +14,20 @@
     <description>GraphQL-Object Mapping</description>
     <url>https://github.com/qudini/gom</url>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <organization>Qudini</organization>
+            <organizationUrl>https://www.qudini.com</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
         <java.version>1.8</java.version>
         <jsr305.version>3.0.2</jsr305.version>
