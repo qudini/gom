@@ -53,7 +53,7 @@ I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-k
 
 ### Resolvers
 
-To create a resolver, just annotate a class with `@graphq.gom.TypeResolver` while passing the GraphQL type this resolver will handle:
+To create a resolver, just annotate a class with `@com.qudini.gom.TypeResolver` while passing the GraphQL type this resolver will handle:
 
 ```java
 @TypeResolver("Article")
@@ -62,7 +62,7 @@ public class ArticleResolver {
 }
 ```
 
-Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotation one of `ArticleResolver`'s methods with `@graphq.gom.FieldResolver` while passing the field name this method will handle:
+Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotation one of `ArticleResolver`'s methods with `@com.qudini.gom.FieldResolver` while passing the field name this method will handle:
 
 ```java
 @TypeResolver("Article")
@@ -174,7 +174,7 @@ The above resolvers will have one `DataFetcher` implemented for each declared me
 
 #### @Batched
 
-To have a `DataLoader` implemented instead of only a `DataFetcher`, use the `@graphq.gom.Batched` annotation in addition to the `@FieldResolver` one:
+To have a `DataLoader` implemented instead of only a `DataFetcher`, use the `@com.qudini.gom.Batched` annotation in addition to the `@FieldResolver` one:
 
 ```java
 @TypeResolver("Article")
@@ -517,7 +517,7 @@ public class CommentResolver {
 }
 ```
 
-Let see how many times the above methods were run:
+Let's see how many times the above methods were run:
 
 - `QueryResolver#getBlogs`: 1 time (entry point, returning 2 blogs),
 - `BlogResolver#getArticles`: 2 times (2 blogs, returning 4 articles),
