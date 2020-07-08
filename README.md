@@ -49,7 +49,17 @@ This trick then allows a `BatchLoader` to "group the keys by arguments and selec
 
 I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) brings a very nice feature that isn't implemented by GOM (yet?): the validation of your resolvers **on server startup**. GOM will allow your server to start successfully anyway, and will only fail **at query runtime** if any mapping is wrong (this is actually how [graphql-java](https://github.com/graphql-java/graphql-java) behaves, GOM adds no logic here).
 
-## Specs
+## Installation
+
+```xml
+<dependency>
+    <groupId>com.qudini</groupId>
+    <artifactId>qudini-gom</artifactId>
+    <version>${qudini-gom.version}</version>
+</dependency>
+```
+
+## Usage
 
 ### Resolvers
 

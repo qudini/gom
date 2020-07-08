@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.qudini</groupId>
-    <artifactId>gom</artifactId>
+    <artifactId>qudini-gom</artifactId>
     <version>0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
