@@ -41,7 +41,7 @@ public final class QueryRunner {
             throw new IllegalStateException("Test class name couldn't be found", e);
         }
         String testMethodName = caller.getMethodName();
-        String baseResourceName = "/graphql/gom/" + testClassName + "." + testMethodName;
+        String baseResourceName = "/com/qudini/gom/" + testClassName + "." + testMethodName;
 
         String graphqlFile = baseResourceName + ".graphql";
         TypeDefinitionRegistry typeDefinitionRegistry;
