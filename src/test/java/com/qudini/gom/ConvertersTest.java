@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.qudini.gom.Converters.newConverters;
+import static com.qudini.gom.Gom.newGom;
 import static com.qudini.gom.utils.QueryRunner.callExpectingData;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -35,7 +37,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -56,7 +58,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -77,7 +79,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -98,7 +100,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -119,7 +121,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callExpectingData(gom, new Context()).get("foobar"));
@@ -140,7 +142,7 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertNull(callExpectingData(gom, new Context()).get("foobar"));
@@ -170,10 +172,10 @@ public final class ConvertersTest {
         }
         Context queryContext = new Context();
         AtomicReference<Context> converterContext = new AtomicReference<>();
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        Converters.newConverters(Context.class)
+                        newConverters(Context.class)
                                 .converter(MyWrapper.class, (myWrapper, converterContextValue) -> {
                                     converterCalled.set(true);
                                     converterContext.set(converterContextValue);
@@ -209,10 +211,10 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        Converters.newConverters(Context.class)
+                        newConverters(Context.class)
                                 .converter(MyWrapper.class, (myWrapper, context) -> {
                                     converterCalled.set(true);
                                     return myWrapper.value;
@@ -254,10 +256,10 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        Converters.newConverters(Context.class)
+                        newConverters(Context.class)
                                 .converter(MySuperWrapper.class, (mySuperWrapper, context) -> {
                                     superConverterCalled.set(true);
                                     return mySuperWrapper.value;
@@ -304,10 +306,10 @@ public final class ConvertersTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        Converters.newConverters(Context.class)
+                        newConverters(Context.class)
                                 .converter(MySuperWrapper.class, (mySuperWrapper, context) -> {
                                     superConverterCalled.set(true);
                                     return mySuperWrapper.value;

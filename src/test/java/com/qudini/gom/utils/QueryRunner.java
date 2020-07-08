@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static com.qudini.gom.utils.ResourceReader.readResource;
 import static graphql.ExecutionInput.newExecutionInput;
 import static graphql.GraphQL.newGraphQL;
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -46,7 +47,7 @@ public final class QueryRunner {
         String graphqlFile = baseResourceName + ".graphql";
         TypeDefinitionRegistry typeDefinitionRegistry;
         try {
-            typeDefinitionRegistry = new SchemaParser().parse(ResourceReader.readResource(graphqlFile));
+            typeDefinitionRegistry = new SchemaParser().parse(readResource(graphqlFile));
         } catch (NullPointerException e) {
             throw new IllegalStateException("File not found: " + graphqlFile, e);
         }
@@ -69,7 +70,7 @@ public final class QueryRunner {
         try {
             executionInput = newExecutionInput()
                     .context(context)
-                    .query(ResourceReader.readResource(queryFile))
+                    .query(readResource(queryFile))
                     .dataLoaderRegistry(dataLoaderRegistry)
                     .build();
         } catch (NullPointerException e) {

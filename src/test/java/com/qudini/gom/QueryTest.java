@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.qudini.gom.Gom.newGom;
 import static com.qudini.gom.utils.QueryRunner.callExpectingData;
 import static com.qudini.gom.utils.QueryRunner.callExpectingErrors;
 import static java.util.Collections.singletonList;
@@ -30,7 +31,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -54,7 +55,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -75,7 +76,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -99,7 +100,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -122,7 +123,7 @@ public final class QueryTest {
         }
         class QueryResolver extends ParentQueryResolver {
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));
@@ -151,7 +152,7 @@ public final class QueryTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foobar", callExpectingData(gom, new Context()).get("foobar"));

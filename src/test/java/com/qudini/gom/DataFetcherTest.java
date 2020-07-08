@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.qudini.gom.Gom.newGom;
 import static com.qudini.gom.utils.QueryRunner.callExpectingData;
 import static com.qudini.gom.utils.QueryRunner.callExpectingErrors;
 import static java.util.Arrays.asList;
@@ -42,7 +43,7 @@ public final class DataFetcherTest {
 
     @Test
     public void defaultsToGetter() {
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
         assertEquals("foo", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -62,7 +63,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -83,7 +84,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -104,7 +105,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertFalse(callExpectingErrors(gom, Context::new).isEmpty());
@@ -125,7 +126,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, ?>) callExpectingData(gom, new Context()).get("myType")).get("name"));
@@ -155,7 +156,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foo", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));
@@ -186,7 +187,7 @@ public final class DataFetcherTest {
             }
 
         }
-        Gom gom = Gom.newGom()
+        Gom gom = newGom()
                 .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
                 .build();
         assertEquals("foobar", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));

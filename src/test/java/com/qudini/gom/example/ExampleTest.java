@@ -31,6 +31,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.concurrent.CompletableFuture;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static com.qudini.gom.Gom.newGom;
+import static com.qudini.gom.utils.ResourceReader.readResource;
 import static graphql.ExecutionInput.newExecutionInput;
 import static graphql.GraphQL.newGraphQL;
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -63,7 +65,7 @@ public final class ExampleTest {
     }
 
     private Gom createGom(Object... resolvers) {
-        return Gom.newGom()
+        return newGom()
                 .resolvers(asList(resolvers))
                 .build();
     }
@@ -71,7 +73,7 @@ public final class ExampleTest {
     private GraphQLSchema createGraphQLSchema(Gom gom) {
 
         TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser()
-                .parse(ResourceReader.readResource("/com/qudini/gom/example/example.graphql"));
+                .parse(readResource("/com/qudini/gom/example/example.graphql"));
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
         gom.decorateRuntimeWiringBuilder(runtimeWiringBuilder);
@@ -122,7 +124,7 @@ public final class ExampleTest {
          * To run a query, you'll need both Gom and GraphQLSchema instances (created on server boot).
          */
 
-        String query = ResourceReader.readResource("/com/qudini/gom/example/example.query");
+        String query = readResource("/com/qudini/gom/example/example.query");
         ExecutionResult executionResult = runGraphQLQuery(gom, graphQLSchema, query).get();
 
         /*
@@ -130,7 +132,7 @@ public final class ExampleTest {
          */
 
         String actualResult = serialise(executionResult.toSpecification());
-        String expectedResult = ResourceReader.readResource("/com/qudini/gom/example/example.json");
+        String expectedResult = readResource("/com/qudini/gom/example/example.json");
         JSONAssert.assertEquals(expectedResult, actualResult, true);
 
         Assert.assertEquals(1, QueryResolver.getBlogsCallCount());
@@ -162,7 +164,7 @@ public final class ExampleTest {
          * To run a query, you'll need both Gom and GraphQLSchema instances (created on server boot).
          */
 
-        String query = ResourceReader.readResource("/com/qudini/gom/example/example.query");
+        String query = readResource("/com/qudini/gom/example/example.query");
         ExecutionResult executionResult = runGraphQLQuery(gom, graphQLSchema, query).get();
 
         /*
@@ -171,7 +173,7 @@ public final class ExampleTest {
 
         String actualResult = serialise(executionResult.toSpecification());
         System.out.println(actualResult);
-        String expectedResult = ResourceReader.readResource("/com/qudini/gom/example/example.json");
+        String expectedResult = readResource("/com/qudini/gom/example/example.json");
         JSONAssert.assertEquals(expectedResult, actualResult, true);
 
         Assert.assertEquals(1, QueryResolver.getBlogsCallCount());

@@ -18,6 +18,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static com.qudini.gom.Reflections.getMethodAnnotatedWith;
 import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
@@ -160,7 +161,7 @@ final class ResolverInspection {
                     Stream
                             .of(clazz.getMethods())
                             .filter(method -> !Object.class.equals(method.getDeclaringClass()))
-                            .flatMap(method -> Reflections.getMethodAnnotatedWith(method, FieldResolver.class).map(Stream::of).orElseGet(Stream::empty))
+                            .flatMap(method -> getMethodAnnotatedWith(method, FieldResolver.class).map(Stream::of).orElseGet(Stream::empty))
                             .forEach(annotatedMethod -> {
                                 String field = annotatedMethod.getDeclaredAnnotation(FieldResolver.class).value();
                                 MethodInvoker methodInvoker = MethodInvoker.of(annotatedMethod, resolver);
