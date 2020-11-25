@@ -205,7 +205,7 @@ public final class ConvertersTest {
         final class QueryResolver {
 
             @FieldResolver("foobar")
-            public MyWrapper foobar() {
+            public MyWrapper<MyWrapper<String>> foobar() {
                 resolverCalled.set(true);
                 return new MyWrapper<>(new MyWrapper<>("foobar"));
             }
