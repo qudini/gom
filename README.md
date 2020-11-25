@@ -1,16 +1,10 @@
 # GOM
 
-GOM stands for GraphQL-Object Mapping (just like ORM stands for Object-Relational Mapping). Largely inspired by [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools), its purpose is to still allow batching resolvers, but by implementing the recommended approach of [using `DataLoader`s](https://www.graphql-java.com/documentation/master/batching/). Put simply, GOM will prepare `DataFetcher`s and `DataLoader`s for you, so that you just need to _decorate_ your `RuntimeWiring` and `DataLoaderRegistry` instances.
+GOM (GraphQL-Object Mapping) batches your resolvers in order to reduce your data queries, while still allowing them to be customised depending on the arguments and selection.
 
-## Why?
+## Overview
 
-[graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) used to cover everything that GOM does, but unfortunately (yet legitimately as not spec conform), [BatchedExecutionStrategy got deprecated](https://github.com/graphql-java/graphql-java/issues/963). The recommended way is now to [use `DataLoader`s](https://www.graphql-java.com/documentation/master/batching/), but [it's not yet (officially?) supported by graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools/issues/58). Also, [`DataLoader`s make it way harder to customise the queries to your data source](https://github.com/graphql-java/java-dataloader/issues/26), because they are "DataFetchingEnvironment-agnostic" by design.
-
-So basically, **GOM tries to provide a Java-friendly match between data query optimisation and `DataLoader`s**.
-
-### How?
-
-You know how `BatchLoader`s are supposed to take only _keys_ to allow fetching the corresponding values from your data source? For example:
+Originally, [`BatchLoader`s are "DataFetchingEnvironment-agnostic" by design](https://github.com/graphql-java/java-dataloader/issues/26), meaning they take only _keys_ to allow fetching the corresponding values from your data source, for example:
 
 ```java
 BatchLoader<Integer, Article> articleBatchLoader = new BatchLoader<Integer, Article>() {
@@ -23,31 +17,29 @@ BatchLoader<Integer, Article> articleBatchLoader = new BatchLoader<Integer, Arti
 };
 ```
 
-What GOM actually does, is basically "enhancing" those keys by passing instances of `DataLoaderKey` instead (internal class):
+GOM "enhances" those keys by passing instances of `DataLoaderKey` instead (internal class):
 
 ```java
 class DataLoaderKey {
     
-    // the source, got via DataFetchingEnvironment#getSource
+    // the source (DataFetchingEnvironment#getSource)
     private Object source;
     
-    // the arguments, got via DataFetchingEnvironment#getArguments
+    // the arguments (DataFetchingEnvironment#getArguments)
     private Object arguments;
     
-    // the selection, got via DataFetchingEnvironment#getSelectionSet
+    // the selection (DataFetchingEnvironment#getSelectionSet)
     private Object selection;
     
-    // the context, got via DataFetchingEnvironment#getContext
+    // the context (DataFetchingEnvironment#getContext)
     private Object context;
     
 }
 ```
 
-This trick then allows a `BatchLoader` to "group the keys by arguments and selection", and thus call _your resolvers_ as many times as there are distinct arguments and selection, but each time will all the sources.
+This allows a `BatchLoader` to "group the keys by arguments and selection", and call _your resolvers_ as many times as there are distinct arguments and selection, but each time will all the sources.
 
-### Anything else?
-
-I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-kickstart/graphql-java-tools) brings a very nice feature that isn't implemented by GOM (yet?): the validation of your resolvers **on server startup**. GOM will allow your server to start successfully anyway, and will only fail **at query runtime** if any mapping is wrong (this is actually how [graphql-java](https://github.com/graphql-java/graphql-java) behaves, GOM adds no logic here).
+GOM will prepare [`DataFetcher`s](https://www.graphql-java.com/documentation/master/data-fetching/) and [`DataLoader`s](https://www.graphql-java.com/documentation/master/batching/) for you, so that you just need to _decorate_ your `RuntimeWiring` and `DataLoaderRegistry` instances.
 
 ## Installation
 
@@ -63,7 +55,7 @@ I just wanted to add that [graphql-java-tools](https://github.com/graphql-java-k
 
 ### Resolvers
 
-To create a resolver, just annotate a class with `@com.qudini.gom.TypeResolver` while passing the GraphQL type this resolver will handle:
+To create a resolver, just annotate a class with `@com.qudini.gom.TypeResolver` while passing the GraphQL type this resolver handles:
 
 ```java
 @TypeResolver("Article")
@@ -72,7 +64,7 @@ public class ArticleResolver {
 }
 ```
 
-Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotation one of `ArticleResolver`'s methods with `@com.qudini.gom.FieldResolver` while passing the field name this method will handle:
+Now, say your `Article` GraphQL type has a `blog: Blog!` field, just annotate one of `ArticleResolver`'s methods with `@com.qudini.gom.FieldResolver` while passing the field name this method handles:
 
 ```java
 @TypeResolver("Article")
@@ -92,11 +84,11 @@ A resolver's method takes one, two or three parameters, **in this specific order
 2. the `arguments`, optional (see the [Arguments](#arguments) section).
 3. the `selection`, optional (see the [Selection](#selection) section).
 
-Special case for types that have no `source` (e.g. `Query`), their resolvers' methods will only accept `arguments` and/or `selection`.
+Special case for types that have no `source` (e.g. `Query`): their resolver methods will only accept `arguments` and/or `selection`.
 
-A resolver's method can return anything (more details in the [Converters](#convertersmyconvertersinstance) section).
+A resolver method can return anything (more details in the [Converters](#convertersmyconvertersinstance) section).
 
-All of the following resolvers are thus valid ones:
+The following resolvers are all valid ones:
 
 ```java
 @TypeResolver("Query")
@@ -229,11 +221,11 @@ public class ArticleResolver {
 }
 ```
 
-**Important note:** great care is needed concerning the sources identities: as `@Batched` resolvers take a `Set<Source> sources`, the `Source` class has to implement `equals`/`hashCode` "the right way" (i.e. not leave it to the default `Object`'s, as they are per-instance implemented).
+**Important note:** as `@Batched` resolvers take a `Set<Source>`, the `Source` class has to implement `equals`/`hashCode` carefully (i.e. not leave it to the default `Object`'s, as it is per-instance implemented).
 
 #### Arguments
 
-When asking for the `arguments` as a parameter of your resolvers, you'll receive an instance of `graphql.gom.Arguments`. This is basically an abstraction of the value returned by `DataFetchingEnvironment#getArguments` (`Map<String, Object>`). It provides three main methods:
+When requesting the `arguments` as a parameter of your resolvers, you will receive an instance of `graphql.gom.Arguments`. This is basically an abstraction of the value returned by `DataFetchingEnvironment#getArguments` (`Map<String, Object>`). It provides three main methods:
 
 - `<T> T get(String name)`: to be used when an argument is mandatory according to the GraphQL schema (will fail if the returned value is `null` or absent).
 - `<T> Optional<T> getOptional(String name)`: to be used when an argument is optional according to the GraphQL schema (an empty `Optional` will be returned if the value is `null` or absent).
@@ -242,7 +234,7 @@ When asking for the `arguments` as a parameter of your resolvers, you'll receive
   - `Optional` of an empty `Optional`? Update the data field by emptying its value (e.g. setting `null`).
   - `Optional` of a valued `Optional`? Update the data field with the wrapped value.
 
-You'll also find:
+You will also find:
 
 - `<T extends Enum<T>> T getEnum(String name, Class<T> clazz)` (plus the `Optional` and `Nullable` variants) to deserialise directly into an `Enum`.
 - `Arguments getInput(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s so that you can use `Arguments` for these too.
@@ -250,7 +242,7 @@ You'll also find:
 
 #### Selection
 
-When asking for the `selection` as a parameter of your resolvers, you'll receive an instance of `graphql.gom.Selection`, which exposes two methods:
+When requesting the `selection` as a parameter of your resolvers, you will receive an instance of `graphql.gom.Selection`, which exposes two methods:
 
 - `boolean contains(String field)`: returns `true` if the given field is part of the selection.
 - `Stream<String> stream()`: streams the selected fields.
@@ -270,7 +262,7 @@ The `selection` injected in the resolver of `article` will behave the following 
 - `selection.stream().anyMatch("title"::equals)`: `true`
 - `selection.contains("foobar")`: `false`
 
-**Important note:** the nested selections won't be taken into account. For example, with:
+**Important note:** the nested selections won't be taken into account. For example:
 
 ```text
 article {
@@ -282,7 +274,7 @@ article {
 }
 ```
 
-The `selection` will only contain `id`, `title` and `comments`. A resolver on `comments` would then receive the `content` field in its `selection`.
+A resolver on `article` will only contain `id`, `title` and `comments` in its `selection` parameter. A resolver on `comments` though, would receive the `content` field in its `selection`.
 
 ### Gom
 
@@ -298,7 +290,7 @@ Gom gom = Gom
 
 #### .resolvers(myResolverInstances)
 
-As you can guess, this is where you pass the instances of your resolvers so that they get registered, e.g.:
+This is where you pass the instances of your resolvers so that they get registered, e.g.:
 
 ```java
 .resolvers(asList(
@@ -311,7 +303,7 @@ As you can guess, this is where you pass the instances of your resolvers so that
 
 #### .converters(myConvertersInstance)
 
-All your resolver methods will return `CompletableFuture`s behind the scene. If their don't, then the returned value will be wrapped into `CompletableFuture#completedFuture` anyway, so don't worry. But what if the returned value is "future-capable", while just needs a "conversion"? This is where GOM's converters are useful.
+All your resolver methods will return `CompletableFuture`s behind the scene (if they don't, the returned value will be wrapped into `CompletableFuture#completedFuture` automatically). GOM's converters are useful if the returned value is "future-capable" but just needs a "conversion".
 
 For example, say you're using [Project Reactor](https://projectreactor.io/)'s reactive types `Mono` and `Flux`, you can provide a converter for both of these types so that the returned value becomes "graphql-java compliant". A converter takes the instance it needs to convert plus the GraphQL query context, and returns the converted value. In this case:
 
@@ -323,9 +315,9 @@ Converters converters = Converters
     .build(); 
 ```
 
-You'll then have to pass these `converters` to `Gom#converters` so that they get successfully registered.
+You will then have to pass these `converters` to `Gom#converters` so that they get successfully registered.
 
-The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: if you make `MyGraphQLContext` hold an instance of a Project Reactor's `reactor.util.context.Context` (or simply be that instance), then you can pass it through to your resolvers transparently (and thus being able to use Spring Security with your resolvers for example):
+The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: if you make `MyGraphQLContext` hold an instance of a Project Reactor's `reactor.util.context.Context` (or simply be that instance), you can pass it through to your resolvers transparently, which will then allow using Spring Security annotations on your resolvers for example:
 
 ```java
 .converter(Mono.class, (mono, context) -> mono
@@ -355,7 +347,7 @@ You're now good to go!
 
 ## Example
 
-This example has been implemented as a proof, see src/test/java/graphql/gom/example.
+This example has been implemented as a proof, see [src/test/java/graphql/gom/example](https://github.com/qudini/gom/tree/master/src/test/java/com/qudini/gom/example).
 
 ### Database model
 
@@ -436,7 +428,7 @@ type Comment {
 
 ### GraphQL query
 
-A consumer calls your GraphQL endpoint with the following query (intentionally stupidly overfetching):
+A consumer calls your GraphQL endpoint with the following query (intentionally overfetching):
 
 ```text
 query {
