@@ -6,9 +6,7 @@ import graphql.schema.Coercing;
 import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
 import lombok.NoArgsConstructor;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -25,12 +23,10 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public final class ArgumentsTest {
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     public enum MyEnum {
         MY_VALUE
@@ -42,8 +38,7 @@ public final class ArgumentsTest {
             put("key", "value");
         }});
         assertEquals(1, arguments.size());
-        exception.expect(NullPointerException.class);
-        arguments.get("wrongkey");
+        assertThrows(NullPointerException.class, () -> arguments.get("wrongkey"));
     }
 
     @Test
@@ -106,8 +101,7 @@ public final class ArgumentsTest {
             put("key", "MY_VALUE");
         }});
         assertEquals(1, arguments.size());
-        exception.expect(NullPointerException.class);
-        arguments.getEnum("wrongkey", MyEnum.class);
+        assertThrows(NullPointerException.class, () -> arguments.getEnum("wrongkey", MyEnum.class));
     }
 
     @Test
@@ -172,8 +166,7 @@ public final class ArgumentsTest {
             }});
         }});
         assertEquals(1, arguments.size());
-        exception.expect(NullPointerException.class);
-        arguments.getInput("wrongkey");
+        assertThrows(NullPointerException.class, () -> arguments.getInput("wrongkey"));
     }
 
     @Test
@@ -250,8 +243,7 @@ public final class ArgumentsTest {
             }});
         }});
         assertEquals(1, arguments.size());
-        exception.expect(NullPointerException.class);
-        arguments.getInputArray("wrongkey");
+        assertThrows(NullPointerException.class, () -> arguments.getInputArray("wrongkey"));
     }
 
     @Test
