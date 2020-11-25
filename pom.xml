@@ -31,7 +31,7 @@
     <properties>
         <java.version>1.8</java.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <graphql-java.version>16.0</graphql-java.version>
+        <graphql-java.version>16.1</graphql-java.version>
         <lombok.version>1.18.16</lombok.version>
         <junit.version>4.13.1</junit.version>
         <jsonassert.version>1.5.0</jsonassert.version>
