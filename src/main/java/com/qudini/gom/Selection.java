@@ -6,6 +6,10 @@ import static java.util.Collections.emptySet;
 
 public interface Selection {
 
+    int size();
+
+    Selection subSelection(String prefix);
+
     boolean contains(String field);
 
     Stream<String> stream();

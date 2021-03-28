@@ -13,6 +13,27 @@ import static org.junit.Assert.assertTrue;
 public final class SelectionTest {
 
     @Test
+    public void size() {
+        Selection selection = new DefaultSelection(new HashSet<String>() {{
+            add("foo");
+        }});
+        assertEquals(1, selection.size());
+    }
+
+    @Test
+    public void subSelection() {
+        Selection selection = new DefaultSelection(new HashSet<String>() {{
+            add("foo");
+            add("bar");
+            add("bar/hello");
+            add("bar/world");
+        }});
+        Selection subSelection = selection.subSelection("bar/");
+        assertTrue(subSelection.contains("hello"));
+        assertTrue(subSelection.contains("world"));
+    }
+
+    @Test
     public void contains() {
         Selection selection = new DefaultSelection(new HashSet<String>() {{
             add("foo");
