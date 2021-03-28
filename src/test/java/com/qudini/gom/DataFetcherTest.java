@@ -136,7 +136,7 @@ public final class DataFetcherTest {
     @Test
     public void withSourceAndSelection() {
         AtomicBoolean called = new AtomicBoolean(false);
-        AtomicBoolean containsValue = new AtomicBoolean(false);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
         @RequiredArgsConstructor(access = PRIVATE)
         @Getter
         final class MyName {
@@ -151,7 +151,7 @@ public final class DataFetcherTest {
             @FieldResolver("name")
             public MyName name(MyType myType, Selection selection) {
                 called.set(true);
-                containsValue.set(selection.contains("value"));
+                validSelection.set(selection.size() == 1 && selection.contains("value"));
                 return new MyName(myType.getName());
             }
 
@@ -161,13 +161,60 @@ public final class DataFetcherTest {
                 .build();
         assertEquals("foo", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));
         assertTrue(called.get());
-        assertTrue(containsValue.get());
+        assertTrue(validSelection.get());
+    }
+
+    @Test
+    public void withSourceAndDeeperSelection() {
+        AtomicBoolean called = new AtomicBoolean(false);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
+        @RequiredArgsConstructor(access = PRIVATE)
+        @Getter
+        final class MyName {
+
+            private final String value;
+            private final String content;
+
+            MyName(String value) {
+                this(value, value);
+            }
+
+            public MyName getSelf() {
+                return this;
+            }
+
+        }
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("MyType")
+        final class MyTypeResolver {
+
+            @FieldResolver("name")
+            public MyName name(MyType myType, @Depth(2) Selection selection) {
+                called.set(true);
+                validSelection.set(
+                        selection.size() == 5
+                                && selection.contains("value")
+                                && selection.contains("self")
+                                && selection.contains("self/value")
+                                && selection.contains("self/content")
+                                && selection.contains("self/self")
+                );
+                return new MyName(myType.getName());
+            }
+
+        }
+        Gom gom = newGom()
+                .resolvers(asList(new QueryResolver(), new MyTypeResolver()))
+                .build();
+        assertEquals("foo", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));
+        assertTrue(called.get());
+        assertTrue(validSelection.get());
     }
 
     @Test
     public void withSourceArgumentsAndSelection() {
         AtomicBoolean called = new AtomicBoolean(false);
-        AtomicBoolean containsValue = new AtomicBoolean(false);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
         @RequiredArgsConstructor(access = PRIVATE)
         @Getter
         final class MyName {
@@ -182,7 +229,7 @@ public final class DataFetcherTest {
             @FieldResolver("name")
             public MyName name(MyType myType, Arguments arguments, Selection selection) {
                 called.set(true);
-                containsValue.set(selection.contains("value"));
+                validSelection.set(selection.size() == 1 && selection.contains("value"));
                 return new MyName(myType.getName() + arguments.get("suffix"));
             }
 
@@ -192,7 +239,7 @@ public final class DataFetcherTest {
                 .build();
         assertEquals("foobar", ((Map<String, Map<String, ?>>) callExpectingData(gom, new Context()).get("myType")).get("name").get("value"));
         assertTrue(called.get());
-        assertTrue(containsValue.get());
+        assertTrue(validSelection.get());
     }
 
 }
