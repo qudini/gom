@@ -156,7 +156,7 @@ public final class DataLoaderTest {
     @Test
     public void withSourcesAndSelection() {
         AtomicInteger callCount = new AtomicInteger(0);
-        AtomicBoolean containsValue = new AtomicBoolean(false);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
         @RequiredArgsConstructor(access = PRIVATE)
         @Getter
         final class MyName {
@@ -172,7 +172,7 @@ public final class DataLoaderTest {
             @FieldResolver("name")
             public Map<MyType, MyName> name(Set<MyType> myTypes, Selection selection) {
                 callCount.incrementAndGet();
-                containsValue.set(selection.contains("value"));
+                validSelection.set(selection.contains("value"));
                 return myTypes
                         .stream()
                         .collect(toMap(
@@ -189,13 +189,68 @@ public final class DataLoaderTest {
         assertEquals("foo", myTypes.get(0).get("name").get("value"));
         assertEquals("bar", myTypes.get(1).get("name").get("value"));
         assertEquals(1, callCount.get());
-        assertTrue(containsValue.get());
+        assertTrue(validSelection.get());
+    }
+
+    @Test
+    public void withSourcesAndDeeperSelection() {
+        AtomicInteger callCount = new AtomicInteger(0);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
+        @RequiredArgsConstructor(access = PRIVATE)
+        @Getter
+        final class MyName {
+
+            private final String value;
+            private final String content;
+
+            MyName(String value) {
+                this(value, value);
+            }
+
+            public MyName getSelf() {
+                return this;
+            }
+
+        }
+        @NoArgsConstructor(access = PRIVATE)
+        @TypeResolver("MyType")
+        final class MyTypeResolver {
+
+            @Batched
+            @FieldResolver("name")
+            public Map<MyType, MyName> name(Set<MyType> myTypes, @Depth(2) Selection selection) {
+                callCount.incrementAndGet();
+                validSelection.set(
+                        selection.size() == 5
+                                && selection.contains("value")
+                                && selection.contains("self")
+                                && selection.contains("self/value")
+                                && selection.contains("self/content")
+                                && selection.contains("self/self")
+                );
+                return myTypes
+                        .stream()
+                        .collect(toMap(
+                                identity(),
+                                myType -> new MyName(myType.getName())
+                        ));
+            }
+
+        }
+        Gom gom = newGom()
+                .resolvers(asList(new QueryResolver(true), new MyTypeResolver()))
+                .build();
+        List<Map<String, Map<String, Object>>> myTypes = (List<Map<String, Map<String, Object>>>) callExpectingData(gom, new Context()).get("myTypes");
+        assertEquals("foo", myTypes.get(0).get("name").get("value"));
+        assertEquals("bar", myTypes.get(1).get("name").get("value"));
+        assertEquals(1, callCount.get());
+        assertTrue(validSelection.get());
     }
 
     @Test
     public void withSourcesArgumentsAndSelection() {
         AtomicInteger callCount = new AtomicInteger(0);
-        AtomicBoolean containsValue = new AtomicBoolean(false);
+        AtomicBoolean validSelection = new AtomicBoolean(false);
         @RequiredArgsConstructor(access = PRIVATE)
         @Getter
         final class MyName {
@@ -211,7 +266,7 @@ public final class DataLoaderTest {
             @FieldResolver("name")
             public Map<MyType, MyName> name(Set<MyType> myTypes, Arguments arguments, Selection selection) {
                 callCount.incrementAndGet();
-                containsValue.set(selection.contains("value"));
+                validSelection.set(selection.contains("value"));
                 return myTypes
                         .stream()
                         .collect(toMap(
@@ -228,7 +283,7 @@ public final class DataLoaderTest {
         assertEquals("foobar", myTypes.get(0).get("name").get("value"));
         assertEquals("barbar", myTypes.get(1).get("name").get("value"));
         assertEquals(1, callCount.get());
-        assertTrue(containsValue.get());
+        assertTrue(validSelection.get());
     }
 
     @Test

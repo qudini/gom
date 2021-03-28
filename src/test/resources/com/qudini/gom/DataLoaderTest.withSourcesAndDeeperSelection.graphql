@@ -1,0 +1,13 @@
+type MyName {
+    value: String!
+    content: String!
+    self: MyName!
+}
+
+type MyType {
+    name: MyName!
+}
+
+type Query {
+    myTypes: [MyType!]!
+}

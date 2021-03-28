@@ -38,6 +38,13 @@ final class ResolverInspection {
 
     private final Set<DataLoaderRegistrar> dataLoaderRegistrars = new HashSet<>();
 
+    private int getSelectionDepth(MethodInvoker methodInvoker) {
+        return methodInvoker
+                .getFirstParameterAnnotation(Selection.class, Depth.class)
+                .map(Depth::value)
+                .orElse(1);
+    }
+
     private Object argumentsOrSelection(MethodInvoker methodInvoker, Arguments arguments, Selection selection) {
         return methodInvoker.hasParameterType(Arguments.class) ? arguments : selection;
     }
@@ -133,7 +140,7 @@ final class ResolverInspection {
                 field,
                 environment -> environment
                         .<DataLoaderKey, Object>getDataLoader(dataLoaderKey)
-                        .load(new DataLoaderKey(environment))
+                        .load(new DataLoaderKey(environment, getSelectionDepth(methodInvoker)))
         ));
     }
 
@@ -145,7 +152,7 @@ final class ResolverInspection {
                         methodInvoker,
                         environment.getSource(),
                         new DefaultArguments(environment),
-                        new DefaultSelection(environment),
+                        new DefaultSelection(environment, getSelectionDepth(methodInvoker)),
                         environment.getContext()
                 )
         ));
