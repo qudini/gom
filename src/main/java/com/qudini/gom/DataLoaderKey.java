@@ -29,11 +29,11 @@ final class DataLoaderKey {
 
     private final Object context;
 
-    DataLoaderKey(DataFetchingEnvironment environment) {
+    DataLoaderKey(DataFetchingEnvironment environment, int selectionDepth) {
         this.source = environment.getSource();
         this.discriminator = new Discriminator(
                 new DefaultArguments(environment),
-                new DefaultSelection(environment)
+                new DefaultSelection(environment, selectionDepth)
         );
         this.context = environment.getContext();
     }

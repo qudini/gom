@@ -3,8 +3,12 @@ package com.qudini.gom;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -42,6 +46,21 @@ final class MethodInvoker {
 
     boolean hasParameterType(Class<?> parameterType) {
         return asList(method.getParameterTypes()).contains(parameterType);
+    }
+
+    List<Annotation> getParameterAnnotations(Class<?> parameterType) {
+        int index = asList(method.getParameterTypes()).indexOf(parameterType);
+        return index < 0
+                ? Collections.emptyList()
+                : asList(method.getParameterAnnotations()[index]);
+    }
+
+    <T> Optional<T> getParameterAnnotation(Class<?> parameterType, Class<T> annotationType) {
+        return getParameterAnnotations(parameterType)
+                .stream()
+                .filter(annotationType::isInstance)
+                .map(annotationType::cast)
+                .findFirst();
     }
 
     @Override
