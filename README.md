@@ -291,9 +291,9 @@ To access `comments/content` in this parent `selection` directly, annotate the p
 public Article getArticle(@Depth(2) Selection selection) {...}
 ```
 
-Those above `selection` will then contain `id`, `title`, `comments`, **as well as `comments/content`**. You can then use `selection.subSelection("comments/")` to receive a selection holding the children of `comments/` only (i.e. `content` in this case).
+Those above `selection` will then contain `id`, `title`, `comments`, **as well as `comments/content`**. You can then use `selection.subSelection("comments/")` to receive a selection with the children of `comments/` only (i.e. `content` in this case).
 
-That can end up particularly useful when doing [cursor-based pagination](https://graphql.org/learn/pagination/):
+This can end up particularly useful when doing [cursor-based pagination](https://graphql.org/learn/pagination/):
 
 ```text
 articles(first: 10) {
