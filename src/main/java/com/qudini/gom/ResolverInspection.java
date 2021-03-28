@@ -135,16 +135,18 @@ final class ResolverInspection {
                         dataLoaderSupplier
                 )
         );
+        int selectionDepth = getSelectionDepth(methodInvoker);
         fieldWirings.add(new FieldWiring(
                 type,
                 field,
                 environment -> environment
                         .<DataLoaderKey, Object>getDataLoader(dataLoaderKey)
-                        .load(new DataLoaderKey(environment, getSelectionDepth(methodInvoker)))
+                        .load(new DataLoaderKey(environment, selectionDepth))
         ));
     }
 
     private void createSimpleFieldWiring(String type, String field, MethodInvoker methodInvoker) {
+        int selectionDepth = getSelectionDepth(methodInvoker);
         fieldWirings.add(new FieldWiring(
                 type,
                 field,
@@ -152,7 +154,7 @@ final class ResolverInspection {
                         methodInvoker,
                         environment.getSource(),
                         new DefaultArguments(environment),
-                        new DefaultSelection(environment, getSelectionDepth(methodInvoker)),
+                        new DefaultSelection(environment, selectionDepth),
                         environment.getContext()
                 )
         ));
