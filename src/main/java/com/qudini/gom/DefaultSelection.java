@@ -35,16 +35,6 @@ final class DefaultSelection implements Selection {
     }
 
     @Override
-    public Selection subSelection(String prefix) {
-        Set<String> subFields = fields
-                .stream()
-                .filter(field -> field.startsWith(prefix))
-                .map(field -> field.substring(prefix.length()))
-                .collect(toSet());
-        return new DefaultSelection(subFields);
-    }
-
-    @Override
     public int size() {
         return fields.size();
     }
@@ -57,6 +47,16 @@ final class DefaultSelection implements Selection {
     @Override
     public Stream<String> stream() {
         return fields.stream();
+    }
+
+    @Override
+    public Selection subSelection(String prefix) {
+        Set<String> subFields = fields
+                .stream()
+                .filter(field -> field.startsWith(prefix))
+                .map(field -> field.substring(prefix.length()))
+                .collect(toSet());
+        return new DefaultSelection(subFields);
     }
 
     @Override

@@ -8,11 +8,11 @@ public interface Selection {
 
     int size();
 
-    Selection subSelection(String prefix);
-
     boolean contains(String field);
 
     Stream<String> stream();
+
+    Selection subSelection(String prefix);
 
     static Selection empty() {
         return new DefaultSelection(emptySet());

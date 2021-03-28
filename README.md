@@ -242,10 +242,11 @@ You will also find:
 
 #### Selection
 
-When requesting the `selection` as a parameter of your resolvers, you will receive an instance of `graphql.gom.Selection`, which exposes two methods:
+When requesting the `selection` as a parameter of your resolvers, you will receive an instance of `graphql.gom.Selection`, which exposes the following methods:
 
 - `boolean contains(String field)`: returns `true` if the given field is part of the selection.
 - `Stream<String> stream()`: streams the selected fields.
+- `Selection subSelection(String prefix)`: returns a new selection with the fields starting with the given `prefix` (those matching fields will have the given `prefix` removed, see the [@Depth](#depth) section).
 
 For example, given the following query:
 
@@ -262,7 +263,9 @@ The `selection` injected in the resolver of `article` will behave the following 
 - `selection.stream().anyMatch("title"::equals)`: `true`
 - `selection.contains("foobar")`: `false`
 
-**Important note:** the nested selections won't be taken into account. For example:
+##### @Depth
+
+By default, the selection will have a depth of 1, meaning the nested selections won't be taken into account. For example, given the following query:
 
 ```text
 article {
@@ -274,7 +277,43 @@ article {
 }
 ```
 
-A resolver on `article` will only contain `id`, `title` and `comments` in its `selection` parameter. A resolver on `comments` though, would receive the `content` field in its `selection`.
+```java
+@FieldResolver("article")
+public Article getArticle(Selection selection) {...}
+```
+
+Those above `selection` will only contain `id`, `title` and `comments`. A resolver on `comments` though, would receive the `content` field in its `selection`.
+
+To access `comments/content` in this parent `selection` directly, annotate the parameter with `@com.qudini.gom.Depth`:
+
+```java
+@FieldResolver("article")
+public Article getArticle(@Depth(2) Selection selection) {...}
+```
+
+Those above `selection` will then contain `id`, `title`, `comments`, **as well as `comments/content`**. You can then use `selection.subSelection("comments/")` to receive a selection holding the children of `comments/` only (i.e. `content` in this case).
+
+That can end up particularly useful when doing [cursor-based pagination](https://graphql.org/learn/pagination/):
+
+```text
+articles(first: 10) {
+    edges {
+        node {
+            title
+        }
+    }
+}
+```
+
+```java
+@FieldResolver("articles")
+public Article getPaginatedArticles(@Depth(3) Selection selection) {
+    Selection nodeSelection = selection.subSelection("edges/node/");
+    nodeSelection.contains("title"); // true
+    ...
+}
+```
+
 
 ### Gom
 
