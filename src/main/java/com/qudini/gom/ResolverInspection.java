@@ -40,7 +40,7 @@ final class ResolverInspection {
 
     private int getSelectionDepth(MethodInvoker methodInvoker) {
         return methodInvoker
-                .getParameterAnnotation(Selection.class, Depth.class)
+                .getFirstParameterAnnotation(Selection.class, Depth.class)
                 .map(Depth::value)
                 .orElse(1);
     }

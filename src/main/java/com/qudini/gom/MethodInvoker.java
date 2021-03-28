@@ -48,15 +48,15 @@ final class MethodInvoker {
         return asList(method.getParameterTypes()).contains(parameterType);
     }
 
-    List<Annotation> getParameterAnnotations(Class<?> parameterType) {
+    List<Annotation> getFirstParameterAnnotations(Class<?> parameterType) {
         int index = asList(method.getParameterTypes()).indexOf(parameterType);
         return index < 0
                 ? Collections.emptyList()
                 : asList(method.getParameterAnnotations()[index]);
     }
 
-    <T> Optional<T> getParameterAnnotation(Class<?> parameterType, Class<T> annotationType) {
-        return getParameterAnnotations(parameterType)
+    <T> Optional<T> getFirstParameterAnnotation(Class<?> parameterType, Class<T> annotationType) {
+        return getFirstParameterAnnotations(parameterType)
                 .stream()
                 .filter(annotationType::isInstance)
                 .map(annotationType::cast)
