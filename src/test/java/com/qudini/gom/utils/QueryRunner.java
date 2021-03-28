@@ -45,12 +45,7 @@ public final class QueryRunner {
         String baseResourceName = "/com/qudini/gom/" + testClassName + "." + testMethodName;
 
         String graphqlFile = baseResourceName + ".graphql";
-        TypeDefinitionRegistry typeDefinitionRegistry;
-        try {
-            typeDefinitionRegistry = new SchemaParser().parse(readResource(graphqlFile));
-        } catch (NullPointerException e) {
-            throw new IllegalStateException("File not found: " + graphqlFile, e);
-        }
+        TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(readResource(graphqlFile));
 
         RuntimeWiring.Builder runtimeWiringBuilder = newRuntimeWiring();
         Stream.of(scalars).forEach(runtimeWiringBuilder::scalar);

@@ -1,0 +1,14 @@
+query {
+    myTypes {
+        name {
+            value
+            self {
+                value
+                content
+                self {
+                    value
+                }
+            }
+        }
+    }
+}
