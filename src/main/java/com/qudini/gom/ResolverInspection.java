@@ -169,7 +169,6 @@ final class ResolverInspection {
                     String type = clazz.getAnnotation(TypeResolver.class).value();
                     Stream
                             .of(clazz.getMethods())
-                            .filter(method -> !Object.class.equals(method.getDeclaringClass()))
                             .flatMap(method -> getMethodAnnotatedWith(method, FieldResolver.class).map(Stream::of).orElseGet(Stream::empty))
                             .forEach(annotatedMethod -> {
                                 String field = annotatedMethod.getDeclaredAnnotation(FieldResolver.class).value();

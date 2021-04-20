@@ -12,22 +12,19 @@ import static lombok.AccessLevel.PRIVATE;
 public final class Reflections {
 
     public static <T extends Annotation> Optional<Method> getMethodAnnotatedWith(Method method, Class<T> annotationClass) {
-        final Optional<Method> annotatedMethod;
         if (method.isAnnotationPresent(annotationClass)) {
-            annotatedMethod = Optional.of(method);
-        } else {
-            annotatedMethod = Optional.of(method.getDeclaringClass())
-                    .map(Class::getSuperclass)
-                    .map(superClass -> {
-                        try {
-                            return superClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                        } catch (NoSuchMethodException e) {
-                            return null;
-                        }
-                    })
-                    .flatMap(overriddenMethod -> getMethodAnnotatedWith(overriddenMethod, annotationClass));
+            return Optional.of(method);
         }
-        return annotatedMethod;
+        Class<?> superClass = method.getDeclaringClass().getSuperclass();
+        while (superClass != null) {
+            try {
+                method = superClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                return getMethodAnnotatedWith(method, annotationClass);
+            } catch (NoSuchMethodException e) {
+                superClass = superClass.getSuperclass();
+            }
+        }
+        return Optional.empty();
     }
 
 }
