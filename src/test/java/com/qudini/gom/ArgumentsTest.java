@@ -15,11 +15,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.qudini.gom.ArgumentsTest.MyEnum.MY_VALUE;
+import static com.qudini.gom.ArgumentsTest.MyEnum.A;
+import static com.qudini.gom.ArgumentsTest.MyEnum.C;
 import static com.qudini.gom.Gom.newGom;
 import static com.qudini.gom.utils.QueryRunner.callExpectingData;
 import static graphql.schema.GraphQLScalarType.newScalar;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static lombok.AccessLevel.PRIVATE;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +31,9 @@ import static org.junit.Assert.assertTrue;
 public final class ArgumentsTest {
 
     public enum MyEnum {
-        MY_VALUE
+        A,
+        B,
+        C
     }
 
     @Test
@@ -98,7 +102,7 @@ public final class ArgumentsTest {
     @Test
     public void getEnumAbsent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
         assertThrows(NullPointerException.class, () -> arguments.getEnum("wrongkey", MyEnum.class));
@@ -107,16 +111,16 @@ public final class ArgumentsTest {
     @Test
     public void getEnumPresent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
-        assertEquals(MY_VALUE, arguments.getEnum("key", MyEnum.class));
+        assertEquals(A, arguments.getEnum("key", MyEnum.class));
     }
 
     @Test
     public void getOptionalEnumAbsent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getOptionalEnum("wrongkey", MyEnum.class));
@@ -125,16 +129,16 @@ public final class ArgumentsTest {
     @Test
     public void getOptionalEnumPresent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
-        assertEquals(Optional.of(MY_VALUE), arguments.getOptionalEnum("key", MyEnum.class));
+        assertEquals(Optional.of(A), arguments.getOptionalEnum("key", MyEnum.class));
     }
 
     @Test
     public void getNullableEnumAbsent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
         assertEquals(Optional.empty(), arguments.getNullableEnum("wrongkey", MyEnum.class));
@@ -152,10 +156,91 @@ public final class ArgumentsTest {
     @Test
     public void getNullableEnumPresentNotNull() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
-            put("key", "MY_VALUE");
+            put("key", "A");
         }});
         assertEquals(1, arguments.size());
-        assertEquals(Optional.of(Optional.of(MY_VALUE)), arguments.getNullableEnum("key", MyEnum.class));
+        assertEquals(Optional.of(Optional.of(A)), arguments.getNullableEnum("key", MyEnum.class));
+    }
+
+    @Test
+    public void getEnumArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertThrows(NullPointerException.class, () -> arguments.getEnumArray("wrongkey", MyEnum.class));
+    }
+
+    @Test
+    public void getEnumArrayPresent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(asList(C, A), arguments.getEnumArray("key", MyEnum.class));
+    }
+
+    @Test
+    public void getOptionalEnumArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.empty(), arguments.getOptionalEnumArray("wrongkey", MyEnum.class));
+    }
+
+    @Test
+    public void getOptionalEnumArrayPresent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(asList(C, A), arguments.getOptionalEnumArray("key", MyEnum.class).get());
+    }
+
+    @Test
+    public void getNullableEnumArrayAbsent() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.empty(), arguments.getNullableEnumArray("wrongkey", MyEnum.class));
+    }
+
+    @Test
+    public void getNullableEnumArrayPresentButNull() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", null);
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(Optional.of(Optional.empty()), arguments.getNullableEnumArray("key", MyEnum.class));
+    }
+
+    @Test
+    public void getNullableEnumArrayPresentNotNull() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>() {{
+                add("C");
+                add("A");
+            }});
+        }});
+        assertEquals(1, arguments.size());
+        assertEquals(asList(C, A), arguments.getNullableEnumArray("key", MyEnum.class).get().get());
     }
 
     @Test
@@ -343,7 +428,7 @@ public final class ArgumentsTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .build();
-        assertEquals("MY_VALUE", callExpectingData(gom, new Context()).get("foobar"));
+        assertEquals("A", callExpectingData(gom, new Context()).get("foobar"));
         assertTrue(called.get());
     }
 
