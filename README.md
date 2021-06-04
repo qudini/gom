@@ -2,6 +2,8 @@
 
 GOM (GraphQL-Object Mapping) batches your resolvers in order to reduce your data queries, while still allowing them to be customised depending on the arguments and selection.
 
+See [qudini-reactive](https://github.com/qudini/qudini-reactive/tree/master/qudini-reactive-graphql) for an example of how it can be used with Spring Boot and Spring WebFlux.
+
 ## Overview
 
 Originally, [`BatchLoader`s are "DataFetchingEnvironment-agnostic" by design](https://github.com/graphql-java/java-dataloader/issues/26), meaning they take only _keys_ to allow fetching the corresponding values from your data source, for example:
@@ -236,9 +238,8 @@ When requesting the `arguments` as a parameter of your resolvers, you will recei
 
 You will also find:
 
-- `<T extends Enum<T>> T getEnum(String name, Class<T> clazz)` (plus the `Optional` and `Nullable` variants) to deserialise directly into an `Enum`.
-- `Arguments getInput(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s so that you can use `Arguments` for these too.
-- `List<Arguments> getInputArray(String name)` (plus the `Optional` and `Nullable` variants) when dealing with an array of GraphQL `input`s.
+- `<T extends Enum<T>> T getEnum(String name, Class<T> clazz)` and `<T extends Enum<T>> List<T> getEnumArray(String name, Class<T> clazz)` (plus the `Optional` and `Nullable` variants) to deserialise directly into an `Enum`.
+- `Arguments getInput(String name)` and `List<Arguments> getInputArray(String name)` (plus the `Optional` and `Nullable` variants) when dealing with GraphQL `input`s.
 
 #### Selection
 

@@ -54,11 +54,8 @@ final class DefaultArguments implements Arguments {
     }
 
     private <T extends Enum<T>> T getNullEnum(String name, Class<T> clazz) {
-        try {
-            return Enum.valueOf(clazz, get(name));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            return null;
-        }
+        String key = getNull(name);
+        return key == null ? null : Enum.valueOf(clazz, key);
     }
 
     @Override
@@ -78,6 +75,31 @@ final class DefaultArguments implements Arguments {
     public <T extends Enum<T>> Optional<Optional<T>> getNullableEnum(String name, Class<T> clazz) {
         return arguments.containsKey(name)
                 ? Optional.of(getOptionalEnum(name, clazz))
+                : Optional.empty();
+    }
+
+    private <T extends Enum<T>> List<T> getNullEnumArray(String name, Class<T> clazz) {
+        List<String> inputArray = getNull(name);
+        return inputArray == null ? null : inputArray.stream().map(key -> Enum.valueOf(clazz, key)).collect(toList());
+    }
+
+    @Nonnull
+    @Override
+    public <T extends Enum<T>> List<T> getEnumArray(String name, Class<T> clazz) {
+        return requireNonNull(getNullEnumArray(name, clazz), format(UNEXPECTED_NULL_ARGUMENT_MESSAGE_FORMAT, name));
+    }
+
+    @Override
+    @Nonnull
+    public <T extends Enum<T>> Optional<List<T>> getOptionalEnumArray(String name, Class<T> clazz) {
+        return ofNullable(getNullEnumArray(name, clazz));
+    }
+
+    @Override
+    @Nonnull
+    public <T extends Enum<T>> Optional<Optional<List<T>>> getNullableEnumArray(String name, Class<T> clazz) {
+        return arguments.containsKey(name)
+                ? Optional.of(getOptionalEnumArray(name, clazz))
                 : Optional.empty();
     }
 

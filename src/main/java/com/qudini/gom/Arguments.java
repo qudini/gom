@@ -27,6 +27,15 @@ public interface Arguments {
     <T extends Enum<T>> Optional<Optional<T>> getNullableEnum(String name, Class<T> clazz);
 
     @Nonnull
+    <T extends Enum<T>> List<T> getEnumArray(String name, Class<T> clazz);
+
+    @Nonnull
+    <T extends Enum<T>> Optional<List<T>> getOptionalEnumArray(String name, Class<T> clazz);
+
+    @Nonnull
+    <T extends Enum<T>> Optional<Optional<List<T>>> getNullableEnumArray(String name, Class<T> clazz);
+
+    @Nonnull
     Arguments getInput(String name);
 
     @Nonnull
