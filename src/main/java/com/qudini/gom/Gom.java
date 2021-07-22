@@ -24,7 +24,7 @@ public final class Gom {
 
         private Builder() {
             this.resolvers = new HashSet<>();
-            this.converters = newConverters(Object.class).build();
+            this.converters = newConverters().build();
         }
 
         @Nonnull

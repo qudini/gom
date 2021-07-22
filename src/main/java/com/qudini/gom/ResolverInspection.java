@@ -1,5 +1,6 @@
 package com.qudini.gom;
 
+import graphql.GraphQLContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dataloader.DataLoader;
@@ -26,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PRIVATE;
-import static org.dataloader.DataLoader.newMappedDataLoader;
+import static org.dataloader.DataLoaderFactory.newMappedDataLoader;
 
 @AllArgsConstructor(access = PRIVATE)
 @Getter(PACKAGE)
@@ -54,7 +55,7 @@ final class ResolverInspection {
             @Nullable Object source,
             Arguments arguments,
             Selection selection,
-            Object context
+            GraphQLContext context
     ) {
         final Object returnedValue;
         int parameterCount = methodInvoker.getParameterCount();
@@ -90,7 +91,7 @@ final class ResolverInspection {
     private void createBatchedFieldWiring(String type, String field, MethodInvoker methodInvoker) {
         String dataLoaderKey = methodInvoker.toString();
         Supplier<DataLoader<DataLoaderKey, Object>> dataLoaderSupplier = () -> newMappedDataLoader(keys -> {
-            Optional<Object> maybeContext = keys
+            Optional<GraphQLContext> maybeContext = keys
                     .stream()
                     .map(DataLoaderKey::getContext)
                     .reduce(failIfDifferent());
@@ -155,7 +156,7 @@ final class ResolverInspection {
                         environment.getSource(),
                         new DefaultArguments(environment),
                         new DefaultSelection(environment, selectionDepth),
-                        environment.getContext()
+                        environment.getGraphQlContext()
                 )
         ));
     }

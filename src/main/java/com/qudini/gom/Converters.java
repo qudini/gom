@@ -1,5 +1,6 @@
 package com.qudini.gom;
 
+import graphql.GraphQLContext;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public final class Converters {
         private final Class<?> clazz;
 
         @EqualsAndHashCode.Exclude
-        private final BiFunction<Object, Object, Object> function;
+        private final BiFunction<Object, GraphQLContext, Object> function;
 
-        private Object convert(Object value, Object context) {
+        private Object convert(Object value, GraphQLContext context) {
             return function.apply(value, context);
         }
 
@@ -49,13 +50,13 @@ public final class Converters {
     }
 
     @NoArgsConstructor(access = PRIVATE)
-    public static final class Builder<C> {
+    public static final class Builder {
 
         private final Set<Converter> converters = new HashSet<>();
 
         @Nonnull
-        public <T> Builder<C> converter(Class<T> clazz, BiFunction<T, C, Object> converter) {
-            converters.add(new Converter(clazz, (BiFunction<Object, Object, Object>) converter));
+        public <T> Builder converter(Class<T> clazz, BiFunction<T, GraphQLContext, Object> converter) {
+            converters.add(new Converter(clazz, (BiFunction<Object, GraphQLContext, Object>) converter));
             return this;
         }
 
@@ -68,7 +69,7 @@ public final class Converters {
 
     private final Collection<Converter> converters;
 
-    CompletableFuture<Object> convert(Object value, Object context) {
+    CompletableFuture<Object> convert(Object value, GraphQLContext context) {
         return value instanceof CompletableFuture
                 ? (CompletableFuture<Object>) value
                 : converters
@@ -82,8 +83,8 @@ public final class Converters {
     }
 
     @Nonnull
-    public static <C> Builder<C> newConverters(Class<C> contextClass) {
-        return new Builder<>();
+    public static Builder newConverters() {
+        return new Builder();
     }
 
 }
