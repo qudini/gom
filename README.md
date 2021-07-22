@@ -357,7 +357,7 @@ Converters converters = Converters
 
 You will then have to pass these `converters` to `Gom#converters` so that they get successfully registered.
 
-The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: when building your `ExecutionInput`, if you make the GraphQL context hold an instance of Project Reactor's current `reactor.util.context.Context` thanks to `ExecutionInput.Builder#graphQLContext(...)`, you can pass it through to your resolvers transparently, which will then allow using Spring Security annotations on your resolvers for example:
+The `context` parameter (of type `graphql.GraphQLContext`) looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: when building your `ExecutionInput`, if you make the GraphQL context hold an instance of Project Reactor's current `reactor.util.context.Context` thanks to `ExecutionInput.Builder#graphQLContext(...)`, you can pass it through to your resolvers transparently, which will then allow using Spring Security annotations on your resolvers for example:
 
 ```java
 .converter(Mono.class, (mono, context) -> mono.contextWrite(context.get(REACTOR_CONTEXT_KEY)).toFuture())
