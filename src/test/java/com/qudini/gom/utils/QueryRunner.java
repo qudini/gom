@@ -64,7 +64,7 @@ public final class QueryRunner {
         ExecutionInput executionInput;
         try {
             executionInput = newExecutionInput()
-                    .context(context)
+                    .graphQLContext(builder -> builder.of(context.getClass(), context))
                     .query(readResource(queryFile))
                     .dataLoaderRegistry(dataLoaderRegistry)
                     .build();

@@ -1,5 +1,6 @@
 package com.qudini.gom;
 
+import graphql.GraphQLContext;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +28,7 @@ final class DataLoaderKey {
 
     private final Discriminator discriminator;
 
-    private final Object context;
+    private final GraphQLContext context;
 
     DataLoaderKey(DataFetchingEnvironment environment, int selectionDepth) {
         this.source = environment.getSource();
@@ -35,7 +36,7 @@ final class DataLoaderKey {
                 new DefaultArguments(environment),
                 new DefaultSelection(environment, selectionDepth)
         );
-        this.context = environment.getContext();
+        this.context = environment.getGraphQlContext();
     }
 
 }

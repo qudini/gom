@@ -33,7 +33,7 @@ class DataLoaderKey {
     // the selection (DataFetchingEnvironment#getSelectionSet)
     private Object selection;
     
-    // the context (DataFetchingEnvironment#getContext)
+    // the context (DataFetchingEnvironment#getGraphQlContext)
     private Object context;
     
 }
@@ -349,7 +349,7 @@ For example, say you're using [Project Reactor](https://projectreactor.io/)'s re
 
 ```java
 Converters converters = Converters
-    .newConverters(MyGraphQLContext.class) // the class of the GraphQL query context that you passed to ExecutionInput.Builder#context
+    .newConverters()
     .converter(Mono.class, (mono, context) -> mono.toFuture())
     .converter(Flux.class, (flux, context) -> flux.collectList().toFuture())
     .build(); 
@@ -357,16 +357,11 @@ Converters converters = Converters
 
 You will then have to pass these `converters` to `Gom#converters` so that they get successfully registered.
 
-The `context` parameter looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: if you make `MyGraphQLContext` hold an instance of a Project Reactor's `reactor.util.context.Context` (or simply be that instance), you can pass it through to your resolvers transparently, which will then allow using Spring Security annotations on your resolvers for example:
+The `context` parameter (of type `graphql.GraphQLContext`) looks a bit superfluous, but it can actually be pretty powerful, especially in cases like the above one: when building your `ExecutionInput`, if you make the GraphQL context hold an instance of Project Reactor's current `reactor.util.context.Context` thanks to `ExecutionInput.Builder#graphQLContext(...)`, you can pass it through to your resolvers transparently, which will then allow using Spring Security annotations on your resolvers for example:
 
 ```java
-.converter(Mono.class, (mono, context) -> mono
-    .subscriberContext(context.getMySubscriberContext())
-    .toFuture())
-.converter(Flux.class, (flux, context) -> flux
-    .collectList()
-    .subscriberContext(context.getMySubscriberContext())
-    .toFuture())
+.converter(Mono.class, (mono, context) -> mono.contextWrite(context.get(REACTOR_CONTEXT_KEY)).toFuture())
+.converter(Flux.class, (flux, context) -> flux.collectList())
 ```
 
 #### Gom#decorateRuntimeWiringBuilder and Gom#decorateDataLoaderRegistry

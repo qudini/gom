@@ -175,10 +175,10 @@ public final class ConvertersTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        newConverters(Context.class)
+                        newConverters()
                                 .converter(MyWrapper.class, (myWrapper, converterContextValue) -> {
                                     converterCalled.set(true);
-                                    converterContext.set(converterContextValue);
+                                    converterContext.set(converterContextValue.get(Context.class));
                                     return myWrapper.value;
                                 })
                                 .build()
@@ -214,7 +214,7 @@ public final class ConvertersTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        newConverters(Context.class)
+                        newConverters()
                                 .converter(MyWrapper.class, (myWrapper, context) -> {
                                     converterCalled.set(true);
                                     return myWrapper.value;
@@ -259,7 +259,7 @@ public final class ConvertersTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        newConverters(Context.class)
+                        newConverters()
                                 .converter(MySuperWrapper.class, (mySuperWrapper, context) -> {
                                     superConverterCalled.set(true);
                                     return mySuperWrapper.value;
@@ -309,7 +309,7 @@ public final class ConvertersTest {
         Gom gom = newGom()
                 .resolvers(singletonList(new QueryResolver()))
                 .converters(
-                        newConverters(Context.class)
+                        newConverters()
                                 .converter(MySuperWrapper.class, (mySuperWrapper, context) -> {
                                     superConverterCalled.set(true);
                                     return mySuperWrapper.value;

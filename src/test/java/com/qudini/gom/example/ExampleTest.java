@@ -90,7 +90,7 @@ public final class ExampleTest {
         gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 
         ExecutionInput executionInput = newExecutionInput()
-                .context(new Context())
+                .graphQLContext(builder -> builder.of(Context.class, new Context()))
                 .query(query)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build();
