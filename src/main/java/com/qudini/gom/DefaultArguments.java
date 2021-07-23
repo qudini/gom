@@ -4,14 +4,17 @@ import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 @EqualsAndHashCode
@@ -30,7 +33,10 @@ final class DefaultArguments implements Arguments {
     }
 
     private <T> T getNull(String name) {
-        return (T) arguments.get(name);
+        T value = (T) arguments.get(name);
+        return value instanceof List<?>
+                ? (T) unmodifiableList((List<?>) value)
+                : value;
     }
 
     @Override
@@ -79,8 +85,8 @@ final class DefaultArguments implements Arguments {
     }
 
     private <T extends Enum<T>> List<T> getNullEnumArray(String name, Class<T> clazz) {
-        List<String> inputArray = getNull(name);
-        return inputArray == null ? null : inputArray.stream().map(key -> Enum.valueOf(clazz, key)).collect(toList());
+        List<String> enumArray = getNull(name);
+        return enumArray == null ? null : enumArray.stream().map(key -> Enum.valueOf(clazz, key)).collect(collectingAndThen(toList(), Collections::unmodifiableList));
     }
 
     @Nonnull
@@ -130,7 +136,7 @@ final class DefaultArguments implements Arguments {
 
     private List<Arguments> getNullInputArray(String name) {
         List<Map<String, Object>> inputArray = getNull(name);
-        return inputArray == null ? null : inputArray.stream().map(DefaultArguments::new).collect(toList());
+        return inputArray == null ? null : inputArray.stream().map(DefaultArguments::new).collect(collectingAndThen(toList(), Collections::unmodifiableList));
     }
 
     @Override

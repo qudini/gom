@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -100,6 +101,15 @@ public final class ArgumentsTest {
     }
 
     @Test
+    public void getUnmodifiableArray() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>());
+        }});
+        List<String> array = arguments.get("key");
+        assertThrows(UnsupportedOperationException.class, () -> array.add("value"));
+    }
+
+    @Test
     public void getEnumAbsent() {
         Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
             put("key", "A");
@@ -184,6 +194,15 @@ public final class ArgumentsTest {
         }});
         assertEquals(1, arguments.size());
         assertEquals(asList(C, A), arguments.getEnumArray("key", MyEnum.class));
+    }
+
+    @Test
+    public void getUnmodifiableEnumArray() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<String>());
+        }});
+        List<MyEnum> enumArray = arguments.getEnumArray("key", MyEnum.class);
+        assertThrows(UnsupportedOperationException.class, () -> enumArray.add(MyEnum.B));
     }
 
     @Test
@@ -342,6 +361,15 @@ public final class ArgumentsTest {
         }});
         assertEquals(1, arguments.size());
         assertEquals("value", arguments.getInputArray("key").get(0).get("subkey"));
+    }
+
+    @Test
+    public void getUnmodifiableInputArray() {
+        Arguments arguments = new DefaultArguments(new HashMap<String, Object>() {{
+            put("key", new ArrayList<Map<String, Object>>());
+        }});
+        List<Arguments> inputArray = arguments.getInputArray("key");
+        assertThrows(UnsupportedOperationException.class, () -> inputArray.add(Arguments.empty()));
     }
 
     @Test
