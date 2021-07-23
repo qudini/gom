@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import static com.qudini.gom.Reflections.getMethodAnnotatedWith;
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -108,7 +109,7 @@ final class ResolverInspection {
                         return this
                                 .<Map<Object, Object>>invoke(
                                         methodInvoker,
-                                        keysBySource.keySet(),
+                                        unmodifiableSet(keysBySource.keySet()),
                                         entry.getKey().getArguments(),
                                         entry.getKey().getSelection(),
                                         maybeContext.orElseThrow(IllegalStateException::new)

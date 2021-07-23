@@ -4,6 +4,7 @@ import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.SelectedField;
 import lombok.EqualsAndHashCode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -11,6 +12,8 @@ import java.util.stream.Stream;
 
 import static java.lang.String.join;
 import static java.util.Collections.nCopies;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -20,7 +23,7 @@ final class DefaultSelection implements Selection {
     private final Set<String> fields;
 
     DefaultSelection(Set<String> fields) {
-        this.fields = fields;
+        this.fields = unmodifiableSet(fields);
     }
 
     DefaultSelection(DataFetchingEnvironment environment, int depth) {
@@ -31,7 +34,7 @@ final class DefaultSelection implements Selection {
                 .getFields(firstGlob, globs.toArray(new String[0]))
                 .stream()
                 .map(SelectedField::getQualifiedName)
-                .collect(toSet());
+                .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
     }
 
     @Override
