@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +26,12 @@ final class DefaultArguments implements Arguments {
     private final Map<String, Object> arguments;
 
     DefaultArguments(Map<String, Object> arguments) {
-        this.arguments = unmodifiableMap(arguments);
+        Map<String, Object> mutableArguments = new HashMap<>();
+        arguments.forEach((key, value) -> mutableArguments.put(
+                key,
+                value instanceof List<?> ? unmodifiableList((List<?>) value) : value
+        ));
+        this.arguments = unmodifiableMap(mutableArguments);
     }
 
     DefaultArguments(DataFetchingEnvironment environment) {
@@ -33,10 +39,7 @@ final class DefaultArguments implements Arguments {
     }
 
     private <T> T getNull(String name) {
-        T value = (T) arguments.get(name);
-        return value instanceof List<?>
-                ? (T) unmodifiableList((List<?>) value)
-                : value;
+        return (T) arguments.get(name);
     }
 
     @Override
