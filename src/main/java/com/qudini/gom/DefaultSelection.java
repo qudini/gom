@@ -4,7 +4,6 @@ import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.SelectedField;
 import lombok.EqualsAndHashCode;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -13,7 +12,6 @@ import java.util.stream.Stream;
 import static java.lang.String.join;
 import static java.util.Collections.nCopies;
 import static java.util.Collections.unmodifiableSet;
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -27,14 +25,7 @@ final class DefaultSelection implements Selection {
     }
 
     DefaultSelection(DataFetchingEnvironment environment, int depth) {
-        List<String> globs = buildGlobs(depth);
-        String firstGlob = globs.remove(0);
-        this.fields = environment
-                .getSelectionSet()
-                .getFields(firstGlob, globs.toArray(new String[0]))
-                .stream()
-                .map(SelectedField::getQualifiedName)
-                .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+        this(extractFields(environment, depth));
     }
 
     @Override
@@ -65,6 +56,17 @@ final class DefaultSelection implements Selection {
     @Override
     public String toString() {
         return fields.toString();
+    }
+
+    private static Set<String> extractFields(DataFetchingEnvironment environment, int depth) {
+        List<String> globs = buildGlobs(depth);
+        String firstGlob = globs.remove(0);
+        return environment
+                .getSelectionSet()
+                .getFields(firstGlob, globs.toArray(new String[0]))
+                .stream()
+                .map(SelectedField::getQualifiedName)
+                .collect(toSet());
     }
 
     private static List<String> buildGlobs(int depth) {
