@@ -45,6 +45,8 @@ GOM will prepare [`DataFetcher`s](https://www.graphql-java.com/documentation/mas
 
 ## Installation
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.qudini/qudini-gom.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.qudini%22%20AND%20a:%22qudini-gom%22)
+
 ```xml
 <dependency>
     <groupId>com.qudini</groupId>
