@@ -58,4 +58,10 @@ public final class SelectionTest {
         assertEquals("", selection.stream().collect(joining()));
     }
 
+    @Test
+    public void of() {
+        Selection selection = Selection.of("foo");
+        assertEquals("foo", selection.stream().collect(joining()));
+    }
+
 }
