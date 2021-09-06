@@ -1,8 +1,10 @@
 package com.qudini.gom;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toSet;
 
 public interface Selection {
 
@@ -16,6 +18,10 @@ public interface Selection {
 
     static Selection empty() {
         return new DefaultSelection(emptySet());
+    }
+
+    static Selection of(String... fields) {
+        return new DefaultSelection(Arrays.stream(fields).collect(toSet()));
     }
 
 }
