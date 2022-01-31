@@ -72,8 +72,7 @@ final class DefaultSelection implements Selection {
     private static List<String> buildGlobs(int depth) {
         return IntStream
                 .rangeClosed(1, depth)
-                .mapToObj(i -> nCopies(i, "*"))
-                .map(stars -> join("/", stars))
+                .mapToObj(i -> join("/", nCopies(i, "*")))
                 .collect(toList());
     }
 

@@ -6,10 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 import static java.util.Collections.unmodifiableSet;
@@ -69,17 +73,27 @@ public final class Converters {
 
     private final Collection<Converter> converters;
 
-    CompletableFuture<Object> convert(Object value, GraphQLContext context) {
-        return value instanceof CompletableFuture
-                ? (CompletableFuture<Object>) value
-                : converters
+    private final Map<Class<?>, Optional<Converter>> cache = new ConcurrentHashMap<>();
+
+    CompletableFuture<Object> convert(@Nullable Object value, GraphQLContext context) {
+        if (value == null) {
+            return completedFuture(null);
+        } else if (value instanceof CompletableFuture) {
+            return (CompletableFuture<Object>) value;
+        } else {
+            return cache
+                    .computeIfAbsent(value.getClass(), this::findConverter)
+                    .map(converter -> convert(converter.convert(value, context), context))
+                    .orElseGet(() -> completedFuture(value));
+        }
+    }
+
+    private Optional<Converter> findConverter(Class<?> from) {
+        return converters
                 .stream()
-                .filter(converter -> converter.clazz.isInstance(value))
+                .filter(converter -> converter.clazz.isAssignableFrom(from))
                 .sorted()
-                .findFirst()
-                .map(converter -> converter.convert(value, context))
-                .map(object -> convert(object, context))
-                .orElse(completedFuture(value));
+                .findFirst();
     }
 
     @Nonnull
