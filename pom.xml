@@ -36,20 +36,20 @@
         <junit.version>4.13.2</junit.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <jackson-databind.version>2.13.1</jackson-databind.version>
-        <compiler-plugin.version>3.9.0</compiler-plugin.version>
+        <compiler-plugin.version>3.10.0</compiler-plugin.version>
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <failsafe-plugin.version>2.22.2</failsafe-plugin.version>
-        <resources-plugin.version>3.2.0</resources-plugin.version>
-        <javadoc-plugin.version>3.3.1</javadoc-plugin.version>
+        <source-plugin.version>3.2.1</source-plugin.version>
+        <javadoc-plugin.version>3.3.2</javadoc-plugin.version>
         <jacoco-plugin.version>0.8.7</jacoco-plugin.version>
         <lombok-plugin.version>1.18.20.0</lombok-plugin.version>
-        <antrun-plugin.version>3.0.0</antrun-plugin.version>
-        <build-helper-plugin.version>3.3.0</build-helper-plugin.version>
         <versions-plugin.version>2.9.0</versions-plugin.version>
         <deploy-plugin.version>2.8.2</deploy-plugin.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java-sources>src/main/java</java-sources>
+        <skip-coverage>false</skip-coverage>
     </properties>
 
     <distributionManagement>
@@ -72,13 +72,76 @@
 
     <profiles>
         <profile>
-            <id>deploy</id>
+            <id>release</id>
+            <properties>
+                <java-sources>${project.build.directory}/delombok</java-sources>
+                <skip-coverage>true</skip-coverage>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>versions-maven-plugin</artifactId>
                         <version>${versions-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                        <version>${lombok-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>delombok-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>delombok</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirectory>src/main/java</sourceDirectory>
+                                    <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+                                    <addOutputDirectory>false</addOutputDirectory>
+                                    <formatPreferences>
+                                        <indent>tab</indent>
+                                        <emptyLines>blank</emptyLines>
+                                        <finalParams>skip</finalParams>
+                                        <constructorProperties>skip</constructorProperties>
+                                        <suppressWarnings>skip</suppressWarnings>
+                                        <generated>skip</generated>
+                                        <danceAroundIdeChecks>skip</danceAroundIdeChecks>
+                                        <generateDelombokComment>skip</generateDelombokComment>
+                                        <javaLangAsFQN>generate</javaLangAsFQN>
+                                    </formatPreferences>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <doclint>all,-missing</doclint>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -173,6 +236,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip-coverage}</skip>
                             <destFile>${project.build.directory}/jacoco/ut.exec</destFile>
                             <propertyName>surefire.jacoco.args</propertyName>
                         </configuration>
@@ -184,6 +248,7 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip-coverage}</skip>
                             <dataFile>${project.build.directory}/jacoco/ut.exec</dataFile>
                             <outputDirectory>${project.reporting.outputDirectory}/coverage/ut</outputDirectory>
                         </configuration>
@@ -195,6 +260,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip-coverage}</skip>
                             <destFile>${project.build.directory}/jacoco/it.exec</destFile>
                             <propertyName>failsafe.jacoco.args</propertyName>
                         </configuration>
@@ -206,6 +272,7 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip-coverage}</skip>
                             <dataFile>${project.build.directory}/jacoco/it.exec</dataFile>
                             <outputDirectory>${project.reporting.outputDirectory}/coverage/it</outputDirectory>
                         </configuration>
@@ -227,123 +294,6 @@
                 <configuration>
                     <argLine>${failsafe.jacoco.args}</argLine>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>${lombok-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>delombok-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>src/main/java</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
-                            <addOutputDirectory>false</addOutputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>delombok-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/resources</directory>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${antrun-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-delomboked-sources-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${noSources}</skip>
-                            <target>
-                                <jar basedir="${project.build.directory}/delombok"
-                                     destfile="${project.build.directory}/${project.build.finalName}-sources.jar"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>no-sources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>bsh-property</goal>
-                        </goals>
-                        <configuration>
-                            <source>noSources = !new File("${project.build.directory}/delombok").exists();</source>
-                            <properties>
-                                <property>noSources</property>
-                            </properties>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>attach-delomboked-sources-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <skipAttach>${noSources}</skipAttach>
-                            <artifacts>
-                                <artifact>
-                                    <file>${project.build.directory}/${project.build.finalName}-sources.jar</file>
-                                    <type>jar</type>
-                                    <classifier>sources</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${noSources}</skip>
-                            <doclint>all,-missing</doclint>
-                            <sourcepath>${project.build.directory}/delombok</sourcepath>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
