@@ -211,6 +211,7 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${java-sources}</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
