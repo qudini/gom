@@ -37,6 +37,54 @@ public class Connection<T> {
         return new Connection<>(0, PageInfo.builder().build(), emptyList());
     }
 
+    /**
+     * <p>
+     * If arguments.after is provided, to help build the page info,
+     * the list of edges is expected to hold arguments.first + 2 elements:
+     * </p>
+     *
+     * <ul>
+     * <li>first, the element matching arguments.after</li>
+     * <li>then, the following arguments.first elements (which will be the ones in the returned connection eventually)</li>
+     * <li>finally, the following one element</li>
+     * </ul>
+     *
+     * <p>In other words, in pseudo-SQL, instead of:</p>
+     *
+     * <pre>{@literal
+     * WHERE column > :after ORDER BY column LIMIT :first
+     * }</pre>
+     *
+     * <p>Use:</p>
+     *
+     * <pre>{@literal
+     * WHERE column >= :after ORDER BY column LIMIT :first + 2
+     * }</pre>
+     * </p>
+     *
+     * <p>
+     * If arguments.after is not provided, to help build the page info,
+     * the list of edges is expected to hold arguments.first + 1 element:
+     * </p>
+     *
+     * <ul>
+     * <li>first, the arguments.first elements (which will be the ones in the returned connection eventually)</li>
+     * <li>then finally, the following one element</li>
+     * </ul>
+     *
+     * <p>In other words, in pseudo-SQL, instead of:</p>
+     *
+     * <pre>{@literal
+     * ORDER BY column LIMIT :first
+     * }</pre>
+     *
+     * <p>Use:</p>
+     *
+     * <pre>{@literal
+     * ORDER BY column LIMIT :first + 1
+     * }</pre>
+     * </p>
+     */
     public static <T> Connection<T> build(long totalCount, List<Edge<T>> edges, PageArguments arguments) {
         return arguments
                 .getAfter()
