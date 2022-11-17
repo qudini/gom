@@ -1,3 +1,4 @@
+
 # GOM
 
 GOM (GraphQL-Object Mapping) batches your resolvers in order to reduce your data queries, while still allowing them to be customised depending on the arguments and selection.
@@ -381,6 +382,15 @@ gom.decorateDataLoaderRegistry(dataLoaderRegistry);
 ```
 
 You're now good to go!
+
+### Other utilities
+
+According to the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm), predefined types have been made available:
+
+- `com.qudini.gom.paging.Connection`
+- `com.qudini.gom.paging.Edge`
+- `com.qudini.gom.paging.PageArguments`
+- `com.qudini.gom.paging.PageInfo`
 
 ## Example
 
