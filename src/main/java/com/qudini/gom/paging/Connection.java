@@ -60,7 +60,6 @@ public class Connection<T> {
      * <pre>{@literal
      * WHERE column >= :after ORDER BY column LIMIT :first + 2
      * }</pre>
-     * </p>
      *
      * <p>
      * If arguments.after is not provided, to help build the page info,
@@ -83,7 +82,6 @@ public class Connection<T> {
      * <pre>{@literal
      * ORDER BY column LIMIT :first + 1
      * }</pre>
-     * </p>
      */
     public static <T> Connection<T> build(long totalCount, List<Edge<T>> edges, PageArguments arguments) {
         return arguments
