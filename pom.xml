@@ -45,7 +45,7 @@
         <lombok-plugin.version>1.18.20.0</lombok-plugin.version>
         <versions-plugin.version>2.13.0</versions-plugin.version>
         <deploy-plugin.version>3.0.0</deploy-plugin.version>
-        <gpg-plugin.version>3.0.1</gpg-plugin.version>
+        <gpg-plugin.version>3.2.8</gpg-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java-sources>src/main/java</java-sources>
